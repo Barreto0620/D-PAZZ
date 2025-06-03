@@ -86,7 +86,7 @@ export const Navbar: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img 
-              src="/dpazz-imports-logo.png"
+              src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png"
               alt="D'Pazz Imports"
               className="h-12"
             />

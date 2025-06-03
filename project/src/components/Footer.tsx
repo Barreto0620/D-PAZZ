@@ -11,7 +11,7 @@ export const Footer: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center">
               <img 
-                src="https://raw.githubusercontent.com/stackblitz/stackblitz-images/main/dpazz-imports-logo.png" 
+                src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png" 
                 alt="D'Pazz Imports"
                 className="h-12"
               />

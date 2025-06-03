@@ -28,7 +28,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <Link to="/" className="flex items-center">
             <img 
-              src="https://raw.githubusercontent.com/stackblitz/stackblitz-images/main/dpazz-imports-logo.png" 
+              src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png" 
               alt="D'Pazz Imports"
               className="h-12"
             />
@@ -93,7 +93,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
         <header className="bg-white dark:bg-dark-lighter p-4 shadow-md md:hidden flex items-center justify-between">
           <div className="flex items-center">
             <img 
-              src="https://raw.githubusercontent.com/stackblitz/stackblitz-images/main/dpazz-imports-logo.png" 
+              src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png" 
               alt="D'Pazz Imports"
               className="h-8"
             />
