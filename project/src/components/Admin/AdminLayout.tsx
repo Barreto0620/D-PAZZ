@@ -30,7 +30,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
             <img 
               src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png" 
               alt="D'Pazz Imports"
-              className="h-12"
+              className="h-12 ml-15"
             />
           </Link>
         </div>
@@ -95,7 +95,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
             <img 
               src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png" 
               alt="D'Pazz Imports"
-              className="h-8"
+              className="h-8 ml-15"
             />
           </div>
           

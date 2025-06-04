@@ -88,7 +88,7 @@ export const Navbar: React.FC = () => {
             <img 
               src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png"
               alt="D'Pazz Imports"
-              className="h-12"
+              className="h-12 ml-20"
             />
           </Link>
 

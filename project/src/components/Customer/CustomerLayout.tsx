@@ -30,7 +30,7 @@ export const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children, title 
             <img 
               src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png"
               alt="D'Pazz Imports"
-              className="h-12"
+              className="h-20 ml-15"
             />
           </Link>
         </div>

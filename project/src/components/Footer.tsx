@@ -13,7 +13,7 @@ export const Footer: React.FC = () => {
               <img 
                 src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png" 
                 alt="D'Pazz Imports"
-                className="h-12"
+                className="h-20 ml-20"
               />
             </div>
             <p className="text-gray-600 dark:text-gray-300 text-sm">
