@@ -4,126 +4,115 @@ import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from 'lucide-react'
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-white dark:bg-dark-lighter mt-10 pt-10 pb-6">
+    <footer className="bg-white dark:bg-dark-lighter mt-10 pt-10 pb-6 border-t border-gray-200 dark:border-gray-700">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <div className="flex items-center">
-              <img 
-                src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png" 
+            <Link to="/" className="flex items-center mb-4">
+              <img
+                src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png"
                 alt="D'Pazz Imports"
                 className="h-20 ml-20"
               />
-            </div>
-            <p className="text-gray-600 dark:text-gray-300 text-sm">
-              A D'Pazz Imports é especializada em produtos importados de alta qualidade, 
-              trazendo o melhor do mundo diretamente para sua casa.
+            </Link>
+            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+              A D'Pazz Imports é sua loja online especializada em produtos importados de alta qualidade.
+              
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-500 hover:text-primary transition-colors">
+            <div className="flex space-x-4 pt-2">
+              <a href="https://facebook.com/dpazzimports" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors">
                 <Facebook size={24} />
               </a>
-              <a href="#" className="text-gray-500 hover:text-primary transition-colors">
+              <a href="https://instagram.com/dpazzimports" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors">
                 <Instagram size={24} />
               </a>
-              <a href="#" className="text-gray-500 hover:text-primary transition-colors">
+              <a href="https://twitter.com/dpazzimports" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors">
                 <Twitter size={24} />
               </a>
             </div>
           </div>
 
-          {/* Categories */}
+          {/* Categorias de Produtos */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-dark dark:text-white">Categorias</h3>
+            <h3 className="text-lg font-semibold mb-4 text-dark dark:text-white">Nossas Categorias</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/categoria/1" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Eletrônicos
+                <Link to="/categoria/tenis" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                  Tênis
                 </Link>
               </li>
               <li>
-                <Link to="/categoria/2" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Roupas
+                <Link to="/categoria/perfumes" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                  Perfumes
                 </Link>
               </li>
               <li>
-                <Link to="/categoria/3" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Acessórios
+                <Link to="/novidades" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                  Novidades
                 </Link>
               </li>
               <li>
-                <Link to="/categoria/4" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Casa & Decoração
-                </Link>
-              </li>
-              <li>
-                <Link to="/categoria/5" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Beleza
-                </Link>
-              </li>
-              <li>
-                <Link to="/categoria/6" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Esportes
+                <Link to="/promocoes" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                  Promoções
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Quick Links */}
+          {/* Informações e Suporte */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-dark dark:text-white">Links Rápidos</h3>
+            <h3 className="text-lg font-semibold mb-4 text-dark dark:text-white">Informações</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Página Inicial
-                </Link>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                <Link to="/sobre" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
                   Sobre Nós
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                <Link to="/termos-de-servico" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
                   Termos de Serviço
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                <Link to="/politica-de-privacidade" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
                   Política de Privacidade
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                <Link to="/trocas-e-devolucoes" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                  Trocas e Devoluções
+                </Link>
+              </li>
+              <li>
+                <Link to="/faq" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
                   FAQ
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Contato
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Contato */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-dark dark:text-white">Entre em Contato</h3>
+            <h3 className="text-lg font-semibold mb-4 text-dark dark:text-white">Atendimento ao Cliente</h3>
             <ul className="space-y-3">
               <li className="flex items-start space-x-3">
                 <MapPin size={20} className="text-primary flex-shrink-0 mt-1" />
                 <span className="text-gray-600 dark:text-gray-300">
-                  Av. Paulista, 1000, São Paulo - SP, 01310-000
+                  Rua Exemplo, 123 - Centro<br/>Santo André - SP, 09015-010
                 </span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone size={20} className="text-primary" />
-                <span className="text-gray-600 dark:text-gray-300">(11) 95555-5555</span>
+                <a href="tel:+5511955555555" className="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
+                  (11) 95555-5555
+                </a>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail size={20} className="text-primary" />
-                <span className="text-gray-600 dark:text-gray-300">contato@dpazzimports.com.br</span>
+                <a href="mailto:contato@dpazzimports.com.br" className="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
+                  contato@dpazzimports.com.br
+                </a>
               </li>
             </ul>
           </div>

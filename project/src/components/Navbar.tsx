@@ -16,14 +16,14 @@ export const Navbar: React.FC = () => {
   const { favorites } = useFavorites();
   const { isAuthenticated, isAdmin, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]); // Mantém as categorias da API
   const navigate = useNavigate();
-  
-  const { 
-    searchQuery, 
-    setSearchQuery, 
-    searchResults, 
-    isSearching 
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    isSearching
   } = useSearch();
 
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -34,7 +34,7 @@ export const Navbar: React.FC = () => {
         const data = await getCategories();
         setCategories(data);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Erro ao buscar categorias:', error);
       }
     };
 
@@ -59,7 +59,7 @@ export const Navbar: React.FC = () => {
     setSearchQuery('');
   };
 
-  // Close search results when clicking outside
+  // Fecha os resultados da busca ao clicar fora
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -79,68 +79,74 @@ export const Navbar: React.FC = () => {
   const cartItemCount = getItemCount();
   const favoritesCount = favorites.length;
 
+  // Define os links de navegação principais, priorizando os nomes que você pediu.
+  // Se 'Tênis' ou 'Perfumes' existirem nas categorias da API, usaremos seus IDs reais.
+  // Caso contrário, usaremos paths genéricos.
+  const navLinks = [
+    { 
+      name: 'Tênis', 
+      path: categories.find(c => c.name.toLowerCase() === 'tênis')?.id 
+        ? `/categoria/${categories.find(c => c.name.toLowerCase() === 'tênis')?.id}` 
+        : '/categoria/tenis' // Fallback para path genérico
+    },
+    { 
+      name: 'Perfumes', 
+      path: categories.find(c => c.name.toLowerCase() === 'perfumes')?.id 
+        ? `/categoria/${categories.find(c => c.name.toLowerCase() === 'perfumes')?.id}` 
+        : '/categoria/perfumes' // Fallback para path genérico
+    },
+    { name: 'Novidades', path: '/novidades' },
+    { name: 'Promoções', path: '/promocoes' },
+    { name: 'Contato', path: '/contato' },
+  ];
+
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-dark-lighter shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img 
+            <img
               src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png"
               alt="D'Pazz Imports"
               className="h-12 ml-20"
             />
           </Link>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors">
-              Início
-            </Link>
-            {categories.slice(0, 4).map(category => (
-              <Link 
-                key={category.id}
-                to={`/categoria/${category.id}`}
-                className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors"
+          {/* Desktop Nav - Centralizado para destaque */}
+          <nav className="hidden md:flex items-center justify-center flex-grow space-x-6">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.path}
+                className="text-dark dark:text-white font-medium hover:text-primary dark:hover:text-primary transition-colors text-lg"
               >
-                {category.name}
+                {link.name}
               </Link>
             ))}
           </nav>
 
-          {/* Search, Cart, Favorites, Dark Mode */}
+          {/* Search, User, Favorites, Cart, Dark Mode - Alinhados à direita */}
           <div className="hidden md:flex items-center space-x-4">
             <div className="relative search-container">
               <form onSubmit={handleSearch} className="relative">
                 <input
                   type="text"
-                  placeholder="Buscar produtos..."
-                  className="px-4 py-2 pl-10 rounded-full bg-light-darker dark:bg-dark-lighter text-dark dark:text-white w-96 focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Buscar..."
+                  className="px-4 py-2 pl-10 rounded-full bg-light-darker dark:bg-dark-lighter text-dark dark:text-white w-64 focus:outline-none focus:ring-2 focus:ring-primary"
                   value={searchQuery}
                   onChange={handleSearchInputChange}
                 />
                 <Search size={18} className="absolute left-3 top-2.5 text-gray-400" />
               </form>
-              
+
               {showSearchResults && (
-                <SearchResults 
-                  results={searchResults} 
-                  onClose={handleSearchResultClick} 
+                <SearchResults
+                  results={searchResults}
+                  onClose={handleSearchResultClick}
                 />
               )}
             </div>
-
-            <Link 
-              to="/favoritos" 
-              className="relative p-2 rounded-full hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
-            >
-              <Heart size={24} className="text-dark dark:text-white" />
-              {favoritesCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-error text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {favoritesCount}
-                </span>
-              )}
-            </Link>
 
             <div className="relative group">
               {isAuthenticated ? (
@@ -148,15 +154,14 @@ export const Navbar: React.FC = () => {
                   <User size={24} className="text-dark dark:text-white" />
                 </button>
               ) : (
-                <Link 
+                <Link
                   to="/login"
                   className="flex items-center gap-2 p-2 rounded-full hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
                 >
                   <LogIn size={24} className="text-dark dark:text-white" />
-                  <span className="text-sm font-medium text-dark dark:text-white">Entrar</span>
                 </Link>
               )}
-              
+
               {isAuthenticated && (
                 <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-dark-lighter shadow-lg rounded-lg overflow-hidden hidden group-hover:block border border-gray-200 dark:border-gray-700">
                   <div className="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -172,15 +177,15 @@ export const Navbar: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  
-                  <Link 
+
+                  <Link
                     to={isAdmin ? '/admin/dashboard' : '/cliente/painel'}
                     className="flex items-center gap-2 px-4 py-2 text-sm text-dark dark:text-white hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
                   >
                     {isAdmin ? 'Dashboard Admin' : 'Minha Conta'}
                   </Link>
-                  
-                  <button 
+
+                  <button
                     onClick={logout}
                     className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-error hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
                   >
@@ -191,8 +196,20 @@ export const Navbar: React.FC = () => {
               )}
             </div>
 
-            <Link 
-              to="/carrinho" 
+            <Link
+              to="/favoritos"
+              className="relative p-2 rounded-full hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
+            >
+              <Heart size={24} className="text-dark dark:text-white" />
+              {favoritesCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-error text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {favoritesCount}
+                </span>
+              )}
+            </Link>
+
+            <Link
+              to="/carrinho"
               className="relative p-2 rounded-full hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
             >
               <ShoppingCart size={24} className="text-dark dark:text-white" />
@@ -206,7 +223,7 @@ export const Navbar: React.FC = () => {
             <DarkModeToggle />
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu button and icons */}
           <div className="flex items-center space-x-4 md:hidden">
             <Link to="/favoritos" className="relative p-2">
               <Heart size={24} className="text-dark dark:text-white" />
@@ -222,7 +239,7 @@ export const Navbar: React.FC = () => {
                 <LogIn size={24} className="text-dark dark:text-white" />
               </Link>
             )}
-            
+
             <Link to="/carrinho" className="relative p-2">
               <ShoppingCart size={24} className="text-dark dark:text-white" />
               {cartItemCount > 0 && (
@@ -231,8 +248,8 @@ export const Navbar: React.FC = () => {
                 </span>
               )}
             </Link>
-            
-            <button 
+
+            <button
               onClick={toggleMenu}
               className="p-2 rounded-lg bg-light-darker dark:bg-dark-lighter"
               aria-label="Menu"
@@ -269,49 +286,42 @@ export const Navbar: React.FC = () => {
                   />
                   <Search size={18} className="absolute left-3 top-2.5 text-gray-400" />
                 </form>
-                
+
                 {showSearchResults && (
                   <div className="absolute top-full left-0 right-0 mt-2 z-50">
-                    <SearchResults 
-                      results={searchResults} 
-                      onClose={handleSearchResultClick} 
+                    <SearchResults
+                      results={searchResults}
+                      onClose={handleSearchResultClick}
                     />
                   </div>
                 )}
               </div>
 
-              <Link 
-                to="/" 
-                className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Início
-              </Link>
-
-              {categories.map(category => (
-                <Link 
-                  key={category.id}
-                  to={`/categoria/${category.id}`}
+              {/* Links do menu mobile: fixos conforme solicitado */}
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
                   className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {category.name}
+                  {link.name}
                 </Link>
               ))}
 
               <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700">
                 <DarkModeToggle />
-                
+
                 {isAuthenticated ? (
                   <div className="flex space-x-4">
-                    <Link 
+                    <Link
                       to={isAdmin ? '/admin/dashboard' : '/cliente/painel'}
                       className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {isAdmin ? 'Admin' : 'Minha Conta'}
                     </Link>
-                    <button 
+                    <button
                       onClick={() => {
                         logout();
                         setIsMenuOpen(false);
@@ -322,7 +332,7 @@ export const Navbar: React.FC = () => {
                     </button>
                   </div>
                 ) : (
-                  <Link 
+                  <Link
                     to="/login"
                     className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors"
                     onClick={() => setIsMenuOpen(false)}

@@ -2,275 +2,263 @@
   "categories": [
     {
       "id": 1,
-      "name": "Eletrônicos",
-      "image": "https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg",
-      "description": "Produtos eletrônicos importados de alta qualidade",
+      "name": "Tênis Esportivos",
+      "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=600&fit=crop&crop=center",
+      "description": "Desempenho e estilo para suas atividades físicas. Encontre modelos para corrida, treino e mais.",
       "featured": true
     },
     {
       "id": 2,
-      "name": "Roupas",
-      "image": "https://images.pexels.com/photos/934070/pexels-photo-934070.jpeg",
-      "description": "Roupas importadas das melhores marcas",
+      "name": "Tênis Casuais",
+      "image": "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&h=600&fit=crop&crop=center",
+      "description": "Conforto e elegância para o dia a dia. Perfeitos para qualquer ocasião.",
       "featured": true
     },
     {
       "id": 3,
-      "name": "Acessórios",
-      "image": "https://images.pexels.com/photos/1374910/pexels-photo-1374910.jpeg",
-      "description": "Acessórios exclusivos para complementar seu estilo",
+      "name": "Perfumes Masculinos",
+      "image": "https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&h=600&fit=crop&crop=center",
+      "description": "Fragrâncias marcantes e sofisticadas para o homem moderno.",
       "featured": true
     },
     {
       "id": 4,
-      "name": "Casa & Decoração",
-      "image": "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
-      "description": "Artigos para casa e decoração de alto padrão",
+      "name": "Perfumes Femininos",
+      "image": "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800&h=600&fit=crop&crop=center",
+      "description": "Essências delicadas e envolventes que realçam a sua beleza.",
       "featured": true
     },
     {
       "id": 5,
-      "name": "Beleza",
-      "image": "https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg",
-      "description": "Produtos de beleza importados",
+      "name": "Perfumes Unissex",
+      "image": "https://images.unsplash.com/photo-1588405748880-12d1d2a59d32?w=800&h=600&fit=crop&crop=center",
+      "description": "Fragrâncias versáteis que se adaptam a todos os estilos.",
       "featured": false
     },
     {
       "id": 6,
-      "name": "Esportes",
-      "image": "https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg",
-      "description": "Artigos esportivos de qualidade premium",
+      "name": "Acessórios para Tênis",
+      "image": "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=800&h=600&fit=crop&crop=center",
+      "description": "Complementos essenciais para o cuidado e estilo dos seus tênis.",
       "featured": false
     }
   ],
   "products": [
     {
       "id": 1,
-      "name": "Smartphone Premium XS",
-      "description": "Smartphone de última geração com câmera de alta resolução, processador potente e bateria de longa duração. Ideal para quem busca tecnologia de ponta e desempenho excepcional.",
-      "price": 3499.99,
-      "oldPrice": 3999.99,
+      "name": "Tênis Runner Pro X",
+      "description": "Desenvolvido para alta performance em corridas, o Runner Pro X oferece amortecimento superior e leveza incomparável, garantindo conforto e propulsão a cada passo. Ideal para atletas exigentes.",
+      "price": 799.99,
+      "oldPrice": 999.99,
       "category": 1,
       "images": [
-        "https://images.pexels.com/photos/699122/pexels-photo-699122.jpeg",
-        "https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg",
-        "https://images.pexels.com/photos/404280/pexels-photo-404280.jpeg"
+        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&h=600&fit=crop&crop=center"
       ],
       "featured": true,
       "onSale": true,
       "bestSeller": true,
       "stock": 15,
-      "rating": 4.7,
-      "reviewCount": 123
+      "rating": 4.8,
+      "reviewCount": 185
     },
     {
       "id": 2,
-      "name": "Notebook Ultra Thin",
-      "description": "Notebook ultrafino com desempenho excepcional. Processador de última geração, SSD rápido e tela de alta resolução para máxima produtividade.",
-      "price": 4999.99,
-      "oldPrice": 5499.99,
-      "category": 1,
+      "name": "Tênis Casual Urbano Style",
+      "description": "O Urbano Style é o tênis perfeito para o seu dia a dia, combinando design moderno com o máximo de conforto. Feito com materiais premium, ideal para compor looks casuais e despojados.",
+      "price": 449.99,
+      "oldPrice": 529.99,
+      "category": 2,
       "images": [
-        "https://images.pexels.com/photos/705675/pexels-photo-705675.jpeg",
-        "https://images.pexels.com/photos/1229861/pexels-photo-1229861.jpeg",
-        "https://images.pexels.com/photos/129208/pexels-photo-129208.jpeg"
+        "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&h=600&fit=crop&crop=center"
       ],
       "featured": true,
       "onSale": true,
       "bestSeller": false,
-      "stock": 8,
+      "stock": 20,
       "rating": 4.5,
-      "reviewCount": 87
+      "reviewCount": 120
     },
     {
       "id": 3,
-      "name": "Jaqueta Premium Winter",
-      "description": "Jaqueta de inverno premium com tecnologia térmica avançada. Mantém o calor mesmo em temperaturas extremamente baixas, sendo leve e confortável.",
-      "price": 899.99,
-      "oldPrice": 1199.99,
-      "category": 2,
-      "images": [
-        "https://images.pexels.com/photos/16170/pexels-photo.jpg",
-        "https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg",
-        "https://images.pexels.com/photos/6770028/pexels-photo-6770028.jpeg"
-      ],
-      "featured": false,
-      "onSale": true,
-      "bestSeller": true,
-      "stock": 20,
-      "rating": 4.9,
-      "reviewCount": 156
-    },
-    {
-      "id": 4,
-      "name": "Relógio Smartwatch Pro",
-      "description": "Smartwatch com monitoramento completo de saúde, GPS integrado, resistência à água e bateria de longa duração. Conecte-se com suas músicas, notificações e exercícios.",
-      "price": 1299.99,
-      "oldPrice": 1499.99,
+      "name": "Perfume Majestic Code (Masculino)",
+      "description": "Uma fragrância masculina poderosa e envolvente, com notas amadeiradas e toques de especiarias. Perfeito para homens que buscam elegância e sofisticação em todas as ocasiões.",
+      "price": 389.90,
+      "oldPrice": 450.00,
       "category": 3,
       "images": [
-        "https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg",
-        "https://images.pexels.com/photos/393047/pexels-photo-393047.jpeg",
-        "https://images.pexels.com/photos/4722311/pexels-photo-4722311.jpeg"
+        "https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=800&h=600&fit=crop&crop=center"
       ],
       "featured": true,
-      "onSale": true,
-      "bestSeller": true,
-      "stock": 12,
-      "rating": 4.6,
-      "reviewCount": 98
-    },
-    {
-      "id": 5,
-      "name": "Conjunto de Panelas Premium",
-      "description": "Conjunto de panelas de qualidade superior, fabricadas com materiais duráveis e tecnologia antiaderente avançada. Perfeitas para quem valoriza a culinária de alto padrão.",
-      "price": 1899.99,
-      "oldPrice": 2299.99,
-      "category": 4,
-      "images": [
-        "https://images.pexels.com/photos/3566025/pexels-photo-3566025.jpeg",
-        "https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg",
-        "https://images.pexels.com/photos/5677794/pexels-photo-5677794.jpeg"
-      ],
-      "featured": false,
-      "onSale": true,
-      "bestSeller": false,
-      "stock": 6,
-      "rating": 4.8,
-      "reviewCount": 45
-    },
-    {
-      "id": 6,
-      "name": "Kit Skincare Premium",
-      "description": "Kit completo de skincare com produtos premium para uma rotina de cuidados com a pele perfeita. Contém limpador, tônico, sérum e hidratante.",
-      "price": 699.99,
-      "oldPrice": 899.99,
-      "category": 5,
-      "images": [
-        "https://images.pexels.com/photos/3321416/pexels-photo-3321416.jpeg",
-        "https://images.pexels.com/photos/3737579/pexels-photo-3737579.jpeg",
-        "https://images.pexels.com/photos/3785147/pexels-photo-3785147.jpeg"
-      ],
-      "featured": true,
-      "onSale": true,
-      "bestSeller": false,
-      "stock": 25,
-      "rating": 4.7,
-      "reviewCount": 112
-    },
-    {
-      "id": 7,
-      "name": "Tênis de Corrida Pro",
-      "description": "Tênis de corrida profissional com tecnologia de amortecimento avançada, suporte para arco do pé e design ultraleve para máximo desempenho esportivo.",
-      "price": 549.99,
-      "oldPrice": 699.99,
-      "category": 6,
-      "images": [
-        "https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg",
-        "https://images.pexels.com/photos/1478442/pexels-photo-1478442.jpeg",
-        "https://images.pexels.com/photos/4653941/pexels-photo-4653941.jpeg"
-      ],
-      "featured": false,
       "onSale": true,
       "bestSeller": true,
       "stock": 18,
-      "rating": 4.5,
-      "reviewCount": 76
+      "rating": 4.9,
+      "reviewCount": 210
     },
     {
-      "id": 8,
-      "name": "Fones de Ouvido Bluetooth Premium",
-      "description": "Fones de ouvido bluetooth com cancelamento de ruído ativo, som de alta definição e bateria que dura o dia todo. Conforto excepcional para uso prolongado.",
-      "price": 799.99,
-      "oldPrice": 999.99,
-      "category": 1,
+      "id": 4,
+      "name": "Perfume Floral Aura (Feminino)",
+      "description": "Floral Aura é uma fragrância feminina delicada e radiante, com um buquê de flores brancas e notas cítricas. Ideal para mulheres que apreciam um aroma leve, fresco e duradouro.",
+      "price": 329.90,
+      "oldPrice": 399.90,
+      "category": 4,
       "images": [
-        "https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg",
-        "https://images.pexels.com/photos/3394665/pexels-photo-3394665.jpeg",
-        "https://images.pexels.com/photos/577769/pexels-photo-577769.jpeg"
+        "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=800&h=600&fit=crop&crop=center"
       ],
       "featured": true,
       "onSale": true,
       "bestSeller": true,
       "stock": 22,
+      "rating": 4.7,
+      "reviewCount": 195
+    },
+    {
+      "id": 5,
+      "name": "Tênis Caminhada Confort Fit",
+      "description": "Perfeito para caminhadas e uso diário, o Confort Fit proporciona um ajuste ergonômico e suporte ideal. Sua sola flexível absorve impactos, garantindo uma experiência leve e confortável.",
+      "price": 319.99,
+      "oldPrice": 380.00,
+      "category": 1,
+      "images": [
+        "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": false,
+      "bestSeller": false,
+      "stock": 25,
+      "rating": 4.4,
+      "reviewCount": 90
+    },
+    {
+      "id": 6,
+      "name": "Tênis Skate Vibe Street",
+      "description": "Com design robusto e aderência superior, o Vibe Street é ideal para os amantes do skate. Oferece durabilidade e estilo para suas manobras e para o dia a dia urbano.",
+      "price": 499.99,
+      "oldPrice": null,
+      "category": 2,
+      "images": [
+        "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": false,
+      "bestSeller": false,
+      "stock": 10,
+      "rating": 4.6,
+      "reviewCount": 75
+    },
+    {
+      "id": 7,
+      "name": "Perfume Noir Seduction (Unissex)",
+      "description": "Noir Seduction é uma fragrância intrigante e sedutora, ideal para quem busca um perfume unissex com notas ambaradas e um toque oriental. Crie uma aura misteriosa e cativante.",
+      "price": 419.90,
+      "oldPrice": 500.00,
+      "category": 5,
+      "images": [
+        "https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": true,
+      "onSale": true,
+      "bestSeller": true,
+      "stock": 12,
       "rating": 4.8,
-      "reviewCount": 134
+      "reviewCount": 160
+    },
+    {
+      "id": 8,
+      "name": "Cadarço Premium Colorido (Par)",
+      "description": "Cadarços de alta resistência em diversas cores vibrantes para personalizar seus tênis. Feitos com material durável e pontas reforçadas.",
+      "price": 29.90,
+      "oldPrice": null,
+      "category": 6,
+      "images": [
+        "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": false,
+      "bestSeller": false,
+      "stock": 50,
+      "rating": 4.2,
+      "reviewCount": 45
     },
     {
       "id": 9,
-      "name": "Vestido de Festa Luxo",
-      "description": "Vestido de festa de alta costura, confeccionado com tecidos nobres e acabamento impecável. Perfeito para ocasiões especiais onde você deseja se destacar.",
-      "price": 1299.99,
-      "oldPrice": 1599.99,
-      "category": 2,
+      "name": "Tênis Crossfit Dyno X",
+      "description": "Projetado para treinos intensos de crossfit, o Dyno X oferece estabilidade, suporte e tração excepcionais. Sua construção reforçada garante durabilidade e segurança em cada movimento.",
+      "price": 689.99,
+      "oldPrice": 750.00,
+      "category": 1,
       "images": [
-        "https://images.pexels.com/photos/985635/pexels-photo-985635.jpeg",
-        "https://images.pexels.com/photos/972995/pexels-photo-972995.jpeg",
-        "https://images.pexels.com/photos/949671/pexels-photo-949671.jpeg"
+        "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": true,
+      "onSale": true,
+      "bestSeller": true,
+      "stock": 10,
+      "rating": 4.7,
+      "reviewCount": 130
+    },
+    {
+      "id": 10,
+      "name": "Perfume Golden Bloom (Feminino)",
+      "description": "Golden Bloom é um perfume feminino vibrante e luxuoso, com notas frutadas e um fundo adocicado. Uma fragrância que transmite alegria e sofisticação.",
+      "price": 369.90,
+      "oldPrice": null,
+      "category": 4,
+      "images": [
+        "https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=800&h=600&fit=crop&crop=center"
       ],
       "featured": true,
       "onSale": false,
       "bestSeller": false,
-      "stock": 10,
-      "rating": 4.9,
-      "reviewCount": 56
-    },
-    {
-      "id": 10,
-      "name": "Bolsa Designer Limited Edition",
-      "description": "Bolsa de grife em edição limitada, feita com couro premium e ferragens exclusivas. Um acessório que combina funcionalidade com estilo incomparável.",
-      "price": 2499.99,
-      "oldPrice": 2999.99,
-      "category": 3,
-      "images": [
-        "https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg",
-        "https://images.pexels.com/photos/1936848/pexels-photo-1936848.jpeg",
-        "https://images.pexels.com/photos/5863391/pexels-photo-5863391.jpeg"
-      ],
-      "featured": true,
-      "onSale": true,
-      "bestSeller": true,
-      "stock": 5,
-      "rating": 4.9,
-      "reviewCount": 89
+      "stock": 17,
+      "rating": 4.6,
+      "reviewCount": 115
     },
     {
       "id": 11,
-      "name": "Conjunto de Sofá Moderno",
-      "description": "Conjunto de sofá moderno com design ergonômico e materiais premium. Adiciona sofisticação e conforto excepcional a qualquer ambiente.",
-      "price": 3899.99,
-      "oldPrice": 4599.99,
-      "category": 4,
+      "name": "Tênis Casual Clássico Retro",
+      "description": "Com um toque de nostalgia e estilo atemporal, o Clássico Retro é perfeito para quem busca um visual vintage. Confeccionado com materiais de alta qualidade para durabilidade e conforto.",
+      "price": 399.99,
+      "oldPrice": 450.00,
+      "category": 2,
       "images": [
-        "https://images.pexels.com/photos/276583/pexels-photo-276583.jpeg",
-        "https://images.pexels.com/photos/1866149/pexels-photo-1866149.jpeg",
-        "https://images.pexels.com/photos/6707628/pexels-photo-6707628.jpeg"
-      ],
-      "featured": true,
-      "onSale": true,
-      "bestSeller": false,
-      "stock": 3,
-      "rating": 4.7,
-      "reviewCount": 32
-    },
-    {
-      "id": 12,
-      "name": "Perfume Luxury Collection",
-      "description": "Perfume de luxo com composição exclusiva de notas raras e duradouras. Fragrância sofisticada que deixa uma impressão memorável.",
-      "price": 899.99,
-      "oldPrice": 1099.99,
-      "category": 5,
-      "images": [
-        "https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg",
-        "https://images.pexels.com/photos/3059609/pexels-photo-3059609.jpeg",
-        "https://images.pexels.com/photos/2779453/pexels-photo-2779453.jpeg"
+        "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=800&h=600&fit=crop&crop=center"
       ],
       "featured": false,
       "onSale": true,
       "bestSeller": true,
-      "stock": 15,
-      "rating": 4.8,
-      "reviewCount": 143
+      "stock": 13,
+      "rating": 4.7,
+      "reviewCount": 98
+    },
+    {
+      "id": 12,
+      "name": "Perfume Fresh Ocean (Masculino)",
+      "description": "Uma fragrância masculina refrescante e revigorante, inspirada na brisa do oceano. Ideal para o dia a dia e para quem busca uma sensação de leveza e energia.",
+      "price": 299.90,
+      "oldPrice": null,
+      "category": 3,
+      "images": [
+        "https://images.unsplash.com/photo-1565108510111-68e52b3db4ac?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": false,
+      "bestSeller": false,
+      "stock": 20,
+      "rating": 4.3,
+      "reviewCount": 80
     }
   ]
 }
