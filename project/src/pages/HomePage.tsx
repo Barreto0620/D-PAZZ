@@ -135,8 +135,9 @@ export const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-light via-white to-light dark:from-dark dark:via-dark-lighter dark:to-dark">
       <Helmet>
-        <title>D'Pazz Imports - Tênis e Perfumes Premium | Qualidade Internacional</title>
+        <title>D'Pazz Imports - Tênis Premium | Qualidade Internacional</title>
         <meta name="description" content="Descubra a excelência em produtos importados. Tênis esportivos de alta performance e perfumes sofisticados das melhores marcas mundiais. Qualidade premium, entrega rápida." />
+        <link rel="icon" type="image/x-icon" href="img/favicon.ico" />
       </Helmet>
 
       <Navbar />
