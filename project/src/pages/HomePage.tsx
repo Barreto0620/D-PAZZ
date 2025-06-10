@@ -9,6 +9,7 @@ import { getFeaturedCategories, getOnSaleProducts, getBestSellerProducts } from 
 import { Category, Product } from '../types';
 import { motion } from 'framer-motion';
 import { Sparkles, TrendingUp, Star, ShoppingBag, Flame, Trophy } from 'lucide-react';
+import Slider from 'react-slick'; // Importando o Slider
 
 export const HomePage: React.FC = () => {
   const [featuredCategories, setFeaturedCategories] = useState<Category[]>([]);
@@ -132,6 +133,61 @@ export const HomePage: React.FC = () => {
     </motion.div>
   );
 
+  // Configurações para o carrossel de categorias
+  const categorySliderSettings = {
+    dots: true, // Bolinhas de navegação
+    infinite: true, // Loop infinito
+    speed: 500, // Velocidade da transição (ms)
+    slidesToShow: 4, // Quantos slides mostrar por vez
+    slidesToScroll: 1, // Quantos slides rolar por vez
+    autoplay: true, // Ativar auto-play
+    autoplaySpeed: 3000, // Intervalo de 3 segundos entre os slides
+    cssEase: "linear", // Tipo de easing para a animação
+    arrows: true, // Mostrar setas de navegação
+    className: "center", // Adiciona uma classe para estilização, se necessário
+    centerMode: true, // Centraliza o slide atual, se houver slides vazios nas bordas
+    centerPadding: "60px", // Espaçamento para o centro, útil com centerMode
+    responsive: [ // Responsividade para diferentes tamanhos de tela
+      {
+        breakpoint: 1200, // Para telas menores que 1200px (desktop médio)
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true,
+          centerPadding: "40px",
+        }
+      },
+      {
+        breakpoint: 1024, // Para telas menores que 1024px (tablet paisagem)
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true,
+          centerPadding: "30px",
+        }
+      },
+      {
+        breakpoint: 768, // Para telas menores que 768px (tablet retrato)
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          initialSlide: 0,
+          centerPadding: "20%", // Para mobile, centraliza um item maior
+        }
+      },
+      {
+        breakpoint: 480, // Para telas menores que 480px (celular)
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          centerPadding: "15%", // Para mobile, centraliza um item maior
+        }
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-light via-white to-light dark:from-dark dark:via-dark-lighter dark:to-dark">
       <Helmet>
@@ -182,23 +238,23 @@ export const HomePage: React.FC = () => {
               ))}
             </div>
           ) : (
-            <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              {featuredCategories.map(category => (
-                <motion.div 
-                  key={category.id} 
-                  variants={itemVariants}
-                  whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                  className="transform transition-all duration-300"
-                >
-                  <CategoryCard category={category} />
-                </motion.div>
-              ))}
-            </motion.div>
+            // Contêiner para o carrossel. Importante para o overflow e espaçamento das setas.
+            <div className="relative px-8 md:px-12 lg:px-16 overflow-hidden"> 
+              <Slider {...categorySliderSettings}>
+                {featuredCategories.map(category => (
+                  // Div pai com padding para criar o espaçamento entre os cards
+                  <div key={category.id} className="p-2 sm:p-3 md:p-4"> 
+                    <motion.div 
+                      variants={itemVariants}
+                      whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                      className="transform transition-all duration-300"
+                    >
+                      <CategoryCard category={category} />
+                    </motion.div>
+                  </div>
+                ))}
+              </Slider>
+            </div>
           )}
         </section>
 
@@ -252,7 +308,7 @@ export const HomePage: React.FC = () => {
         <section className="mb-20">
           <SectionTitle
             icon={Trophy}
-            title="Campeões de Vendas & Favoritos dos Clientes"
+            title="Campeões de Vendas & Favorito dos Clientes"
             subtitle="Os produtos mais amados pelos nossos clientes. Qualidade comprovada, satisfação garantida e avaliações excepcionais em cada item."
             gradient="from-yellow-500 to-amber-500"
           />

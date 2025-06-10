@@ -28,7 +28,7 @@ function App() {
           <FavoritesProvider>
             <Router>
               <Helmet>
-                <title>ImportShop - Produtos Importados de Qualidade</title>
+                <title>D'Pazz Imports - Tênis Premium | Qualidade Internacional</title>
                 <meta name="description" content="A melhor loja de produtos importados do Brasil. Eletrônicos, roupas, acessórios e mais com os melhores preços." />
                 <meta name="keywords" content="importados, eletrônicos, roupas, acessórios, produtos importados" />
               </Helmet>

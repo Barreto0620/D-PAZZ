@@ -4,53 +4,44 @@
       "id": 1,
       "name": "Tênis Esportivos",
       "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=600&fit=crop&crop=center",
-      "description": "Desempenho e estilo para suas atividades físicas. Encontre modelos para corrida, treino e mais.",
-      "featured": true
+      "description": "Alcance seu melhor desempenho. Encontre o par ideal para corrida, treino ou seu esporte favorito com tecnologia e estilo.",
+      "featured": true,
+      "slug": "tenis-esportivos"
     },
     {
       "id": 2,
       "name": "Tênis Casuais",
       "image": "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&h=600&fit=crop&crop=center",
-      "description": "Conforto e elegância para o dia a dia. Perfeitos para qualquer ocasião.",
-      "featured": true
+      "description": "Conforto e estilo para o seu dia a dia. Modelos versáteis que combinam com qualquer ocasião, do casual ao elegante.",
+      "featured": true,
+      "slug": "tenis-casuais"
     },
     {
       "id": 3,
-      "name": "Perfumes Masculinos",
-      "image": "https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&h=600&fit=crop&crop=center",
-      "description": "Fragrâncias marcantes e sofisticadas para o homem moderno.",
-      "featured": true
+      "name": "Tênis Infantis",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRNQnzwHh201iuxVDA81WFhgYQsYMPifZ0ow&s",
+      "description": "Estilo e conforto para os pequenos exploradores. Modelos duráveis e divertidos, perfeitos para cada aventura.",
+      "featured": true,
+      "slug": "tenis-infantis-juvenis"
     },
     {
       "id": 4,
-      "name": "Perfumes Femininos",
-      "image": "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800&h=600&fit=crop&crop=center",
-      "description": "Essências delicadas e envolventes que realçam a sua beleza.",
-      "featured": true
-    },
-    {
-      "id": 5,
-      "name": "Perfumes Unissex",
-      "image": "https://images.unsplash.com/photo-1588405748880-12d1d2a59d32?w=800&h=600&fit=crop&crop=center",
-      "description": "Fragrâncias versáteis que se adaptam a todos os estilos.",
-      "featured": false
-    },
-    {
-      "id": 6,
-      "name": "Acessórios para Tênis",
-      "image": "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=800&h=600&fit=crop&crop=center",
-      "description": "Complementos essenciais para o cuidado e estilo dos seus tênis.",
-      "featured": false
+      "name": "Lançamentos & Exclusivos",
+      "image": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=800&h=600&fit=crop&crop=center",
+      "description": "Seja o primeiro a ter. Descubra as últimas coleções e modelos de edição limitada, disponíveis apenas por tempo limitado.",
+      "featured": true,
+      "slug": "lancamentos-exclusivos"
     }
   ],
   "products": [
     {
       "id": 1,
-      "name": "Tênis Runner Pro X",
-      "description": "Desenvolvido para alta performance em corridas, o Runner Pro X oferece amortecimento superior e leveza incomparável, garantindo conforto e propulsão a cada passo. Ideal para atletas exigentes.",
-      "price": 799.99,
-      "oldPrice": 999.99,
+      "name": "Tênis Corrida SpeedForce Carbon X",
+      "description": "O auge da tecnologia em corrida. Com placa de carbono responsiva, oferece máxima propulsão e retorno de energia, ideal para recordes pessoais. Leveza e amortecimento superior.",
+      "price": 999.99,
+      "oldPrice": 1200.00,
       "category": 1,
+      "brand": "Nike",
       "images": [
         "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=600&fit=crop&crop=center",
         "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&h=600&fit=crop&crop=center"
@@ -58,17 +49,18 @@
       "featured": true,
       "onSale": true,
       "bestSeller": true,
-      "stock": 15,
-      "rating": 4.8,
-      "reviewCount": 185
+      "stock": 10,
+      "rating": 4.9,
+      "reviewCount": 250
     },
     {
       "id": 2,
-      "name": "Tênis Casual Urbano Style",
-      "description": "O Urbano Style é o tênis perfeito para o seu dia a dia, combinando design moderno com o máximo de conforto. Feito com materiais premium, ideal para compor looks casuais e despojados.",
-      "price": 449.99,
-      "oldPrice": 529.99,
+      "name": "Tênis Urbano Elegance Leather",
+      "description": "Sofisticação e conforto para o seu dia a dia. Feito com couro legítimo de alta qualidade e design minimalista que combina com qualquer guarda-roupa, do casual ao mais arrumado.",
+      "price": 589.99,
+      "oldPrice": 650.00,
       "category": 2,
+      "brand": "Adidas",
       "images": [
         "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&h=600&fit=crop&crop=center",
         "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&h=600&fit=crop&crop=center"
@@ -76,161 +68,151 @@
       "featured": true,
       "onSale": true,
       "bestSeller": false,
-      "stock": 20,
-      "rating": 4.5,
-      "reviewCount": 120
+      "stock": 18,
+      "rating": 4.7,
+      "reviewCount": 150
     },
     {
       "id": 3,
-      "name": "Perfume Majestic Code (Masculino)",
-      "description": "Uma fragrância masculina poderosa e envolvente, com notas amadeiradas e toques de especiarias. Perfeito para homens que buscam elegância e sofisticação em todas as ocasiões.",
-      "price": 389.90,
-      "oldPrice": 450.00,
+      "name": "Tênis Infantil Aventureiro Color",
+      "description": "Diversão e segurança para os pés dos pequenos. Este tênis colorido é leve, flexível e super resistente, perfeito para brincadeiras e aventuras do dia a dia. Fácil de calçar.",
+      "price": 189.90,
+      "oldPrice": null,
       "category": 3,
+      "brand": "Puma Kids",
       "images": [
-        "https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&h=600&fit=crop&crop=center",
-        "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=800&h=600&fit=crop&crop=center"
+        "https://images.unsplash.com/photo-1596755490426-580193798950?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1606822295554-159f81643c5b?w=800&h=600&fit=crop&crop=center"
       ],
       "featured": true,
-      "onSale": true,
-      "bestSeller": true,
-      "stock": 18,
-      "rating": 4.9,
-      "reviewCount": 210
-    },
-    {
-      "id": 4,
-      "name": "Perfume Floral Aura (Feminino)",
-      "description": "Floral Aura é uma fragrância feminina delicada e radiante, com um buquê de flores brancas e notas cítricas. Ideal para mulheres que apreciam um aroma leve, fresco e duradouro.",
-      "price": 329.90,
-      "oldPrice": 399.90,
-      "category": 4,
-      "images": [
-        "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800&h=600&fit=crop&crop=center",
-        "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=800&h=600&fit=crop&crop=center"
-      ],
-      "featured": true,
-      "onSale": true,
-      "bestSeller": true,
-      "stock": 22,
-      "rating": 4.7,
-      "reviewCount": 195
-    },
-    {
-      "id": 5,
-      "name": "Tênis Caminhada Confort Fit",
-      "description": "Perfeito para caminhadas e uso diário, o Confort Fit proporciona um ajuste ergonômico e suporte ideal. Sua sola flexível absorve impactos, garantindo uma experiência leve e confortável.",
-      "price": 319.99,
-      "oldPrice": 380.00,
-      "category": 1,
-      "images": [
-        "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=800&h=600&fit=crop&crop=center",
-        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop&crop=center"
-      ],
-      "featured": false,
       "onSale": false,
-      "bestSeller": false,
-      "stock": 25,
-      "rating": 4.4,
+      "bestSeller": true,
+      "stock": 35,
+      "rating": 4.8,
       "reviewCount": 90
     },
     {
-      "id": 6,
-      "name": "Tênis Skate Vibe Street",
-      "description": "Com design robusto e aderência superior, o Vibe Street é ideal para os amantes do skate. Oferece durabilidade e estilo para suas manobras e para o dia a dia urbano.",
-      "price": 499.99,
+      "id": 4,
+      "name": "Lançamento: Tênis Hyperspeed X Edição Limitada",
+      "description": "Experimente o futuro da velocidade. Este tênis de edição limitada combina design arrojado com tecnologia de ponta para atletas que buscam o máximo em performance e exclusividade.",
+      "price": 1499.99,
       "oldPrice": null,
-      "category": 2,
+      "category": 4,
+      "brand": "Nike",
       "images": [
-        "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=800&h=600&fit=crop&crop=center",
-        "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&h=600&fit=crop&crop=center"
-      ],
-      "featured": false,
-      "onSale": false,
-      "bestSeller": false,
-      "stock": 10,
-      "rating": 4.6,
-      "reviewCount": 75
-    },
-    {
-      "id": 7,
-      "name": "Perfume Noir Seduction (Unissex)",
-      "description": "Noir Seduction é uma fragrância intrigante e sedutora, ideal para quem busca um perfume unissex com notas ambaradas e um toque oriental. Crie uma aura misteriosa e cativante.",
-      "price": 419.90,
-      "oldPrice": 500.00,
-      "category": 5,
-      "images": [
-        "https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&h=600&fit=crop&crop=center",
-        "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800&h=600&fit=crop&crop=center"
+        "https://images.unsplash.com/photo-1628178122393-379659a22d48?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1582236372076-ebc2105193cd?w=800&h=600&fit=crop&crop=center"
       ],
       "featured": true,
-      "onSale": true,
-      "bestSeller": true,
-      "stock": 12,
-      "rating": 4.8,
-      "reviewCount": 160
-    },
-    {
-      "id": 8,
-      "name": "Cadarço Premium Colorido (Par)",
-      "description": "Cadarços de alta resistência em diversas cores vibrantes para personalizar seus tênis. Feitos com material durável e pontas reforçadas.",
-      "price": 29.90,
-      "oldPrice": null,
-      "category": 6,
-      "images": [
-        "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=800&h=600&fit=crop&crop=center",
-        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&h=600&fit=crop&crop=center"
-      ],
-      "featured": false,
       "onSale": false,
-      "bestSeller": false,
-      "stock": 50,
-      "rating": 4.2,
-      "reviewCount": 45
+      "bestSeller": true,
+      "stock": 5,
+      "rating": 5.0,
+      "reviewCount": 120
     },
     {
-      "id": 9,
-      "name": "Tênis Crossfit Dyno X",
-      "description": "Projetado para treinos intensos de crossfit, o Dyno X oferece estabilidade, suporte e tração excepcionais. Sua construção reforçada garante durabilidade e segurança em cada movimento.",
-      "price": 689.99,
-      "oldPrice": 750.00,
+      "id": 5,
+      "name": "Tênis Training FlexFit Pro",
+      "description": "Versatilidade para qualquer treino. Estabilidade para levantamento de peso, flexibilidade para agilidade e amortecimento para saltos. Sua base ampla garante segurança em todos os movimentos.",
+      "price": 629.99,
+      "oldPrice": 700.00,
       "category": 1,
+      "brand": "Reebok",
       "images": [
         "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&h=600&fit=crop&crop=center",
         "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=800&h=600&fit=crop&crop=center"
       ],
-      "featured": true,
+      "featured": false,
       "onSale": true,
-      "bestSeller": true,
-      "stock": 10,
-      "rating": 4.7,
-      "reviewCount": 130
+      "bestSeller": false,
+      "stock": 20,
+      "rating": 4.6,
+      "reviewCount": 140
     },
     {
-      "id": 10,
-      "name": "Perfume Golden Bloom (Feminino)",
-      "description": "Golden Bloom é um perfume feminino vibrante e luxuoso, com notas frutadas e um fundo adocicado. Uma fragrância que transmite alegria e sofisticação.",
-      "price": 369.90,
+      "id": 6,
+      "name": "Tênis Casual EasyWalk Confort",
+      "description": "A combinação perfeita de praticidade e bem-estar. Sem cadarços, fácil de calçar e tirar, com palmilha de memória que se adapta aos seus pés para conforto duradouro.",
+      "price": 349.99,
+      "oldPrice": 400.00,
+      "category": 2,
+      "brand": "Skechers",
+      "images": [
+        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": true,
+      "bestSeller": true,
+      "stock": 25,
+      "rating": 4.5,
+      "reviewCount": 110
+    },
+    {
+      "id": 7,
+      "name": "Tênis Juvenil StreetStyle Urbano",
+      "description": "Estilo urbano para os jovens com atitude. Este tênis combina um design moderno com conforto duradouro, ideal para o uso diário na escola ou para passeios com amigos.",
+      "price": 249.90,
+      "oldPrice": null,
+      "category": 3,
+      "brand": "Vans Kids",
+      "images": [
+        "https://images.unsplash.com/photo-1606822295554-159f81643c5b?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1596755490426-580193798950?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": false,
+      "bestSeller": false,
+      "stock": 28,
+      "rating": 4.6,
+      "reviewCount": 75
+    },
+    {
+      "id": 8,
+      "name": "Exclusivo: Tênis Galaxy Runner Pro",
+      "description": "Uma verdadeira obra de arte para seus pés. O Galaxy Runner Pro é uma edição exclusiva com design futurista e amortecimento responsivo, ideal para quem busca performance e um estilo único.",
+      "price": 1100.00,
       "oldPrice": null,
       "category": 4,
+      "brand": "Adidas",
       "images": [
-        "https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&h=600&fit=crop&crop=center",
-        "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=800&h=600&fit=crop&crop=center"
+        "https://images.unsplash.com/photo-1582236372076-ebc2105193cd?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1628178122393-379659a22d48?w=800&h=600&fit=crop&crop=center"
       ],
       "featured": true,
       "onSale": false,
       "bestSeller": false,
-      "stock": 17,
-      "rating": 4.6,
-      "reviewCount": 115
+      "stock": 8,
+      "rating": 4.9,
+      "reviewCount": 60
     },
     {
-      "id": 11,
-      "name": "Tênis Casual Clássico Retro",
-      "description": "Com um toque de nostalgia e estilo atemporal, o Clássico Retro é perfeito para quem busca um visual vintage. Confeccionado com materiais de alta qualidade para durabilidade e conforto.",
-      "price": 399.99,
-      "oldPrice": 450.00,
+      "id": 9,
+      "name": "Tênis Trail Explorer Grip",
+      "description": "Enfrente qualquer terreno. Construído para durabilidade e tração em trilhas, com cabedal resistente à água e sola robusta para máxima aderência em superfícies irregulares.",
+      "price": 649.99,
+      "oldPrice": 720.00,
+      "category": 1,
+      "brand": "Columbia",
+      "images": [
+        "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": true,
+      "onSale": true,
+      "bestSeller": false,
+      "stock": 15,
+      "rating": 4.8,
+      "reviewCount": 130
+    },
+    {
+      "id": 10,
+      "name": "Tênis Ícone Vintage 80s",
+      "description": "Reviva a era de ouro com este clássico reinventado. Inspirado nos modelos icônicos dos anos 80, ele traz um toque de nostalgia sem abrir mão do conforto e estilo atuais.",
+      "price": 429.99,
+      "oldPrice": 480.00,
       "category": 2,
+      "brand": "Puma",
       "images": [
         "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=800&h=600&fit=crop&crop=center",
         "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=800&h=600&fit=crop&crop=center"
@@ -238,27 +220,47 @@
       "featured": false,
       "onSale": true,
       "bestSeller": true,
-      "stock": 13,
+      "stock": 18,
       "rating": 4.7,
-      "reviewCount": 98
+      "reviewCount": 105
     },
     {
-      "id": 12,
-      "name": "Perfume Fresh Ocean (Masculino)",
-      "description": "Uma fragrância masculina refrescante e revigorante, inspirada na brisa do oceano. Ideal para o dia a dia e para quem busca uma sensação de leveza e energia.",
-      "price": 299.90,
+      "id": 11,
+      "name": "Tênis Infantil Primeiros Passos",
+      "description": "Desenvolvido para os primeiros passos dos bebês. Com solado macio e flexível, e ajuste seguro, proporciona conforto e segurança para o desenvolvimento dos pezinhos.",
+      "price": 149.90,
       "oldPrice": null,
       "category": 3,
+      "brand": "Nike Kids",
       "images": [
-        "https://images.unsplash.com/photo-1565108510111-68e52b3db4ac?w=800&h=600&fit=crop&crop=center",
-        "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&h=600&fit=crop&crop=center"
+        "https://images.unsplash.com/photo-1606822295554-159f81643c5b?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1596755490426-580193798950?w=800&h=600&fit=crop&crop=center"
       ],
       "featured": false,
       "onSale": false,
       "bestSeller": false,
-      "stock": 20,
-      "rating": 4.3,
-      "reviewCount": 80
+      "stock": 40,
+      "rating": 4.7,
+      "reviewCount": 65
+    },
+    {
+      "id": 12,
+      "name": "Coleção Cápsula: Tênis Art Series Limited",
+      "description": "Uma fusão de arte e calçado. Este tênis de edição limitada apresenta um design exclusivo com estampas artísticas, ideal para colecionadores e para quem quer se destacar.",
+      "price": 1300.00,
+      "oldPrice": null,
+      "category": 4,
+      "brand": "Adidas",
+      "images": [
+        "https://images.unsplash.com/photo-1582236372076-ebc2105193cd?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1628178122393-379659a22d48?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": false,
+      "bestSeller": false,
+      "stock": 7,
+      "rating": 4.9,
+      "reviewCount": 50
     }
   ]
 }
