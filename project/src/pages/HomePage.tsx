@@ -105,7 +105,7 @@ export const HomePage: React.FC = () => {
           <Icon className="w-8 h-8 text-white" />
         </div>
       </div>
-      <h2 className="text-4xl font-bold text-dark dark:text-white mb-3 bg-gradient-to-r from-dark to-primary bg-clip-text text-transparent">
+      <h2 className="text-4xl font-bold text-dark dark:text-white mb-3 bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
         {title}
       </h2>
       <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
@@ -143,7 +143,8 @@ export const HomePage: React.FC = () => {
     autoplay: true, // Ativar auto-play
     autoplaySpeed: 3000, // Intervalo de 3 segundos entre os slides
     cssEase: "linear", // Tipo de easing para a animação
-    arrows: true, // Mostrar setas de navegação
+    arrows: false, // <<<< REMOVIDO os botões de navegação
+    pauseOnHover: true, // <<<< PAUSA o autoplay no hover
     className: "center", // Adiciona uma classe para estilização, se necessário
     centerMode: true, // Centraliza o slide atual, se houver slides vazios nas bordas
     centerPadding: "60px", // Espaçamento para o centro, útil com centerMode
@@ -189,7 +190,7 @@ export const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-light via-white to-light dark:from-dark dark:via-dark-lighter dark:to-dark">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 font-sans"> {/* Ajuste sutil no background e fonte */}
       <Helmet>
         <title>D'Pazz Imports - Tênis Premium | Qualidade Internacional</title>
         <meta name="description" content="Descubra a excelência em produtos importados. Tênis esportivos de alta performance e perfumes sofisticados das melhores marcas mundiais. Qualidade premium, entrega rápida." />
@@ -198,7 +199,7 @@ export const HomePage: React.FC = () => {
 
       <Navbar />
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-4 py-8 md:py-12"> {/* Ajuste no padding geral */}
         {/* Hero Banner */}
         <section className="mb-16">
           <Banner />
@@ -206,12 +207,12 @@ export const HomePage: React.FC = () => {
 
         {/* Stats Section */}
         <motion.section 
-          className="mb-16"
+          className="mb-20" /* Aumentei a margem inferior para maior espaçamento */
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"> {/* Aumentei o gap */}
             <StatsCard number="10K+" label="Clientes Satisfeitos" icon={Star} />
             <StatsCard number="500+" label="Produtos Premium" icon={ShoppingBag} />
             <StatsCard number="98%" label="Avaliações 5★" icon={Trophy} />
@@ -225,7 +226,7 @@ export const HomePage: React.FC = () => {
             icon={Sparkles}
             title="Descubra Nossas Coleções Exclusivas"
             subtitle="Explore categorias cuidadosamente selecionadas com produtos importados de alta qualidade, pensados especialmente para seu estilo e necessidades únicas."
-            gradient="from-purple-500 to-pink-500"
+            gradient="from-indigo-600 to-purple-600" /* Novo gradiente */
           />
 
           {loading.categories ? (
@@ -233,20 +234,18 @@ export const HomePage: React.FC = () => {
               {[...Array(4)].map((_, index) => (
                 <div
                   key={index}
-                  className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-dark-lighter dark:to-dark rounded-3xl animate-pulse h-72"
+                  className="bg-gray-200 dark:bg-gray-700 rounded-3xl animate-pulse h-72" /* Cor e arredondamento ajustados */
                 />
               ))}
             </div>
           ) : (
-            // Contêiner para o carrossel. Importante para o overflow e espaçamento das setas.
-            <div className="relative px-8 md:px-12 lg:px-16 overflow-hidden"> 
+            <div className="relative px-4 md:px-8 lg:px-12 overflow-hidden"> {/* Reduzi o padding horizontal aqui */}
               <Slider {...categorySliderSettings}>
                 {featuredCategories.map(category => (
-                  // Div pai com padding para criar o espaçamento entre os cards
-                  <div key={category.id} className="p-2 sm:p-3 md:p-4"> 
+                  <div key={category.id} className="p-2"> {/* Reduzi o padding aqui para os cards ficarem mais próximos */}
                     <motion.div 
                       variants={itemVariants}
-                      whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                      whileHover={{ scale: 1.05, transition: { duration: 0.3 } }} // AUMENTO da escala no hover
                       className="transform transition-all duration-300"
                     >
                       <CategoryCard category={category} />
@@ -272,7 +271,7 @@ export const HomePage: React.FC = () => {
               {[...Array(4)].map((_, index) => (
                 <div
                   key={index}
-                  className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-dark-lighter dark:to-dark rounded-3xl animate-pulse h-96"
+                  className="bg-gray-200 dark:bg-gray-700 rounded-3xl animate-pulse h-96"
                 />
               ))}
             </div>
@@ -289,12 +288,13 @@ export const HomePage: React.FC = () => {
                   key={product.id}
                   variants={itemVariants}
                   whileHover={{ 
-                    y: -10, 
+                    y: -8, // Um pouco menos de "subida"
+                    boxShadow: "0 15px 30px rgba(0,0,0,0.15)", // Sombra mais pronunciada no hover
                     transition: { duration: 0.3 } 
                   }}
-                  className="relative group"
+                  className="relative group rounded-3xl overflow-hidden" // Adicionado rounded-3xl e overflow-hidden
                 >
-                  <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-3xl blur-sm opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
+                  <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-3xl blur-md opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div> {/* Ajustado blur e opacity */}
                   <div className="relative">
                     <ProductCard product={product} />
                   </div>
@@ -318,7 +318,7 @@ export const HomePage: React.FC = () => {
               {[...Array(4)].map((_, index) => (
                 <div
                   key={index}
-                  className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-dark-lighter dark:to-dark rounded-3xl animate-pulse h-96"
+                  className="bg-gray-200 dark:bg-gray-700 rounded-3xl animate-pulse h-96"
                 />
               ))}
             </div>
@@ -335,12 +335,13 @@ export const HomePage: React.FC = () => {
                   key={product.id}
                   variants={itemVariants}
                   whileHover={{ 
-                    y: -10, 
+                    y: -8, 
+                    boxShadow: "0 15px 30px rgba(0,0,0,0.15)", 
                     transition: { duration: 0.3 } 
                   }}
-                  className="relative group"
+                  className="relative group rounded-3xl overflow-hidden"
                 >
-                  <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-3xl blur-sm opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
+                  <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-3xl blur-md opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
                   <div className="relative">
                     <ProductCard product={product} />
                   </div>
@@ -369,15 +370,15 @@ export const HomePage: React.FC = () => {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
-              <h3 className="text-3xl font-bold mb-4">
+              <h3 className="text-4xl font-extrabold mb-4 leading-tight"> {/* Aumentei tamanho e peso da fonte */}
                 Não Perca Nenhuma Novidade!
               </h3>
-              <p className="text-xl mb-8 opacity-90">
-                Seja o primeiro a descobrir lançamentos exclusivos e ofertas especiais
+              <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto"> {/* Adicionei max-width */}
+                Seja o primeiro a descobrir lançamentos exclusivos e ofertas especiais diretamente na sua caixa de entrada.
               </p>
               <motion.button
-                className="bg-white text-primary px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-300 shadow-lg"
-                whileHover={{ scale: 1.05 }}
+                className="bg-white text-primary px-10 py-5 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-300 shadow-xl" /* Aumentei padding e sombra */
+                whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }} /* Sombra no hover */
                 whileTap={{ scale: 0.95 }}
               >
                 Cadastre-se Agora

@@ -2,31 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Remova as importações do slick-carousel daqui se você as moveu para main.tsx/index.tsx */
-/* @import "~slick-carousel/slick/slick.css"; */
-/* @import "~slick-carousel/slick/slick-theme.css"; */
+/* Customizações do React Slick Carousel */
 
-/* Remova também os estilos personalizados para as setas e dots */
-/* .slick-prev:before,
-.slick-next:before {
-  color: #a0aec0;
-}
-
-.slick-dots li button:before {
-  color: #a0aec0;
-}
-
-.slick-dots li.slick-active button:before {
-  color: #4a5568;
-}
-
-.slick-prev, .slick-next {
-    z-index: 10;
-}
-
-.slick-prev {
-    left: -25px;
-}
+/* Ocultar as setas de navegação, conforme solicitado */
+.slick-prev,
 .slick-next {
-    right: -25px;
-} */
+  display: none !important; /* Força a remoção dos botões */
+}
+
+/* Estilização para os dots (pontos de navegação) */
+.slick-dots {
+  bottom: -40px; /* Ajusta a posição vertical dos dots abaixo do carrossel */
+  margin-top: 20px; /* Espaçamento entre o carrossel e os dots */
+  display: flex !important; /* Garante que os dots sejam exibidos em linha */
+  justify-content: center; /* Centraliza os dots */
+  padding: 0;
+  list-style: none; /* Remove bullet points */
+}
+
+.slick-dots li {
+  margin: 0 5px; /* Espaçamento entre os dots */
+}
+
+.slick-dots li button {
+  display: block;
+  width: 12px; /* Largura do dot */
+  height: 12px; /* Altura do dot */
+  padding: 0;
+  border: none;
+  border-radius: 50%; /* Transforma o dot em círculo */
+  background-color: #cbd5e0; /* Cor padrão dos dots (cinza claro/slate-300) */
+  opacity: 0.75;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.slick-dots li.slick-active button {
+  background-color: #6366f1; /* Cor do dot ativo (indigo-500) */
+  opacity: 1;
+  width: 14px; /* Aumenta um pouco o dot ativo */
+  height: 14px; /* Aumenta um pouco o dot ativo */
+}
+
+/* Remova o ":before" para os dots se o button já for o elemento clicável */
+.slick-dots li button:before {
+  content: none !important; /* Remove o conteúdo padrão do slick, usamos o background-color no button */
+}

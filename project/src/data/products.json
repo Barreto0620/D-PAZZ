@@ -4,7 +4,6 @@
       "id": 1,
       "name": "Tênis Esportivos",
       "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=600&fit=crop&crop=center",
-      "description": "Alcance seu melhor desempenho. Encontre o par ideal para corrida, treino ou seu esporte favorito com tecnologia e estilo.",
       "featured": true,
       "slug": "tenis-esportivos"
     },
@@ -12,7 +11,6 @@
       "id": 2,
       "name": "Tênis Casuais",
       "image": "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&h=600&fit=crop&crop=center",
-      "description": "Conforto e estilo para o seu dia a dia. Modelos versáteis que combinam com qualquer ocasião, do casual ao elegante.",
       "featured": true,
       "slug": "tenis-casuais"
     },
@@ -20,7 +18,6 @@
       "id": 3,
       "name": "Tênis Infantis",
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRNQnzwHh201iuxVDA81WFhgYQsYMPifZ0ow&s",
-      "description": "Estilo e conforto para os pequenos exploradores. Modelos duráveis e divertidos, perfeitos para cada aventura.",
       "featured": true,
       "slug": "tenis-infantis-juvenis"
     },
@@ -28,7 +25,6 @@
       "id": 4,
       "name": "Lançamentos & Exclusivos",
       "image": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=800&h=600&fit=crop&crop=center",
-      "description": "Seja o primeiro a ter. Descubra as últimas coleções e modelos de edição limitada, disponíveis apenas por tempo limitado.",
       "featured": true,
       "slug": "lancamentos-exclusivos"
     }
