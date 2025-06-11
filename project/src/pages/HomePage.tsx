@@ -24,18 +24,14 @@ export const HomePage: React.FC = () => {
 
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  // O tipo 'info' é adicionado aqui porque o Toast.tsx também o suporta.
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success'); 
 
   const handleShowToast = (message: string, type: 'success' | 'error' | 'info') => {
     setToastMessage(message);
-    setToastType(type); // Define o tipo baseado no parâmetro
+    setToastType(type);
     setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-      setToastMessage('');
-      setToastType('success'); // Resetar para o tipo padrão após fechar
-    }, 3000); // A duração padrão é 3000ms (3 segundos)
+    // The Toast component itself handles hiding, so we just reset state after it's gone
+    // A timeout here is redundant if Toast handles its own `onClose` after duration
   };
 
   useEffect(() => {

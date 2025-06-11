@@ -14,7 +14,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onShowToast }) => {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { addToCart, cartItems, updateQuantity } = useCart();
-  const [isAdding, setIsAdding] = useState(false);
+  const [isAdding, setIsAdding] = useState(false); // Unused, consider removing if not needed for animation feedback
   
   const cartItem = cartItems.find(item => item.product.id === product.id);
   const quantity = cartItem?.quantity || 0;
@@ -24,13 +24,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onShowToast }
     e.stopPropagation();
     if (!cartItem) {
       addToCart(product);
-      setIsAdding(true);
-      setTimeout(() => setIsAdding(false), 300);
-      // Mensagem genérica para adicionar
-      onShowToast(`Produto adicionado!`, 'success'); 
+      // setIsAdding(true); // Consider if this state is still needed for animation
+      // setTimeout(() => setIsAdding(false), 300); // And this timeout
+      onShowToast(`"${product.name}" adicionado ao carrinho!`, 'success'); 
     } else {
-      // Mensagem genérica para item já no carrinho
-      onShowToast(`Produto já no carrinho.`, 'info'); 
+      onShowToast(`"${product.name}" já está no seu carrinho.`, 'info'); 
     }
   };
   
@@ -39,19 +37,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onShowToast }
     e.stopPropagation();
     if (newQuantity === 0) {
       updateQuantity(product.id, 0);
-      // Mensagem genérica para remover
-      onShowToast(`Produto removido.`, 'error'); 
+      onShowToast(`"${product.name}" removido do carrinho.`, 'error'); 
     } else if (newQuantity <= product.stock) {
       updateQuantity(product.id, newQuantity);
-      // Mensagem genérica para atualização de quantidade
-      onShowToast(`Quantidade atualizada.`, 'success'); 
+      onShowToast(`Quantidade de "${product.name}" atualizada para ${newQuantity}.`, 'info'); 
+    } else {
+      onShowToast(`Limite de estoque para "${product.name}" atingido!`, 'error');
     }
   };
   
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const currentState = isFavorite(product.id);
     toggleFavorite(product);
+    if (!currentState) {
+      onShowToast(`"${product.name}" adicionado aos seus favoritos!`, 'success');
+    } else {
+      onShowToast(`"${product.name}" removido dos seus favoritos.`, 'info');
+    }
   };
 
   const isProductFavorite = isFavorite(product.id);

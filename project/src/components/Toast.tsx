@@ -18,12 +18,14 @@ export const Toast: React.FC<ToastProps> = ({
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
+    // Set a timer to hide the toast
     const timer = setTimeout(() => {
-      setIsVisible(false);
-      setTimeout(onClose, 300);
+      setIsVisible(false); // Trigger exit animation
+      // After animation, call onClose to remove from DOM
+      setTimeout(onClose, 300); // 300ms matches exit animation duration
     }, duration);
 
-    return () => clearTimeout(timer);
+    return () => clearTimeout(timer); // Cleanup timer on unmount or dependency change
   }, [duration, onClose]);
 
   const getIcon = () => {
@@ -42,13 +44,13 @@ export const Toast: React.FC<ToastProps> = ({
   const getBgColor = () => {
     switch (type) {
       case 'success':
-        return 'bg-success';
+        return 'bg-green-600'; // More vibrant green
       case 'error':
-        return 'bg-error';
+        return 'bg-red-600'; // More vibrant red
       case 'info':
-        return 'bg-primary';
+        return 'bg-blue-600'; // More vibrant blue
       default:
-        return 'bg-success';
+        return 'bg-green-600';
     }
   };
 
@@ -56,14 +58,15 @@ export const Toast: React.FC<ToastProps> = ({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 50 }}
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
+          initial={{ opacity: 0, y: 50, scale: 0.8 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 50, scale: 0.8 }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          className="fixed bottom-6 right-6 z-50" // Changed position to bottom-right
         >
-          <div className={`flex items-center gap-3 px-6 py-4 rounded-lg shadow-lg ${getBgColor()}`}>
+          <div className={`flex items-center gap-3 px-6 py-4 rounded-xl shadow-lg ${getBgColor()}`}>
             {getIcon()}
-            <p className="text-white font-medium">{message}</p>
+            <p className="text-white font-medium text-lg">{message}</p>
             <button
               onClick={() => {
                 setIsVisible(false);
@@ -72,7 +75,7 @@ export const Toast: React.FC<ToastProps> = ({
               className="p-1 text-white/80 hover:text-white transition-colors"
               aria-label="Fechar"
             >
-              <X size={16} />
+              <X size={18} /> {/* Slightly larger close icon */}
             </button>
           </div>
         </motion.div>
