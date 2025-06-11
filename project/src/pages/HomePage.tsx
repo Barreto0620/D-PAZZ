@@ -9,8 +9,12 @@ import { getFeaturedCategories, getOnSaleProducts, getBestSellerProducts } from 
 import { Category, Product } from '../types';
 import { motion } from 'framer-motion';
 import { Sparkles, TrendingUp, Star, ShoppingBag, Flame, Trophy } from 'lucide-react';
-import Slider from 'react-slick'; 
+import Slider from 'react-slick';
 import { Toast } from '../components/Toast'; // Importar o Toast
+
+// Importar os estilos do react-slick
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 export const HomePage: React.FC = () => {
   const [featuredCategories, setFeaturedCategories] = useState<Category[]>([]);
@@ -24,14 +28,13 @@ export const HomePage: React.FC = () => {
 
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success'); 
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
 
   const handleShowToast = (message: string, type: 'success' | 'error' | 'info') => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
-    // The Toast component itself handles hiding, so we just reset state after it's gone
-    // A timeout here is redundant if Toast handles its own `onClose` after duration
+    // O componente Toast já gerencia o próprio fechamento.
   };
 
   useEffect(() => {
@@ -43,6 +46,7 @@ export const HomePage: React.FC = () => {
       } catch (error) {
         console.error('Erro ao buscar categorias:', error);
         setLoading(prev => ({ ...prev, categories: false }));
+        handleShowToast('Erro ao carregar categorias.', 'error');
       }
 
       try {
@@ -52,6 +56,7 @@ export const HomePage: React.FC = () => {
       } catch (error) {
         console.error('Erro ao buscar produtos em promoção:', error);
         setLoading(prev => ({ ...prev, onSale: false }));
+        handleShowToast('Erro ao carregar ofertas.', 'error');
       }
 
       try {
@@ -61,6 +66,7 @@ export const HomePage: React.FC = () => {
       } catch (error) {
         console.error('Erro ao buscar produtos mais vendidos:', error);
         setLoading(prev => ({ ...prev, bestSeller: false }));
+        handleShowToast('Erro ao carregar mais vendidos.', 'error');
       }
     };
 
@@ -95,18 +101,18 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  const SectionTitle = ({ 
-    icon: Icon, 
-    title, 
-    subtitle, 
-    gradient = "from-primary to-accent" 
-  }: { 
-    icon: any, 
-    title: string, 
-    subtitle: string, 
-    gradient?: string 
+  const SectionTitle = ({
+    icon: Icon,
+    title,
+    subtitle,
+    gradient = "from-primary to-accent"
+  }: {
+    icon: any,
+    title: string,
+    subtitle: string,
+    gradient?: string
   }) => (
-    <motion.div 
+    <motion.div
       className="text-center mb-10"
       variants={titleVariants}
       initial="hidden"
@@ -147,55 +153,100 @@ export const HomePage: React.FC = () => {
   );
 
   const categorySliderSettings = {
-    dots: true, 
-    infinite: true, 
-    speed: 500, 
-    slidesToShow: 4, 
-    slidesToScroll: 1, 
-    autoplay: true, 
-    autoplaySpeed: 3000, 
-    cssEase: "linear", 
-    arrows: false, 
-    pauseOnHover: true, 
-    className: "center", 
-    centerMode: true, 
-    centerPadding: "60px", 
-    responsive: [ 
+    dots: false, // Pontos de navegação podem "quebrar" a ilusão de rolamento contínuo
+    infinite: true,
+    speed: 5000, // Tempo total para um ciclo completo de rolamento (mais longo para ser suave)
+    slidesToShow: 4,
+    slidesToScroll: 1, // Rolagem de um slide por vez
+    autoplay: true,
+    autoplaySpeed: 0, // Essencial! Define que o slide não para. A transição é contínua.
+    cssEase: "linear", // Movimento linear, crucial para a fluidez
+    arrows: false,
+    pauseOnHover: true, // Pausa ao passar o mouse, para interação
+    className: "center",
+    centerMode: true,
+    centerPadding: "60px",
+    responsive: [
       {
-        breakpoint: 1200, 
+        breakpoint: 1200,
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
           infinite: true,
-          dots: true,
+          dots: false,
           centerPadding: "40px",
         }
       },
       {
-        breakpoint: 1024, 
+        breakpoint: 1024,
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
           infinite: true,
-          dots: true,
+          dots: false,
           centerPadding: "30px",
         }
       },
       {
-        breakpoint: 768, 
+        breakpoint: 768,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
           initialSlide: 0,
-          centerPadding: "20%", 
+          dots: false,
+          centerPadding: "20%",
         }
       },
       {
-        breakpoint: 480, 
+        breakpoint: 480,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          centerPadding: "15%", 
+          dots: false,
+          centerPadding: "15%",
+        }
+      }
+    ]
+  };
+
+  const productSliderSettings = {
+    dots: false, // Também removidos para carrosséis contínuos
+    infinite: true,
+    speed: 4000, // Velocidade da transição
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 0, // Não para
+    cssEase: "linear", // Movimento suave e contínuo
+    arrows: false,
+    pauseOnHover: true,
+    responsive: [
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+        }
+      },
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
         }
       }
     ]
@@ -216,13 +267,13 @@ export const HomePage: React.FC = () => {
           <Banner />
         </section>
 
-        <motion.section 
-          className="mb-20" 
+        <motion.section
+          className="mb-20"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"> 
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <StatsCard number="10K+" label="Clientes Satisfeitos" icon={Star} />
             <StatsCard number="500+" label="Produtos Premium" icon={ShoppingBag} />
             <StatsCard number="98%" label="Avaliações 5★" icon={Trophy} />
@@ -243,18 +294,18 @@ export const HomePage: React.FC = () => {
               {[...Array(4)].map((_, index) => (
                 <div
                   key={index}
-                  className="bg-gray-200 dark:bg-gray-700 rounded-3xl animate-pulse h-72" 
+                  className="bg-gray-200 dark:bg-gray-700 rounded-3xl animate-pulse h-72"
                 />
               ))}
             </div>
           ) : (
-            <div className="relative px-4 md:px-8 lg:px-12 overflow-hidden"> 
+            <div className="relative px-4 md:px-8 lg:px-12 overflow-hidden">
               <Slider {...categorySliderSettings}>
                 {featuredCategories.map(category => (
-                  <div key={category.id} className="p-2"> 
-                    <motion.div 
+                  <div key={category.id} className="p-2">
+                    <motion.div
                       variants={itemVariants}
-                      whileHover={{ scale: 1.05, transition: { duration: 0.3 } }} 
+                      whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
                       className="transform transition-all duration-300"
                     >
                       <CategoryCard category={category} />
@@ -284,30 +335,33 @@ export const HomePage: React.FC = () => {
               ))}
             </div>
           ) : (
-            <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+            <motion.div
+              className="relative px-4 md:px-8 lg:px-12 overflow-hidden"
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
             >
-              {onSaleProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  variants={itemVariants}
-                  whileHover={{ 
-                    y: -8, 
-                    boxShadow: "0 15px 30px rgba(0,0,0,0.15)", 
-                    transition: { duration: 0.3 } 
-                  }}
-                  className="relative group rounded-3xl overflow-hidden" 
-                >
-                  <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-3xl blur-md opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div> 
-                  <div className="relative">
-                    <ProductCard product={product} onShowToast={handleShowToast} /> 
+              <Slider {...productSliderSettings}>
+                {onSaleProducts.map((product, index) => (
+                  <div key={product.id} className="p-2">
+                    <motion.div
+                      variants={itemVariants}
+                      whileHover={{
+                        y: -8,
+                        boxShadow: "0 15px 30px rgba(0,0,0,0.15)",
+                        transition: { duration: 0.3 }
+                      }}
+                      className="relative group rounded-3xl overflow-hidden"
+                    >
+                      <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-3xl blur-md opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
+                      <div className="relative">
+                        <ProductCard product={product} onShowToast={handleShowToast} />
+                      </div>
+                    </motion.div>
                   </div>
-                </motion.div>
-              ))}
+                ))}
+              </Slider>
             </motion.div>
           )}
         </section>
@@ -330,40 +384,43 @@ export const HomePage: React.FC = () => {
               ))}
             </div>
           ) : (
-            <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+            <motion.div
+              className="relative px-4 md:px-8 lg:px-12 overflow-hidden"
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
             >
-              {bestSellerProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  variants={itemVariants}
-                  whileHover={{ 
-                    y: -8, 
-                    boxShadow: "0 15px 30px rgba(0,0,0,0.15)", 
-                    transition: { duration: 0.3 } 
-                  }}
-                  className="relative group rounded-3xl overflow-hidden"
-                >
-                  <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-3xl blur-md opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
-                  <div className="relative">
-                    <ProductCard product={product} onShowToast={handleShowToast} /> 
+              <Slider {...productSliderSettings}>
+                {bestSellerProducts.map((product, index) => (
+                  <div key={product.id} className="p-2">
+                    <motion.div
+                      variants={itemVariants}
+                      whileHover={{
+                        y: -8,
+                        boxShadow: "0 15px 30px rgba(0,0,0,0.15)",
+                        transition: { duration: 0.3 }
+                      }}
+                      className="relative group rounded-3xl overflow-hidden"
+                    >
+                      <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-3xl blur-md opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
+                      <div className="relative">
+                        <ProductCard product={product} onShowToast={handleShowToast} />
+                      </div>
+                      {index < 3 && (
+                        <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                          #{index + 1} TOP
+                        </div>
+                      )}
+                    </motion.div>
                   </div>
-                  {index < 3 && (
-                    <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                      #{index + 1} TOP
-                    </div>
-                  )}
-                </motion.div>
-              ))}
+                ))}
+              </Slider>
             </motion.div>
           )}
         </section>
 
-        <motion.section 
+        <motion.section
           className="mb-16"
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -376,15 +433,15 @@ export const HomePage: React.FC = () => {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
-              <h3 className="text-4xl font-extrabold mb-4 leading-tight"> 
+              <h3 className="text-4xl font-extrabold mb-4 leading-tight">
                 Não Perca Nenhuma Novidade!
               </h3>
-              <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto"> 
+              <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
                 Seja o primeiro a descobrir lançamentos exclusivos e ofertas especiais diretamente na sua caixa de entrada.
               </p>
               <motion.button
-                className="bg-white text-primary px-10 py-5 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-300 shadow-xl" 
-                whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }} 
+                className="bg-white text-primary px-10 py-5 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-300 shadow-xl"
+                whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
                 whileTap={{ scale: 0.95 }}
               >
                 Cadastre-se Agora
@@ -397,9 +454,9 @@ export const HomePage: React.FC = () => {
       <Footer />
 
       {showToast && (
-        <Toast 
-          message={toastMessage} 
-          type={toastType} 
+        <Toast
+          message={toastMessage}
+          type={toastType}
           onClose={() => setShowToast(false)}
         />
       )}
