@@ -5,16 +5,15 @@ import { Product } from '../types';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { useCart } from '../contexts/CartContext';
 import { motion } from 'framer-motion';
-import { Toast } from './Toast';
 
 interface ProductCardProps {
+  onShowToast: (message: string, type: 'success' | 'error' | 'info') => void; 
   product: Product;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onShowToast }) => {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { addToCart, cartItems, updateQuantity } = useCart();
-  const [showToast, setShowToast] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   
   const cartItem = cartItems.find(item => item.product.id === product.id);
@@ -27,8 +26,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       addToCart(product);
       setIsAdding(true);
       setTimeout(() => setIsAdding(false), 300);
+      // Mensagem genérica para adicionar
+      onShowToast(`Produto adicionado!`, 'success'); 
+    } else {
+      // Mensagem genérica para item já no carrinho
+      onShowToast(`Produto já no carrinho.`, 'info'); 
     }
-    setShowToast(true);
   };
   
   const handleQuantityChange = (e: React.MouseEvent, newQuantity: number) => {
@@ -36,9 +39,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     e.stopPropagation();
     if (newQuantity === 0) {
       updateQuantity(product.id, 0);
+      // Mensagem genérica para remover
+      onShowToast(`Produto removido.`, 'error'); 
     } else if (newQuantity <= product.stock) {
       updateQuantity(product.id, newQuantity);
-      setShowToast(true);
+      // Mensagem genérica para atualização de quantidade
+      onShowToast(`Quantidade atualizada.`, 'success'); 
     }
   };
   
@@ -57,7 +63,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className={`group relative rounded-2xl overflow-hidden transition-all duration-300 ${
-          quantity > 0 ? 'ring-2 ring-primary bg-primary/5' : 'bg-white dark:bg-dark-lighter'
+          quantity > 0 ? 'ring-2 ring-primary-dark bg-primary/5' : 'bg-white dark:bg-dark-lighter' 
         } shadow-md`}
       >
         <Link to={`/produto/${product.id}`} className="block relative">
@@ -174,14 +180,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           )}
         </div>
       </motion.div>
-      
-      {showToast && (
-        <Toast 
-          message={`${product.name} ${quantity > 0 ? 'atualizado' : 'adicionado'} no carrinho!`}
-          type="success"
-          onClose={() => setShowToast(false)}
-        />
-      )}
     </>
   );
 };
