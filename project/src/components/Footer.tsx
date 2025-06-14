@@ -99,19 +99,19 @@ export const Footer: React.FC = () => {
               <li className="flex items-start space-x-3">
                 <MapPin size={20} className="text-primary flex-shrink-0 mt-1" />
                 <span className="text-gray-600 dark:text-gray-300">
-                  Rua Exemplo, 123 - Centro<br/>Santo André - SP, 09015-010
+                  Rua Comendador Artur Capodaglio, 306 - Americanópolis<br/>São Paulo - SP, 04410-080
                 </span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone size={20} className="text-primary" />
-                <a href="tel:+5511955555555" className="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
-                  (11) 95555-5555
+                <a href="tel:+551152047813" className="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
+                  (11) 5204-7813
                 </a>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail size={20} className="text-primary" />
-                <a href="mailto:contato@dpazzimports.com.br" className="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
-                  contato@dpazzimports.com.br
+                <a href="mailto:marciodpmarques@gmail.com" className="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
+                  marciodpmarques@gmail.com
                 </a>
               </li>
             </ul>
@@ -120,7 +120,7 @@ export const Footer: React.FC = () => {
 
         <div className="border-t border-gray-200 dark:border-gray-700 mt-8 pt-6 text-center">
           <p className="text-gray-600 dark:text-gray-400 text-sm">
-            &copy; {new Date().getFullYear()} D'Pazz Imports. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} D'Pazz Imports. CNPJ: 904.861/0001-26. Todos os direitos reservados.
           </p>
         </div>
       </div>

@@ -16,27 +16,30 @@ export const Banner: React.FC = () => {
   const slides: BannerSlide[] = [
     {
       id: 1,
-      image: 'https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg',
-      title: 'Gadgets Premium',
-      subtitle: 'Descubra os melhores eletrônicos importados',
-      cta: 'Comprar Agora',
+      // URL pública para a imagem do banner principal
+      image: 'https://github.com/Barreto0620/img_public/blob/df8cd11d8e5ae8799e94ee5e9d7984f61e4a3288/banner_principal_1.png?raw=true',
+      title: '', // Título adicionado
+      subtitle: '', // Subtítulo adicionado
+      cta: 'Ver Novidades',
       link: '/categoria/1'
     },
     {
       id: 2,
-      image: 'https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg',
+      // Usando o mesmo URL público para o segundo banner, pois o caminho local estava incorreto
+      image: 'https://github.com/Barreto0620/img_public/blob/dc15784c281a15e8d9dc4e15e97ab07277e5fac5/banner_principal_2.png?raw=true',
       title: 'Acessórios Exclusivos',
-      subtitle: 'Complemente seu visual com nossas peças importadas',
+      subtitle: 'Realce seu estilo com nossa coleção importada premium',
       cta: 'Ver Coleção',
       link: '/categoria/3'
     },
     {
       id: 3,
-      image: 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg',
-      title: 'Esportes & Fitness',
-      subtitle: 'Equipamentos de alta performance para seus treinos',
-      cta: 'Explorar',
-      link: '/categoria/6'
+      // URL pública para a imagem do banner de tênis
+      image: 'https://github.com/Barreto0620/img_public/blob/8faed451802dbf0b7b8808ce3287c228708c7e9f/banner_principal_3.png?raw=true',
+      title: 'Desempenho nos Seus Pés', // Novo título
+      subtitle: 'Encontre o tênis perfeito para cada passo da sua jornada.', // Nova frase
+      cta: 'Compre Agora', // Novo CTA
+      link: '/categoria/tenis' // Link mais específico para categoria de tênis
     }
   ];
 
@@ -46,13 +49,13 @@ export const Banner: React.FC = () => {
   // Autoplay
   useEffect(() => {
     let interval: number;
-    
+
     if (autoplay) {
       interval = window.setInterval(() => {
         setCurrent(prev => (prev + 1) % slides.length);
       }, 5000);
     }
-    
+
     return () => clearInterval(interval);
   }, [autoplay, slides.length]);
 
@@ -69,13 +72,13 @@ export const Banner: React.FC = () => {
   };
 
   return (
-    <div 
+    <div
       className="relative h-[300px] md:h-[450px] overflow-hidden rounded-2xl shadow-lg"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <AnimatePresence mode="wait">
-        <motion.div 
+        <motion.div
           key={current}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -83,15 +86,15 @@ export const Banner: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="absolute inset-0 w-full h-full"
         >
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${slides[current].image})` }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
           </div>
-          
+
           <div className="relative h-full flex flex-col justify-center pl-8 md:pl-16 max-w-lg text-white">
-            <motion.h2 
+            <motion.h2
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
@@ -99,7 +102,7 @@ export const Banner: React.FC = () => {
             >
               {slides[current].title}
             </motion.h2>
-            <motion.p 
+            <motion.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -112,7 +115,7 @@ export const Banner: React.FC = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-              <Link 
+              <Link
                 to={slides[current].link}
                 className="bg-primary hover:bg-secondary text-dark px-6 py-3 rounded-lg font-medium inline-block transition-colors"
               >
@@ -124,15 +127,15 @@ export const Banner: React.FC = () => {
       </AnimatePresence>
 
       {/* Navigation Buttons */}
-      <button 
+      <button
         onClick={prev}
         className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors"
         aria-label="Slide anterior"
       >
         <ChevronLeft size={24} />
       </button>
-      
-      <button 
+
+      <button
         onClick={next}
         className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors"
         aria-label="Próximo slide"
