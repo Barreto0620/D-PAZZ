@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { Package, AlertCircle, Mail, Lock, User, Phone, FileText } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Mail, Lock, User, Phone, FileText } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
+
+// IMPORTANT: Ensure this path is correct for your logo file!
+// If your logo is directly in the 'public' folder: '/logompz-Photoroom.png'
+// If you're importing it from an 'assets' folder: import DpazzLogo from '../assets/logompz-Photoroom.png';
+const DpazzLogo = 'https://github.com/Lusxka/logompz/blob/e8477de0803ee21809d05f7ab35f73e2b4fc6164/logompz-Photoroom.png?raw=true'; 
 
 export const LoginPage: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -20,7 +25,7 @@ export const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { login, register, isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
 
@@ -113,7 +118,7 @@ export const LoginPage: React.FC = () => {
         return false;
       }
 
-      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+      const passwordRegex = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,}$/;
       if (!passwordRegex.test(formData.password)) {
         setError('A senha deve ter pelo menos 8 caracteres, incluindo letras e números');
         return false;
@@ -125,31 +130,30 @@ export const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       if (isForgotPassword) {
-        // Simulate password recovery request
         await new Promise(resolve => setTimeout(resolve, 1000));
         setSuccess(`Código de recuperação enviado para ${recoveryMethod === 'email' ? 'seu email' : 'seu telefone'}`);
         return;
       }
 
-      let success;
-      
+      let successAction;
+
       if (isRegistering) {
-        success = await register(formData);
-        if (!success) {
+        successAction = await register(formData);
+        if (!successAction) {
           setError('Este email já está em uso');
         }
       } else {
-        success = await login(formData.email, formData.password);
-        if (!success) {
+        successAction = await login(formData.email, formData.password);
+        if (!successAction) {
           setError('Email ou senha inválidos');
         }
       }
@@ -186,106 +190,125 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-light dark:bg-dark flex items-center justify-center px-4">
+    <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden bg-gradient-to-r from-blue-900 to-cyan-500"> {/* Updated Gradient */}
       <Helmet>
         <title>
-          {isForgotPassword 
-            ? 'Recuperar Senha' 
-            : isRegistering 
-              ? 'Criar Conta' 
-              : 'Login'} - ImportShop
+          {isForgotPassword
+            ? 'Recuperar Senha'
+            : isRegistering
+              ? 'Criar Conta'
+              : 'Login'} - D' PAZZ Imports
         </title>
-        <meta 
-          name="description" 
+        <meta
+          name="description"
           content={
-            isForgotPassword 
-              ? 'Recupere sua senha na ImportShop.' 
-              : isRegistering 
-                ? 'Crie sua conta na ImportShop.' 
-                : 'Acesse sua conta na ImportShop.'
-          } 
+            isForgotPassword
+              ? 'Recupere sua senha na D\' PAZZ Imports.'
+              : isRegistering
+                ? 'Crie sua conta na D\' PAZZ Imports.'
+                : 'Acesse sua conta na D\' PAZZ Imports.'
+          }
         />
       </Helmet>
-      
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-dark-lighter rounded-2xl shadow-lg p-8 max-w-md w-full"
+
+      {/* Background Shapes/Elements (adjust colors to match new gradient or keep subtle) */}
+      <div className="absolute inset-0 z-0 opacity-20">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-700 rounded-full mix-blend-overlay filter blur-3xl animate-blob"></div> {/* Adjusted color */}
+        <div className="absolute top-1/2 right-1/4 w-80 h-80 bg-cyan-400 rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-2000"></div> {/* Adjusted color */}
+        <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-blue-500 rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-4000"></div> {/* Adjusted color */}
+      </div>
+
+      {/* Back to Home Button */}
+      <Link
+        to="/"
+        className="absolute top-6 left-6 text-white hover:text-gray-200 flex items-center gap-2 text-lg font-medium transition-colors z-10"
+      >
+        <ArrowLeft size={20} />
+        Voltar para Home
+      </Link>
+
+      <motion.div
+        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.7, type: "spring", stiffness: 100 }}
+        className="relative z-10 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 md:p-10 max-w-md w-full border border-gray-200 dark:border-gray-700"
       >
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <Package size={40} className="text-primary" />
+          <div className="flex justify-center mb-6">
+            <img src={DpazzLogo} alt="D' PAZZ Imports Logo" className="h-16 object-contain" />
           </div>
-          <h1 className="text-2xl font-bold text-dark dark:text-white">
-            {isForgotPassword 
+          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">
+            {isForgotPassword
               ? 'Recuperar Senha'
-              : isRegistering 
-                ? 'Criar Conta' 
+              : isRegistering
+                ? 'Crie sua Conta'
                 : 'Bem-vindo de volta!'}
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
+          <p className="text-gray-600 dark:text-gray-300 text-md">
             {isForgotPassword
-              ? 'Escolha como deseja receber o código de recuperação'
-              : isRegistering 
-                ? 'Preencha seus dados para começar' 
-                : 'Entre na sua conta para continuar'}
+              ? 'Insira seu e-mail ou telefone para recuperar o acesso.'
+              : isRegistering
+                ? 'Junte-se à família D\' PAZZ Imports e comece a explorar!'
+                : 'Faça login para gerenciar seus pedidos e favoritos.'}
           </p>
         </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
+
+        <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="p-3 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg">
-              <div className="flex items-center gap-2">
-                <AlertCircle size={18} />
-                <p>{error}</p>
-              </div>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg flex items-center gap-3 shadow-sm"
+            >
+              <AlertCircle size={20} />
+              <p className="text-sm font-medium">{error}</p>
+            </motion.div>
           )}
 
           {success && (
-            <div className="p-3 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-lg">
-              <div className="flex items-center gap-2">
-                <AlertCircle size={18} />
-                <p>{success}</p>
-              </div>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-4 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-lg flex items-center gap-3 shadow-sm"
+            >
+              <AlertCircle size={20} />
+              <p className="text-sm font-medium">{success}</p>
+            </motion.div>
           )}
 
           {isForgotPassword ? (
             <>
-              <div className="flex gap-4 mb-4">
+              <div className="flex gap-4">
                 <button
                   type="button"
                   onClick={() => setRecoveryMethod('email')}
-                  className={`flex-1 p-3 rounded-lg border transition-colors ${
+                  className={`flex-1 p-4 rounded-xl border-2 transition-all duration-300 flex flex-col items-center justify-center ${
                     recoveryMethod === 'email'
-                      ? 'border-primary bg-primary/10 text-dark dark:text-white'
-                      : 'border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-200 shadow-md'
+                      : 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-blue-400'
                   }`}
                 >
-                  <Mail size={24} className="mx-auto mb-2" />
-                  <span className="block text-sm">Email</span>
+                  <Mail size={32} className="mb-2" />
+                  <span className="block font-semibold">Email</span>
                 </button>
-                
+
                 <button
                   type="button"
                   onClick={() => setRecoveryMethod('sms')}
-                  className={`flex-1 p-3 rounded-lg border transition-colors ${
+                  className={`flex-1 p-4 rounded-xl border-2 transition-all duration-300 flex flex-col items-center justify-center ${
                     recoveryMethod === 'sms'
-                      ? 'border-primary bg-primary/10 text-dark dark:text-white'
-                      : 'border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-200 shadow-md'
+                      : 'border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-blue-400'
                   }`}
                 >
-                  <Phone size={24} className="mx-auto mb-2" />
-                  <span className="block text-sm">SMS</span>
+                  <Phone size={32} className="mb-2" />
+                  <span className="block font-semibold">SMS</span>
                 </button>
               </div>
 
               {recoveryMethod === 'email' ? (
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Email
-                  </label>
+                  <label htmlFor="email" className="sr-only">Email</label>
                   <div className="relative">
                     <input
                       type="email"
@@ -293,17 +316,15 @@ export const LoginPage: React.FC = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                      placeholder="Digite seu email"
+                      className="w-full pl-12 pr-4 py-3.5 rounded-lg border-2 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="seu.email@exemplo.com"
                     />
-                    <Mail size={18} className="absolute left-3 top-3.5 text-gray-400" />
+                    <Mail size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300" />
                   </div>
                 </div>
               ) : (
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Telefone
-                  </label>
+                  <label htmlFor="phone" className="sr-only">Telefone</label>
                   <div className="relative">
                     <input
                       type="text"
@@ -311,10 +332,10 @@ export const LoginPage: React.FC = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full pl-12 pr-4 py-3.5 rounded-lg border-2 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       placeholder="(XX) XXXXX-XXXX"
                     />
-                    <Phone size={18} className="absolute left-3 top-3.5 text-gray-400" />
+                    <Phone size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300" />
                   </div>
                 </div>
               )}
@@ -324,9 +345,7 @@ export const LoginPage: React.FC = () => {
               {isRegistering && (
                 <>
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Nome Completo
-                    </label>
+                    <label htmlFor="name" className="sr-only">Nome Completo</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -334,18 +353,16 @@ export const LoginPage: React.FC = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="Digite seu nome completo"
+                        className="w-full pl-12 pr-4 py-3.5 rounded-lg border-2 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="Nome Completo"
                       />
-                      <User size={18} className="absolute left-3 top-3.5 text-gray-400" />
+                      <User size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300" />
                     </div>
-                    <p className="mt-1 text-xs text-gray-500">Digite seu nome e sobrenome</p>
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Nome e sobrenome, por favor.</p>
                   </div>
 
                   <div>
-                    <label htmlFor="cpf" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      CPF
-                    </label>
+                    <label htmlFor="cpf" className="sr-only">CPF</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -354,17 +371,15 @@ export const LoginPage: React.FC = () => {
                         value={formData.cpf}
                         onChange={handleInputChange}
                         maxLength={14}
-                        className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full pl-12 pr-4 py-3.5 rounded-lg border-2 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                         placeholder="XXX.XXX.XXX-XX"
                       />
-                      <FileText size={18} className="absolute left-3 top-3.5 text-gray-400" />
+                      <FileText size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300" />
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Telefone
-                    </label>
+                    <label htmlFor="phone" className="sr-only">Telefone</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -373,19 +388,17 @@ export const LoginPage: React.FC = () => {
                         value={formData.phone}
                         onChange={handleInputChange}
                         maxLength={15}
-                        className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full pl-12 pr-4 py-3.5 rounded-lg border-2 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                         placeholder="(XX) XXXXX-XXXX"
                       />
-                      <Phone size={18} className="absolute left-3 top-3.5 text-gray-400" />
+                      <Phone size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300" />
                     </div>
                   </div>
                 </>
               )}
-              
+
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Email
-                </label>
+                <label htmlFor="email" className="sr-only">Email</label>
                 <div className="relative">
                   <input
                     type="email"
@@ -394,17 +407,15 @@ export const LoginPage: React.FC = () => {
                     autoComplete="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Digite seu email"
+                    className="w-full pl-12 pr-4 py-3.5 rounded-lg border-2 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="Email"
                   />
-                  <Mail size={18} className="absolute left-3 top-3.5 text-gray-400" />
+                  <Mail size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300" />
                 </div>
               </div>
-              
+
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Senha
-                </label>
+                <label htmlFor="password" className="sr-only">Senha</label>
                 <div className="relative">
                   <input
                     type="password"
@@ -413,21 +424,19 @@ export const LoginPage: React.FC = () => {
                     autoComplete={isRegistering ? 'new-password' : 'current-password'}
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Digite sua senha"
+                    className="w-full pl-12 pr-4 py-3.5 rounded-lg border-2 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="Senha"
                   />
-                  <Lock size={18} className="absolute left-3 top-3.5 text-gray-400" />
+                  <Lock size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300" />
                 </div>
                 {isRegistering && (
-                  <p className="mt-1 text-xs text-gray-500">Mínimo de 8 caracteres, incluindo letras e números</p>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Mínimo de 8 caracteres, letras e números.</p>
                 )}
               </div>
 
               {isRegistering && (
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Confirmar Senha
-                  </label>
+                  <label htmlFor="confirmPassword" className="sr-only">Confirmar Senha</label>
                   <div className="relative">
                     <input
                       type="password"
@@ -436,47 +445,50 @@ export const LoginPage: React.FC = () => {
                       autoComplete="new-password"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                      placeholder="Confirme sua senha"
+                      className="w-full pl-12 pr-4 py-3.5 rounded-lg border-2 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="Confirmar Senha"
                     />
-                    <Lock size={18} className="absolute left-3 top-3.5 text-gray-400" />
+                    <Lock size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300" />
                   </div>
                 </div>
               )}
             </>
           )}
-          
+
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 bg-primary hover:bg-secondary text-dark rounded-lg font-medium transition-colors disabled:opacity-70"
+            // Changed button colors to match the new professional theme
+            className="w-full py-3.5 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-semibold text-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 shadow-lg"
           >
-            {isLoading 
-              ? 'Processando...' 
+            {isLoading
+              ? 'Processando...'
               : isForgotPassword
-                ? 'Enviar Código'
-                : isRegistering 
-                  ? 'Criar Conta' 
-                  : 'Entrar'}
+                ? 'Enviar Código de Recuperação'
+                : isRegistering
+                  ? 'Criar Minha Conta'
+                  : 'Entrar na Conta'}
           </button>
         </form>
-        
-        <div className="mt-6 text-center space-y-4">
+
+        <div className="mt-8 text-center space-y-4">
           {!isForgotPassword && (
-            <button 
+            <button
               onClick={toggleMode}
-              className="text-primary hover:text-secondary transition-colors"
+              // Changed link colors to match the new professional theme
+              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors font-medium text-md"
             >
-              {isRegistering ? 'Já tem uma conta? Entre aqui' : 'Não tem uma conta? Cadastre-se'}
+              {isRegistering ? 'Já tem uma conta? Faça login aqui' : 'Não tem uma conta? Crie sua conta agora!'}
             </button>
           )}
-          
+
           {!isRegistering && (
             <button
               onClick={toggleForgotPassword}
-              className="block w-full text-primary hover:text-secondary transition-colors"
+              // Changed link colors to match the new professional theme
+              className="block w-full text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors font-medium text-md"
             >
-              {isForgotPassword ? 'Voltar ao login' : 'Esqueceu sua senha?'}
+              {isForgotPassword ? 'Lembrei minha senha, voltar ao login' : 'Esqueceu sua senha?'}
             </button>
           )}
         </div>
