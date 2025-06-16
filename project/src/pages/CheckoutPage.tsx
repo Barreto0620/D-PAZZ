@@ -11,19 +11,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 export const CheckoutPage: React.FC = () => {
   const { cartItems, getCartTotal, clearCart } = useCart();
   const navigate = useNavigate();
-  
+
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
     email: '',
     phone: '',
     address: ''
   });
-  
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState<string>('');
-  
+  const [finalOrderTotal, setFinalOrderTotal] = useState<number>(0); // New state to store the total
+
   const subtotal = getCartTotal();
   const shipping = cartItems.length > 0 ? 15.99 : 0;
   const total = subtotal + shipping;
@@ -32,10 +33,10 @@ export const CheckoutPage: React.FC = () => {
     const { name, value } = e.target;
     setCustomerInfo(prev => ({ ...prev, [name]: value }));
     // Clear error when field is being edited
-    if (errors[name]) {
+    if (errors[name]) { // Corrected: access dynamically using [name]
       setErrors(prev => {
         const newErrors = { ...prev };
-        delete newErrors[name];
+        delete newErrors[name]; // Corrected: delete dynamically using [name]
         return newErrors;
       });
     }
@@ -43,43 +44,46 @@ export const CheckoutPage: React.FC = () => {
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!customerInfo.name.trim()) {
       newErrors.name = 'Nome é obrigatório';
     }
-    
+
     if (!customerInfo.email.trim()) {
       newErrors.email = 'Email é obrigatório';
     } else if (!/\S+@\S+\.\S+/.test(customerInfo.email)) {
       newErrors.email = 'Email inválido';
     }
-    
+
     if (!customerInfo.phone.trim()) {
       newErrors.phone = 'Telefone é obrigatório';
     }
-    
+
     if (!customerInfo.address.trim()) {
       newErrors.address = 'Endereço é obrigatório';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm() || cartItems.length === 0) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
+      // Store the current total *before* clearing the cart
+      setFinalOrderTotal(total);
+
       // Simulate API call to submit order
       const result = await submitOrder(customerInfo, cartItems);
-      
-      if (result.success) {
+
+      if (result?.success) {
         setOrderSuccess(true);
         setOrderId(result.orderId);
         clearCart(); // Clear cart after successful order
@@ -103,12 +107,12 @@ export const CheckoutPage: React.FC = () => {
         <title>Checkout - ImportShop</title>
         <meta name="description" content="Finalize sua compra na ImportShop." />
       </Helmet>
-      
+
       <Navbar />
-      
+
       <main className="container mx-auto px-4 py-8">
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -126,10 +130,10 @@ export const CheckoutPage: React.FC = () => {
             Preencha seus dados para concluir seu pedido.
           </p>
         </motion.div>
-        
+
         <AnimatePresence mode="wait">
           {!orderSuccess ? (
-            <motion.div 
+            <motion.div
               key="checkout-form"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -142,20 +146,20 @@ export const CheckoutPage: React.FC = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
-                  className="bg-gray-800 rounded-2xl shadow-lg border border-gray-700 overflow-hidden" // Dark theme background, border, shadow
+                  className="bg-gray-800 rounded-2xl shadow-lg border border-gray-700 overflow-hidden"
                 >
                   {/* Header do Formulário */}
-                  <div className="bg-gradient-to-r from-primary/10 to-secondary/10 px-6 py-4 border-b border-gray-700"> {/* Gradient header */}
+                  <div className="bg-gradient-to-r from-primary/10 to-secondary/10 px-6 py-4 border-b border-gray-700">
                     <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                       <Shield size={20} /> Informações do Cliente
                     </h2>
                   </div>
-                  
+
                   <form onSubmit={handleSubmit} className="p-6 space-y-5">
                     {/* Name */}
                     <div>
-                      <label 
-                        htmlFor="name" 
+                      <label
+                        htmlFor="name"
                         className="block text-base font-medium text-gray-200 mb-2"
                       >
                         Nome Completo
@@ -166,8 +170,8 @@ export const CheckoutPage: React.FC = () => {
                         name="name"
                         value={customerInfo.name}
                         onChange={handleInputChange}
-                        className={`w-full p-3 rounded-lg border ${errors.name 
-                          ? 'border-red-500' 
+                        className={`w-full p-3 rounded-lg border ${errors.name
+                          ? 'border-red-500'
                           : 'border-gray-700'
                         } bg-gray-700 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary text-base transition-colors duration-200`}
                         placeholder="Digite seu nome completo"
@@ -176,12 +180,12 @@ export const CheckoutPage: React.FC = () => {
                         <p className="mt-1 text-sm text-red-400 font-medium">{errors.name}</p>
                       )}
                     </div>
-                    
+
                     {/* Email and Phone */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div>
-                        <label 
-                          htmlFor="email" 
+                        <label
+                          htmlFor="email"
                           className="block text-base font-medium text-gray-200 mb-2"
                         >
                           Email
@@ -192,8 +196,8 @@ export const CheckoutPage: React.FC = () => {
                           name="email"
                           value={customerInfo.email}
                           onChange={handleInputChange}
-                          className={`w-full p-3 rounded-lg border ${errors.email 
-                            ? 'border-red-500' 
+                          className={`w-full p-3 rounded-lg border ${errors.email
+                            ? 'border-red-500'
                             : 'border-gray-700'
                           } bg-gray-700 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary text-base transition-colors duration-200`}
                           placeholder="Digite seu email"
@@ -202,10 +206,10 @@ export const CheckoutPage: React.FC = () => {
                           <p className="mt-1 text-sm text-red-400 font-medium">{errors.email}</p>
                         )}
                       </div>
-                      
+
                       <div>
-                        <label 
-                          htmlFor="phone" 
+                        <label
+                          htmlFor="phone"
                           className="block text-base font-medium text-gray-200 mb-2"
                         >
                           Telefone
@@ -216,8 +220,8 @@ export const CheckoutPage: React.FC = () => {
                           name="phone"
                           value={customerInfo.phone}
                           onChange={handleInputChange}
-                          className={`w-full p-3 rounded-lg border ${errors.phone 
-                            ? 'border-red-500' 
+                          className={`w-full p-3 rounded-lg border ${errors.phone
+                            ? 'border-red-500'
                             : 'border-gray-700'
                           } bg-gray-700 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary text-base transition-colors duration-200`}
                           placeholder="Digite seu telefone"
@@ -227,11 +231,11 @@ export const CheckoutPage: React.FC = () => {
                         )}
                       </div>
                     </div>
-                    
+
                     {/* Address */}
                     <div>
-                      <label 
-                        htmlFor="address" 
+                      <label
+                        htmlFor="address"
                         className="block text-base font-medium text-gray-200 mb-2"
                       >
                         Endereço Completo
@@ -242,8 +246,8 @@ export const CheckoutPage: React.FC = () => {
                         value={customerInfo.address}
                         onChange={handleInputChange}
                         rows={3}
-                        className={`w-full p-3 rounded-lg border ${errors.address 
-                          ? 'border-red-500' 
+                        className={`w-full p-3 rounded-lg border ${errors.address
+                          ? 'border-red-500'
                           : 'border-gray-700'
                         } bg-gray-700 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary text-base transition-colors duration-200`}
                         placeholder="Digite seu endereço completo"
@@ -252,7 +256,7 @@ export const CheckoutPage: React.FC = () => {
                         <p className="mt-1 text-sm text-red-400 font-medium">{errors.address}</p>
                       )}
                     </div>
-                    
+
                     {/* Submit error */}
                     {errors.submit && (
                       <div className="p-3 bg-red-900/20 text-red-400 rounded-lg flex items-center gap-2">
@@ -260,16 +264,16 @@ export const CheckoutPage: React.FC = () => {
                         <p className="text-sm font-medium">{errors.submit}</p>
                       </div>
                     )}
-                    
+
                     <div className="flex justify-between items-center pt-4">
-                      <Link 
+                      <Link
                         to="/carrinho"
                         className="inline-flex items-center gap-2 text-gray-300 hover:text-primary transition-colors font-medium"
                       >
                         <ArrowLeft size={18} />
                         <span>Voltar ao Carrinho</span>
                       </Link>
-                      
+
                       <button
                         type="submit"
                         disabled={isSubmitting}
@@ -281,7 +285,7 @@ export const CheckoutPage: React.FC = () => {
                   </form>
                 </motion.div>
               </div>
-              
+
               {/* Order Summary */}
               <div className="xl:col-span-1">
                 <motion.div
@@ -297,7 +301,7 @@ export const CheckoutPage: React.FC = () => {
                         <ShoppingBag size={20} /> Resumo do Pedido
                       </h2>
                     </div>
-                    
+
                     <div className="p-6">
                       {/* Item list */}
                       <div className="space-y-3 mb-4 max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
@@ -317,7 +321,7 @@ export const CheckoutPage: React.FC = () => {
                           </div>
                         ))}
                       </div>
-                      
+
                       <div className="border-t border-gray-700 pt-4">
                         <div className="flex justify-between items-center py-2">
                           <span className="text-gray-300 font-medium">Subtotal</span>
@@ -325,20 +329,20 @@ export const CheckoutPage: React.FC = () => {
                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}
                           </span>
                         </div>
-                        
+
                         <div className="flex justify-between items-center py-2">
                           <div className="flex items-center gap-2">
                             <Truck size={16} className="text-gray-400" />
                             <span className="text-gray-300 font-medium">Frete</span>
                           </div>
                           <span className="text-lg font-semibold text-white">
-                            {shipping > 0 
+                            {shipping > 0
                               ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(shipping)
                               : 'Grátis'
                             }
                           </span>
                         </div>
-                        
+
                         <div className="border-t-2 border-gray-700 pt-4 mt-4">
                           <div className="flex justify-between items-center">
                             <span className="text-xl font-bold text-white">Total</span>
@@ -364,7 +368,7 @@ export const CheckoutPage: React.FC = () => {
                           <span>Parcelamento em até 12x sem juros</span>
                         </div>
                       </div>
-                      
+
                       {/* Métodos de Pagamento */}
                       <div className="mt-6 p-4 bg-green-900/20 rounded-xl">
                         <p className="text-sm font-medium text-gray-300 mb-2">
@@ -392,37 +396,37 @@ export const CheckoutPage: React.FC = () => {
               <div className="bg-gray-800 rounded-3xl shadow-xl border border-gray-700 overflow-hidden">
                 <div className="bg-gradient-to-r from-gray-700 to-gray-600 p-8 text-center">
                   <motion.div
-                    animate={{ 
+                    animate={{
                       scale: [1, 1.1, 1],
                       rotate: [0, 5, -5, 0]
                     }}
-                    transition={{ 
+                    transition={{
                       duration: 2,
                       repeat: Infinity,
                       repeatDelay: 3
                     }}
                     className="flex justify-center mb-6"
                   >
-                    <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-lg">
+                    <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center shadow-lg">
                       <CheckCircle size={40} className="text-white" />
                     </div>
                   </motion.div>
-                  
+
                   <h2 className="text-2xl font-bold text-white mb-3">
                     Pedido Recebido!
                   </h2>
-                  
+
                   <p className="text-gray-300 mb-4 text-lg">
                     Seu pedido <span className="font-bold text-primary">#{orderId}</span> foi recebido com sucesso. Você receberá um email de confirmação em breve.
                   </p>
-                  
+
                   <div className="bg-gray-700 rounded-xl p-4 mb-6">
                     <p className="text-white text-lg font-semibold">
-                      Total do Pedido: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}
+                      Total do Pedido: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(finalOrderTotal)} {/* Use finalOrderTotal here */}
                     </p>
                   </div>
-                  
-                  <Link 
+
+                  <Link
                     to="/"
                     className="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                   >
@@ -430,7 +434,7 @@ export const CheckoutPage: React.FC = () => {
                     <span>Continuar Comprando</span>
                   </Link>
                 </div>
-                
+
                 {/* Seção de benefícios - Copied from CartPage */}
                 <div className="p-8">
                   <h3 className="text-lg font-semibold text-white mb-4 text-center">
@@ -465,9 +469,9 @@ export const CheckoutPage: React.FC = () => {
           )}
         </AnimatePresence>
       </main>
-      
+
       <Footer />
-      
+
       {/* Custom Scrollbar Styles */}
       <style jsx global>{`
         .scrollbar-thin::-webkit-scrollbar {
