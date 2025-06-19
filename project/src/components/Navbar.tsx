@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Heart, Search, Menu, X, LogIn, User } from 'lucide-react';
 import { DarkModeToggle } from './DarkModeToggle';
@@ -17,7 +17,10 @@ export const Navbar: React.FC = () => {
   const { isAuthenticated, isAdmin, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false); // New state for dropdown
   const navigate = useNavigate();
+
+  const userDropdownRef = useRef<HTMLDivElement>(null); // Ref for the dropdown container
 
   const {
     searchQuery,
@@ -66,6 +69,10 @@ export const Navbar: React.FC = () => {
       if (!target.closest('.search-container')) {
         setShowSearchResults(false);
       }
+      // Close user dropdown if click outside
+      if (userDropdownRef.current && !userDropdownRef.current.contains(target)) {
+        setIsUserDropdownOpen(false);
+      }
     };
 
     document.addEventListener('click', handleClickOutside);
@@ -102,6 +109,20 @@ export const Navbar: React.FC = () => {
     { name: 'Novidades', path: '/novidades' },
     { name: 'Contato', path: '/contato' },
   ];
+
+  let dropdownCloseTimer: NodeJS.Timeout;
+
+  const handleMouseEnterUserDropdown = () => {
+    clearTimeout(dropdownCloseTimer);
+    setIsUserDropdownOpen(true);
+  };
+
+  const handleMouseLeaveUserDropdown = () => {
+    dropdownCloseTimer = setTimeout(() => {
+      setIsUserDropdownOpen(false);
+    }, 200); // 200ms delay
+  };
+
 
   return (
     <>
@@ -198,7 +219,12 @@ export const Navbar: React.FC = () => {
                 )}
               </div>
 
-              <div className="relative group">
+              <div
+                className="relative"
+                onMouseEnter={handleMouseEnterUserDropdown}
+                onMouseLeave={handleMouseLeaveUserDropdown}
+                ref={userDropdownRef} // Assign ref here
+              >
                 {isAuthenticated ? (
                   <button className="flex items-center gap-2 p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-dark-light transition-all duration-300">
                     <User size={22} className="text-dark dark:text-white" />
@@ -212,8 +238,14 @@ export const Navbar: React.FC = () => {
                   </Link>
                 )}
 
-                {isAuthenticated && (
-                  <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-dark-lighter shadow-xl rounded-xl overflow-hidden hidden group-hover:block border border-gray-200 dark:border-gray-700">
+                {isAuthenticated && isUserDropdownOpen && ( // Use isUserDropdownOpen state
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-dark-lighter shadow-xl rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700"
+                  >
                     <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
@@ -233,19 +265,23 @@ export const Navbar: React.FC = () => {
                     <Link
                       to={isAdmin ? '/admin/dashboard' : '/cliente/painel'}
                       className="flex items-center gap-3 px-4 py-3 text-sm text-dark dark:text-white hover:bg-gray-50 dark:hover:bg-dark-light transition-colors"
+                      onClick={() => setIsUserDropdownOpen(false)} // Close dropdown on click
                     >
                       <User size={16} />
                       {isAdmin ? 'Dashboard Admin' : 'Minha Conta'}
                     </Link>
 
                     <button
-                      onClick={logout}
+                      onClick={() => {
+                        logout();
+                        setIsUserDropdownOpen(false); // Close dropdown on logout
+                      }}
                       className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                     >
                       <LogIn size={16} />
                       <span>Sair</span>
                     </button>
-                  </div>
+                  </motion.div>
                 )}
               </div>
 
