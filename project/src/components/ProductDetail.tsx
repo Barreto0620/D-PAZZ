@@ -3,18 +3,24 @@ import { Product } from '../types';
 import { ChevronLeft, ChevronRight, Star, Minus, Plus, ShoppingCart } from 'lucide-react';
 import { FavoriteButton } from './FavoriteButton';
 import { useCart } from '../contexts/CartContext';
+import { useFavorites } from '../contexts/FavoritesContext';
 import { motion } from 'framer-motion';
 import { Toast } from './Toast';
 
 interface ProductDetailProps {
   product: Product;
+  onShowToast?: (message: string, type: 'success' | 'error' | 'info') => void;
 }
 
-export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
+export const ProductDetail: React.FC<ProductDetailProps> = ({ product, onShowToast }) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
+  
   const { addToCart } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const handlePrevImage = () => {
     setSelectedImage((prev) => 
@@ -30,7 +36,33 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
-    setShowToast(true);
+    const message = `${product.name} adicionado ao carrinho!`;
+    
+    if (onShowToast) {
+      onShowToast(message, 'success');
+    } else {
+      setToastMessage(message);
+      setToastType('success');
+      setShowToast(true);
+    }
+  };
+
+  const handleToggleFavorite = () => {
+    const currentState = isFavorite(product.id);
+    toggleFavorite(product);
+    
+    const message = !currentState 
+      ? `"${product.name}" adicionado aos seus favoritos!`
+      : `"${product.name}" removido dos seus favoritos.`;
+    const type = !currentState ? 'success' : 'info';
+    
+    if (onShowToast) {
+      onShowToast(message, type);
+    } else {
+      setToastMessage(message);
+      setToastType(type);
+      setShowToast(true);
+    }
   };
 
   const decreaseQuantity = () => {
@@ -78,9 +110,29 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
               <ChevronRight size={20} />
             </button>
             
-            {/* Favorite button */}
+            {/* Favorite button com handler personalizado */}
             <div className="absolute top-2 right-2">
-              <FavoriteButton product={product} size="lg" />
+              <button
+                onClick={handleToggleFavorite}
+                className={`p-3 rounded-full transition-all ${
+                  isFavorite(product.id)
+                    ? 'text-error bg-white/90 backdrop-blur-sm shadow-lg' 
+                    : 'text-gray-600 bg-white/80 backdrop-blur-sm hover:text-error hover:bg-white/90 shadow-md'
+                }`}
+                aria-label={isFavorite(product.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+              >
+                <svg 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill={isFavorite(product.id) ? "currentColor" : "none"}
+                  stroke="currentColor" 
+                  strokeWidth="2"
+                  className={isFavorite(product.id) ? 'animate-pulse' : ''}
+                >
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+              </button>
             </div>
           </div>
           
@@ -198,10 +250,11 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
         </div>
       </div>
       
-      {showToast && (
+      {/* Toast local (fallback) */}
+      {showToast && !onShowToast && (
         <Toast 
-          message={`${product.name} adicionado ao carrinho!`} 
-          type="success" 
+          message={toastMessage} 
+          type={toastType}
           onClose={() => setShowToast(false)} 
         />
       )}
