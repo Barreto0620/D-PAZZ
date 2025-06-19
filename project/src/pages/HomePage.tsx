@@ -1,8 +1,9 @@
+// pages/index.tsx
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
-import { Banner } from '../components/Banner';
+import { Banner } from '../components/Banner'; // ESTE É O SEU BANNER ORIGINAL NO TOPO
 import { CategoryCard } from '../components/CategoryCard';
 import { ProductCard } from '../components/ProductCard';
 import { getFeaturedCategories, getOnSaleProducts, getBestSellerProducts } from '../services/api';
@@ -11,6 +12,7 @@ import { motion } from 'framer-motion';
 import { Sparkles, TrendingUp, Star, ShoppingBag, Flame, Trophy } from 'lucide-react';
 import Slider from 'react-slick';
 import { Toast } from '../components/Toast';
+import { VideoBanner } from '../components/VideoBanner'; // Importe o VideoBanner
 
 // Importar os estilos do react-slick
 import "slick-carousel/slick/slick.css";
@@ -281,8 +283,9 @@ export const HomePage: React.FC = () => {
         <Navbar />
 
         <main className="container mx-auto px-4 py-8 md:py-12 flex-grow">
+          {/* SEÇÃO DO SEU BANNER PRINCIPAL ORIGINAL - NÃO MODIFICADA */}
           <section className="mb-16">
-            <Banner />
+            <Banner /> {/* MANTIDO: O seu componente Banner original */}
           </section>
 
           <motion.section
@@ -438,6 +441,7 @@ export const HomePage: React.FC = () => {
             )}
           </section>
 
+          {/* SEÇÃO DA NEWSLETTER COM O VÍDEO DE FUNDO - MODIFICADA */}
           <motion.section
             className="mb-16"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -445,27 +449,19 @@ export const HomePage: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="bg-gradient-to-r from-primary via-accent to-primary p-12 rounded-3xl text-center text-white shadow-2xl">
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                <h3 className="text-4xl font-extrabold mb-4 leading-tight">
-                  Não Perca Nenhuma Novidade!
-                </h3>
-                <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-                  Seja o primeiro a descobrir lançamentos exclusivos e ofertas especiais diretamente na sua caixa de entrada.
-                </p>
-                <motion.button
-                  className="bg-white text-primary px-10 py-5 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-300 shadow-xl"
-                  whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Cadastre-se Agora
-                </motion.button>
-              </motion.div>
-            </div>
+            {/* O SEU CÓDIGO ORIGINAL DA NEWSLETTER FOI SUBSTITUÍDO PELO VideoBanner */}
+            <VideoBanner
+              videoSrc="/img/video_banner.mp4" // Confirme que este caminho está correto para o seu vídeo
+              title="Não Perca Nenhuma Novidade!"
+              subtitle="Seja o primeiro a descobrir lançamentos exclusivos e ofertas especiais diretamente na sua caixa de entrada."
+              callToAction="Cadastre-se Agora"
+              onCallToActionClick={() => {
+                handleShowToast('Você clicou em "Cadastre-se Agora" na newsletter!', 'info');
+                // Adicione sua lógica de cadastro ou formulário aqui
+              }}
+              // Classes para ajustar a altura e padding desta seção específica
+              containerClasses="h-auto py-12 md:py-16"
+            />
           </motion.section>
         </main>
 
