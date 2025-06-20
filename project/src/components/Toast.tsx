@@ -4,24 +4,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface ToastProps {
   message: string;
-  type?: 'success' | 'error' | 'info';
+  type?: 'success' | 'error' | 'info' | 'warning'; // Adicionado 'warning'
   duration?: number;
   onClose: () => void;
 }
 
 export const Toast: React.FC<ToastProps> = ({ 
   message, 
-  type = 'success', 
+  type = 'info', // Default changed to 'info'
   duration = 3000, 
   onClose 
 }) => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    // Set a timer to hide the toast
     const timer = setTimeout(() => {
       setIsVisible(false); // Trigger exit animation
-      // After animation, call onClose to remove from DOM
       setTimeout(onClose, 300); // 300ms matches exit animation duration
     }, duration);
 
@@ -36,21 +34,25 @@ export const Toast: React.FC<ToastProps> = ({
         return <AlertCircle size={20} className="text-white" />;
       case 'info':
         return <Info size={20} className="text-white" />;
+      case 'warning': // Novo tipo de ícone para 'warning'
+        return <AlertCircle size={20} className="text-white" />;
       default:
-        return <CheckCircle size={20} className="text-white" />;
+        return <Info size={20} className="text-white" />;
     }
   };
 
   const getBgColor = () => {
     switch (type) {
       case 'success':
-        return 'bg-green-600'; // More vibrant green
-      case 'error':
-        return 'bg-red-600'; // More vibrant red
-      case 'info':
-        return 'bg-blue-600'; // More vibrant blue
-      default:
         return 'bg-green-600';
+      case 'error':
+        return 'bg-red-600';
+      case 'info':
+        return 'bg-blue-600';
+      case 'warning': // Novo tipo de cor de fundo para 'warning'
+        return 'bg-yellow-500'; // Cor amarela para warning
+      default:
+        return 'bg-blue-600';
     }
   };
 
@@ -62,9 +64,9 @@ export const Toast: React.FC<ToastProps> = ({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 50, scale: 0.8 }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          className="fixed bottom-6 right-6 z-50" // Changed position to bottom-right
+          className="fixed bottom-6 right-6 z-50 pointer-events-none" // Adicionado pointer-events-none para permitir cliques abaixo
         >
-          <div className={`flex items-center gap-3 px-6 py-4 rounded-xl shadow-lg ${getBgColor()}`}>
+          <div className={`flex items-center gap-3 px-6 py-4 rounded-xl shadow-lg ${getBgColor()} pointer-events-auto`}> {/* Adicionado pointer-events-auto */}
             {getIcon()}
             <p className="text-white font-medium text-lg">{message}</p>
             <button
@@ -75,7 +77,7 @@ export const Toast: React.FC<ToastProps> = ({
               className="p-1 text-white/80 hover:text-white transition-colors"
               aria-label="Fechar"
             >
-              <X size={18} /> {/* Slightly larger close icon */}
+              <X size={18} />
             </button>
           </div>
         </motion.div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Plus, Minus } from 'lucide-react'; // Adicionado Plus e Minus
 import { Product, Category } from '../../types';
 import { getCategories } from '../../services/api';
 
@@ -21,14 +21,14 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({
     description: product?.description || '',
     price: product?.price || 0,
     oldPrice: product?.oldPrice || undefined,
-    category: product?.category || 1,
-    images: product?.images || [''],
+    category: product?.category || (categories.length > 0 ? categories[0].id : 1), // Define a primeira categoria como padrão se houver
+    images: product?.images && product.images.length > 0 ? product.images : [''], // Garante pelo menos um campo de imagem
     featured: product?.featured || false,
     onSale: product?.onSale || false,
     bestSeller: product?.bestSeller || false,
     stock: product?.stock || 0,
-    rating: product?.rating || 4.0,
-    reviewCount: product?.reviewCount || 0
+    rating: product?.rating || 4.0, // Valor padrão para rating
+    reviewCount: product?.reviewCount || 0 // Valor padrão para reviewCount
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -38,13 +38,17 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({
       try {
         const data = await getCategories();
         setCategories(data);
+        // Se for um novo produto e não houver categoria selecionada, defina a primeira como padrão
+        if (!product && data.length > 0 && !formData.category) {
+          setFormData(prev => ({ ...prev, category: data[0].id }));
+        }
       } catch (error) {
         console.error('Error fetching categories:', error);
       }
     };
 
     fetchCategories();
-  }, []);
+  }, [product, formData.category]); // Adicionado formData.category para re-avaliar padrão
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -54,7 +58,7 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({ ...prev, [name]: checked }));
-    } else if (name === 'price' || name === 'oldPrice' || name === 'stock') {
+    } else if (['price', 'oldPrice', 'stock'].includes(name)) {
       setFormData(prev => ({ ...prev, [name]: Number(value) }));
     } else if (name === 'category') {
       setFormData(prev => ({ ...prev, [name]: Number(value) }));
@@ -74,7 +78,7 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({
   };
 
   const removeImageField = (index: number) => {
-    if (formData.images.length <= 1) return;
+    if (formData.images.length <= 1) return; // Garante que sempre haja pelo menos um campo de imagem
     const newImages = formData.images.filter((_, i) => i !== index);
     setFormData(prev => ({ ...prev, images: newImages }));
   };
@@ -314,14 +318,14 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({
               <button
                 type="button"
                 onClick={addImageField}
-                className="text-sm text-primary hover:text-secondary"
+                className="flex items-center gap-1 text-sm text-primary hover:text-secondary"
               >
-                + Adicionar Imagem
+                <Plus size={16} /> Adicionar Imagem
               </button>
             </div>
             
             {formData.images.map((image, index) => (
-              <div key={index} className="flex mb-2 gap-2">
+              <div key={index} className="flex mb-2 gap-2 items-center">
                 <input
                   type="text"
                   value={image}
@@ -339,7 +343,7 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({
                   disabled={formData.images.length <= 1}
                   className="p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-light text-gray-500 hover:text-red-500 disabled:opacity-50"
                 >
-                  <X size={20} />
+                  <Minus size={20} /> {/* Ícone de remover */}
                 </button>
               </div>
             ))}

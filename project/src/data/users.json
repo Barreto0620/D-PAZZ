@@ -1,0 +1,28 @@
+{
+  "users": [
+    {
+      "id": "user123",
+      "username": "joaoc",
+      "email": "joao@example.com",
+      "password": "hashed_password",
+      "isAdmin": false,
+      "name": "João Cliente",
+      "phone": "99999-9999",
+      "address": "Rua Principal, 100, Centro, Cidade, UF",
+      "createdAt": "2023-01-15T10:00:00Z",
+      "lastLogin": "2024-06-18T14:30:00Z"
+    },
+    {
+      "id": "admin456",
+      "username": "admin",
+      "email": "admin@dhpazz.com",
+      "password": "adminpassword",
+      "isAdmin": true,
+      "name": "Administrador D'Pazz",
+      "phone": "98765-4321",
+      "address": "Av. Admin, 1, Escritório, Cidade, UF",
+      "createdAt": "2022-10-01T08:00:00Z",
+      "lastLogin": "2024-06-19T18:00:00Z"
+    }
+  ]
+}

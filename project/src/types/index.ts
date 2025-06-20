@@ -1,57 +1,35 @@
+// project/src/types.ts
 export interface Product {
-  id: number;
+  id: number | string; // Permitir string para IDs gerados por UUID, etc.
   name: string;
-  description: string;
+  description?: string; // Tornar opcional para segurança no filtro
   price: number;
-  oldPrice?: number;
-  category: number;
-  categoryName?: string;
-  images: string[];
-  featured?: boolean;
-  onSale?: boolean;
-  bestSeller?: boolean;
   stock: number;
-  rating: number;
-  reviewCount: number;
+  category?: string; // Tornar opcional para segurança no filtro
+  imageUrl?: string; // Se você tiver imagens
+  // Adicione outros campos relevantes do seu produto
 }
 
-export interface Category {
-  id: number;
-  name: string;
-  image: string;
-  description: string;
-  featured?: boolean;
-}
+export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 
-export interface CartItem {
-  product: Product;
-  quantity: number;
+export interface Order {
+  id: string;
+  userId: string; // ID do usuário que fez o pedido
+  total: number;
+  status: OrderStatus;
+  createdAt: string; // ISO Date string
+  items: any[]; // Detalhes dos itens do pedido (poderia ser mais detalhado, e.g., Array<OrderItem>)
+  // Adicione outros campos relevantes do seu pedido
 }
 
 export interface User {
   id: string;
-  username: string;
-  email: string;
-  isAdmin: boolean;
-  name?: string;
-  cpf?: string;
-  phone?: string;
-  address?: string;
-}
-
-export interface CustomerInfo {
   name: string;
   email: string;
-  phone: string;
-  address: string;
-}
-
-export interface Order {
-  id: string;
-  userId: string;
-  items: CartItem[];
-  total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  createdAt: string;
-  shippingAddress: string;
+  role: 'admin' | 'customer';
+  createdAt: string; // ISO Date string
+  phone?: string; // Tornar opcional para segurança no filtro
+  address?: string;
+  cpf?: string;
+  // Adicione outros campos relevantes do seu usuário
 }

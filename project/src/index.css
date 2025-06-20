@@ -2,6 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Base colors for light and dark themes using CSS variables */
+:root {
+  /* Light Theme */
+  --bg-light-darker: #f8f8f8; /* A very light grey for backgrounds */
+  --bg-white: #ffffff;
+  --bg-dark-light: #e0e0e0; /* Used for hover backgrounds in light theme */
+  --text-dark: #333333;
+  --text-gray-500: #6b7280; /* Tailwind gray-500 */
+  --text-gray-700: #4b5563; /* Tailwind gray-700 */
+  --border-gray-200: #e5e7eb; /* Tailwind gray-200 */
+  --border-gray-300: #d1d5db; /* Tailwind gray-300 */
+  --border-gray-700: #374151; /* Tailwind gray-700 for dark theme borders */
+  --primary: #6366f1; /* Tailwind indigo-500 */
+  --secondary: #4f46e5; /* Tailwind indigo-600 */
+  --success: #10b981; /* Tailwind emerald-500 */
+  --warning: #f59e0b; /* Tailwind amber-500 */
+  --error: #ef4444; /* Tailwind red-500 */
+}
+
+.dark {
+  /* Dark Theme */
+  --bg-light-darker: #1a202c; /* Equivalent to dark-lighter for backgrounds */
+  --bg-white: #2d3748; /* Equivalent to dark-lighter for main backgrounds */
+  --bg-dark: #171923; /* Darker background */
+  --bg-dark-lighter: #2d3748; /* Slightly lighter dark background */
+  --text-dark: #edf2f7; /* Light text for dark background */
+  --text-gray-500: #a0aec0; /* Tailwind gray-400 */
+  --text-gray-700: #e2e8f0; /* Lighter text for labels in dark mode */
+  --border-gray-200: #4a5568; /* Tailwind gray-600 for dark theme borders */
+  --border-gray-300: #4a5568; /* Tailwind gray-600 for dark theme borders */
+  --primary: #818cf8; /* Tailwind indigo-400 */
+  --secondary: #6366f1; /* Tailwind indigo-500 */
+  --success: #6ee7b7; /* Tailwind emerald-300 */
+  --warning: #fcd34d; /* Tailwind amber-300 */
+  --error: #f87171; /* Tailwind red-400 */
+}
+
+
 /* Customizações do React Slick Carousel */
 
 /* Ocultar as setas de navegação, conforme solicitado */
@@ -47,4 +85,14 @@
 /* Remova o ":before" para os dots se o button já for o elemento clicável */
 .slick-dots li button:before {
   content: none !important; /* Remove o conteúdo padrão do slick, usamos o background-color no button */
+}
+
+/* Spinner de carregamento global */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }

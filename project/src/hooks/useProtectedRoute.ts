@@ -3,16 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export function useProtectedRoute(requireAdmin = false) {
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin, loading } = useAuth(); // Obter loading do AuthContext
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Se ainda estiver carregando, não faça nada
+    if (loading) {
+      return;
+    }
+
     if (!isAuthenticated) {
-      navigate('/admin/login', { replace: true });
+      navigate('/login', { replace: true }); // Redireciona para /login, não /admin/login
     } else if (requireAdmin && !isAdmin) {
       navigate('/', { replace: true });
     }
-  }, [isAuthenticated, isAdmin, navigate, requireAdmin]);
+  }, [isAuthenticated, isAdmin, loading, navigate, requireAdmin]); // Adicionado loading às dependências
 
-  return { isAuthenticated, isAdmin };
+  return { isAuthenticated, isAdmin, loading }; // Retorna loading também
 }
