@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingBag, Heart, User, LogOut } from 'lucide-react';
 import { useProtectedRoute } from '../../hooks/useProtectedRoute';
 import { useAuth } from '../../contexts/AuthContext';
+// ADICIONADO: Importação do componente de troca de tema.
+// Verifique se este caminho está correto para a sua estrutura de pastas.
+import { ThemeToggle } from '../Admin/ThemeToggle'; 
 
 interface CustomerLayoutProps {
   children: ReactNode;
@@ -74,6 +77,10 @@ export const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children, title 
               <LogOut size={20} />
               <span>Sair</span>
             </button>
+            {/* ADICIONADO: Botão de tema na sidebar para desktop */}
+            <div className="mt-4 flex justify-center">
+                <ThemeToggle />
+            </div>
           </div>
         </nav>
       </aside>
@@ -90,12 +97,16 @@ export const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children, title 
             />
           </div>
           
-          <button
-            onClick={handleLogout}
-            className="p-2 rounded-lg hover:bg-light-darker dark:hover:bg-dark-light text-dark dark:text-white transition-colors"
-          >
-            <LogOut size={20} />
-          </button>
+          {/* ADICIONADO: Wrapper para agrupar os botões da direita */}
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={handleLogout}
+              className="p-2 rounded-lg hover:bg-light-darker dark:hover:bg-dark-light text-dark dark:text-white transition-colors"
+            >
+              <LogOut size={20} />
+            </button>
+          </div>
         </header>
         
         {/* Page content */}
