@@ -110,7 +110,16 @@ export const AdminProductsPage: React.FC = () => {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const data: Product[] = await getProducts();
+      // Mock de dados se a API não estiver disponível. Remova em produção.
+      const mockProducts: Product[] = [
+        { id: 1, name: 'Tênis Esportivo Pro', description: 'Tênis de alta performance para corrida', price: 299.90, imageUrl: '/images/mock-product-1.jpg', category: 'Esportivo', stock: 50, color: 'Preto', shoeNumber: 42, material: 'Mesh' },
+        { id: 2, name: 'Sandália Casual Confort', description: 'Sandália confortável para o dia a dia', price: 89.90, imageUrl: '/images/mock-product-2.jpg', category: 'Casual', stock: 120, color: 'Marrom', shoeNumber: 38, material: 'Couro Sintético' },
+        { id: 3, name: 'Bota de Couro Elegance', description: 'Bota feminina de couro legítimo', price: 450.00, imageUrl: '/images/mock-product-3.jpg', category: 'Social', stock: 30, color: 'Caramelo', shoeNumber: 36, material: 'Couro' },
+        { id: 4, name: 'Chuteira Speed Max', description: 'Chuteira para alta velocidade em campo', price: 199.90, imageUrl: '/images/mock-product-4.jpg', category: 'Esportivo', stock: 75, color: 'Verde Limão', shoeNumber: 40, material: 'Sintético' },
+        { id: 5, name: 'Sapato Social Clássico', description: 'Sapato masculino ideal para eventos formais', price: 350.00, imageUrl: '/images/mock-product-5.jpg', category: 'Social', stock: 40, color: 'Preto', shoeNumber: 43, material: 'Couro' },
+      ];
+      // const data: Product[] = await getProducts(); // Descomente e use esta linha quando a API estiver pronta
+      const data: Product[] = mockProducts; // Use os dados mockados por enquanto
       setProducts(data);
       setFilteredProducts(data);
     } catch (error) {
@@ -129,7 +138,7 @@ export const AdminProductsPage: React.FC = () => {
     }
   }, [authLoading, fetchProducts]);
 
-  // Efeito para filtrar produtos - corrigido para não deixar tela em branco
+  // Efeito para filtrar produtos
   useEffect(() => {
     console.log('Filtering products. Search term:', searchTerm, 'Total products:', products.length);
     
@@ -158,7 +167,8 @@ export const AdminProductsPage: React.FC = () => {
 
   const handleCreateProduct = async (product: Omit<Product, 'id'>) => {
     try {
-      const newProduct = await createProduct(product);
+      // const newProduct = await createProduct(product); // Descomente quando integrar com a API
+      const newProduct: Product = { ...product, id: products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1 }; // Mock de ID
       setProducts(prev => [...prev, newProduct]);
       showToast('Produto criado com sucesso! 🎉', 'success');
     } catch (error) {
@@ -172,7 +182,8 @@ export const AdminProductsPage: React.FC = () => {
 
   const handleUpdateProduct = async (product: Product) => {
     try {
-      const updatedProduct = await updateProduct(product.id, product);
+      // const updatedProduct = await updateProduct(product.id, product); // Descomente quando integrar com a API
+      const updatedProduct = product; // Mock de retorno
       if (!updatedProduct) {
         throw new Error('Produto não encontrado ou atualização falhou.');
       }
@@ -208,7 +219,7 @@ export const AdminProductsPage: React.FC = () => {
     setDeleteModal(prev => ({ ...prev, isDeleting: true }));
 
     try {
-      await deleteProduct(deleteModal.productId);
+      // await deleteProduct(deleteModal.productId); // Descomente quando integrar com a API
       setProducts(prev => prev.filter(p => p.id !== deleteModal.productId));
       setDeleteModal({
         isOpen: false,
