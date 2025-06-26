@@ -215,15 +215,28 @@ export const CustomerDashboardPage: React.FC = () => {
                 
                 {/* CPF */}
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 group-focus-within:text-blue-500 transition-colors">
                     CPF
                   </label>
-                    <div className="p-4 bg-gradient-to-r from-yellow-50 to-yellow-100 dark:bg-dark-light rounded-xl border-2 border-yellow-200 dark:border-yellow-700">
+                  {isEditing ? (
+                    <div className="relative">
+                      <input
+                        type="text"
+                        name="cpf"
+                        value={formData.cpf}
+                        onChange={handleInputChange}
+                        className="w-full p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500 focus:ring-opacity-20 transition-all duration-300"
+                        placeholder="Digite seu CPF"
+                      />
+                      <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1 font-medium">Campo sensível - mantenha atualizado</p>
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-gray-50 dark:bg-dark-light rounded-xl border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300">
                       <p className="text-dark dark:text-white font-medium">
                         {formData.cpf || 'Não informado'}
                       </p>
-                      <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1 font-medium">Campo protegido</p>
                     </div>
+                  )}
                 </div>
                 
                 {/* Telefone */}

@@ -8,7 +8,7 @@ interface AdminOrdersPageProps {
   // ... outras props
 }
 
-export const AdminOrdersPage: React.FC<AdminOrdersPageProps> = ({ orders }) => {
+export const DataTable: React.FC<AdminOrdersPageProps> = ({ orders }) => {
   // Funções utilitárias como formatPrice, truncateText, etc., se aplicável
 
   if (orders.length === 0) {
