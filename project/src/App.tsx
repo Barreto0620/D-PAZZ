@@ -25,7 +25,8 @@ import { AdminCustomersPage } from './pages/AdminCustomersPage';
 import { CustomerDashboardPage } from './pages/CustomerDashboardPage';
 import { PurchaseHistoryPage } from './pages/PurchaseHistoryPage';
 import { NotFoundPage } from './pages/NotFoundPage';
-import { BrandPage } from './pages/BrandPage';  // Página para marcas
+import { BrandPage } from './pages/BrandPage';
+import { ContactPage } from './pages/ContactPage'; 
 
 // Componente que engloba todos os providers para melhor organização
 const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -61,12 +62,13 @@ function App() {
           {/* Páginas públicas */}
           <Route path="/" element={<HomePage />} />
           <Route path="/categoria/:id" element={<CategoryPage />} />
-          <Route path="/marca/:slug" element={<BrandPage />} /> {/* Rota para marcas */}
+          <Route path="/marca/:slug" element={<BrandPage />} />
           <Route path="/produto/:id" element={<ProductPage />} />
           <Route path="/carrinho" element={<CartPage />} />
           <Route path="/favoritos" element={<FavoritesPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/contato" element={<ContactPage />} /> 
 
           {/* Rotas administrativas */}
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
