@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useProducts } from '../contexts/ProductContext';
 import { Product } from '../types';
@@ -8,7 +8,7 @@ import { Footer } from '../components/Footer';
 import { SectionTitle } from '../components/SectionTitle';
 import { ProductCard } from '../components/ProductCard';
 import { Toast } from '../components/Toast';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Flame, Star, ChevronDown } from 'lucide-react';
 
 export const BrandPage: React.FC = () => {
@@ -18,9 +18,9 @@ export const BrandPage: React.FC = () => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
-
-    // ✅ ESTADO PARA ORDENAÇÃO
     const [sortBy, setSortBy] = useState('relevance');
+    const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+    const sortDropdownRef = useRef<HTMLDivElement>(null);
 
     const capitalize = useCallback((s: string | undefined) => {
         if (!s) return '';
@@ -49,7 +49,18 @@ export const BrandPage: React.FC = () => {
         }
     }, [loading, slug, getProductsByBrand, capitalize, handleShowToast]);
 
-    // ✅ LÓGICA DE ORDENAÇÃO
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target as Node)) {
+                setIsSortDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const sortedProducts = useMemo(() => {
         const sorted = [...brandProducts];
         switch (sortBy) {
@@ -64,31 +75,14 @@ export const BrandPage: React.FC = () => {
                 break;
             case 'relevance':
             default:
-                // Mantém a ordem original ou outra lógica de relevância
                 break;
         }
         return sorted;
     }, [brandProducts, sortBy]);
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1
-            }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.5 }
-        }
-    };
-
+    const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } };
+    const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
+    
     const getBrandDetails = (brandSlug: string) => {
         switch (brandSlug.toLowerCase()) {
             case 'nike':
@@ -112,13 +106,7 @@ export const BrandPage: React.FC = () => {
                 <link rel="icon" type="image/x-icon" href="/img/favicon.ico" />
             </Helmet>
 
-            <div className="absolute inset-0 z-0" style={{
-                backgroundImage: `url(https://raw.githubusercontent.com/Barreto0620/img_public/04cb063dcdc701738d51396c8226e9c71341ea0d/logo_home.png)`,
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                backgroundAttachment: 'fixed',
-            }}></div>
+            <div className="absolute inset-0 z-0" style={{ backgroundImage: `url(https://raw.githubusercontent.com/Barreto0620/img_public/04cb063dcdc701738d51396c8226e9c71341ea0d/logo_home.png)`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundAttachment: 'fixed', }}></div>
             <div className="absolute inset-0 z-10 bg-white bg-opacity-80 dark:bg-gray-900 dark:bg-opacity-70 backdrop-blur-sm"></div>
 
             <div className="relative z-20 min-h-screen flex flex-col">
@@ -144,18 +132,30 @@ export const BrandPage: React.FC = () => {
                                 <p>
                                     {sortedProducts.length} produtos encontrados
                                 </p>
-                                
-                                {/* ✅ DROPDOWN DE ORDENAÇÃO ✅ */}
-                                <div className="relative group">
-                                    <button className="flex items-center px-4 py-2 bg-white dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-600 transition-colors">
-                                        <span>Ordenar por</span> <ChevronDown size={18} className="ml-2" />
+                                <div className="relative" ref={sortDropdownRef}>
+                                    <button 
+                                        onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                                        className="flex items-center px-4 py-2 bg-white dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-600 transition-colors"
+                                    >
+                                        <span>Ordenar por</span> 
+                                        <ChevronDown size={18} className={`ml-2 transition-transform duration-200 ${isSortDropdownOpen ? 'rotate-180' : ''}`} />
                                     </button>
-                                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden z-10 hidden group-hover:block">
-                                        <button onClick={() => setSortBy('relevance')} className={`block w-full text-left px-4 py-2 text-sm ${sortBy === 'relevance' ? 'bg-secondary-50 dark:bg-secondary-500/10 text-secondary-600 dark:text-secondary-300 font-medium' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}>Relevância</button>
-                                        <button onClick={() => setSortBy('price-asc')} className={`block w-full text-left px-4 py-2 text-sm ${sortBy === 'price-asc' ? 'bg-secondary-50 dark:bg-secondary-500/10 text-secondary-600 dark:text-secondary-300 font-medium' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}>Menor Preço</button>
-                                        <button onClick={() => setSortBy('price-desc')} className={`block w-full text-left px-4 py-2 text-sm ${sortBy === 'price-desc' ? 'bg-secondary-50 dark:bg-secondary-500/10 text-secondary-600 dark:text-secondary-300 font-medium' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}>Maior Preço</button>
-                                        <button onClick={() => setSortBy('rating')} className={`block w-full text-left px-4 py-2 text-sm ${sortBy === 'rating' ? 'bg-secondary-50 dark:bg-secondary-500/10 text-secondary-600 dark:text-secondary-300 font-medium' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}>Melhor Avaliado</button>
-                                    </div>
+                                    <AnimatePresence>
+                                        {isSortDropdownOpen && (
+                                            <motion.div 
+                                                initial={{ opacity: 0, y: -10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -10 }}
+                                                transition={{ duration: 0.2 }}
+                                                className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden z-10"
+                                            >
+                                                <button onClick={() => { setSortBy('relevance'); setIsSortDropdownOpen(false); }} className={`block w-full text-left px-4 py-2 text-sm ${sortBy === 'relevance' ? 'bg-secondary-50 dark:bg-secondary-500/10 text-secondary-600 dark:text-secondary-300 font-medium' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}>Relevância</button>
+                                                <button onClick={() => { setSortBy('price-asc'); setIsSortDropdownOpen(false); }} className={`block w-full text-left px-4 py-2 text-sm ${sortBy === 'price-asc' ? 'bg-secondary-50 dark:bg-secondary-500/10 text-secondary-600 dark:text-secondary-300 font-medium' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}>Menor Preço</button>
+                                                <button onClick={() => { setSortBy('price-desc'); setIsSortDropdownOpen(false); }} className={`block w-full text-left px-4 py-2 text-sm ${sortBy === 'price-desc' ? 'bg-secondary-50 dark:bg-secondary-500/10 text-secondary-600 dark:text-secondary-300 font-medium' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}>Maior Preço</button>
+                                                <button onClick={() => { setSortBy('rating'); setIsSortDropdownOpen(false); }} className={`block w-full text-left px-4 py-2 text-sm ${sortBy === 'rating' ? 'bg-secondary-50 dark:bg-secondary-500/10 text-secondary-600 dark:text-secondary-300 font-medium' : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}>Melhor Avaliado</button>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
                             </div>
 
@@ -171,7 +171,6 @@ export const BrandPage: React.FC = () => {
                                 initial="hidden"
                                 animate="visible"
                             >
-                                {/* ✅ RENDERIZA PRODUTOS ORDENADOS ✅ */}
                                 {sortedProducts.map((product, index) => (
                                     <motion.div
                                         key={product.id}
@@ -179,8 +178,8 @@ export const BrandPage: React.FC = () => {
                                         whileHover={{ scale: 1.05 }}
                                         className="transform transition-all duration-300"
                                     >
-                                        {/* A prop onShowToast parece estar faltando no componente ProductCard, verifique se ela é necessária */}
-                                        <ProductCard product={product} index={index} />
+                                        {/* ✅ CORREÇÃO: Prop 'onShowToast' restaurada para evitar o crash da página */}
+                                        <ProductCard product={product} index={index} onShowToast={handleShowToast} />
                                     </motion.div>
                                 ))}
                             </motion.div>
