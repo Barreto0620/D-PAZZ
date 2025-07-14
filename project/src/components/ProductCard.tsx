@@ -1,20 +1,21 @@
+// project/src/components/ProductCard.tsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart, Plus, Minus } from 'lucide-react';
-import { Product } from '../types';
+import { Product } from '../types'; // Importa a interface Product do arquivo de tipos
 import { useFavorites } from '../contexts/FavoritesContext';
 import { useCart } from '../contexts/CartContext';
 import { motion } from 'framer-motion';
 
 interface ProductCardProps {
-  onShowToast: (message: string, type: 'success' | 'error' | 'info') => void; 
+  onShowToast: (message: string, type: 'success' | 'error' | 'info') => void;  
   product: Product;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onShowToast }) => {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { addToCart, cartItems, updateQuantity } = useCart();
-  const [isAdding, setIsAdding] = useState(false); // Unused, consider removing if not needed for animation feedback
+  // 'isAdding' foi removido pois não estava sendo utilizado.
   
   const cartItem = cartItems.find(item => item.product.id === product.id);
   const quantity = cartItem?.quantity || 0;
@@ -24,11 +25,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onShowToast }
     e.stopPropagation();
     if (!cartItem) {
       addToCart(product);
-      // setIsAdding(true); // Consider if this state is still needed for animation
-      // setTimeout(() => setIsAdding(false), 300); // And this timeout
-      onShowToast(`"${product.name}" adicionado ao carrinho!`, 'success'); 
+      onShowToast(`"${product.name}" adicionado ao carrinho!`, 'success');  
     } else {
-      onShowToast(`"${product.name}" já está no seu carrinho.`, 'info'); 
+      onShowToast(`"${product.name}" já está no seu carrinho.`, 'info');  
     }
   };
   
@@ -37,10 +36,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onShowToast }
     e.stopPropagation();
     if (newQuantity === 0) {
       updateQuantity(product.id, 0);
-      onShowToast(`"${product.name}" removido do carrinho.`, 'error'); 
+      onShowToast(`"${product.name}" removido do carrinho.`, 'error');  
     } else if (newQuantity <= product.stock) {
       updateQuantity(product.id, newQuantity);
-      onShowToast(`Quantidade de "${product.name}" atualizada para ${newQuantity}.`, 'info'); 
+      onShowToast(`Quantidade de "${product.name}" atualizada para ${newQuantity}.`, 'info');  
     } else {
       onShowToast(`Limite de estoque para "${product.name}" atingido!`, 'error');
     }
@@ -67,16 +66,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onShowToast }
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className={`group relative rounded-2xl overflow-hidden transition-all duration-300 ${
-          quantity > 0 ? 'ring-2 ring-primary-dark bg-primary/5' : 'bg-white dark:bg-dark-lighter' 
+          quantity > 0 ? 'ring-2 ring-primary-dark bg-primary/5' : 'bg-white dark:bg-dark-lighter'  
         } shadow-md`}
       >
         <Link to={`/produto/${product.id}`} className="block relative">
           <div className="relative aspect-square overflow-hidden">
-            <img 
-              src={product.images[0]} 
-              alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            />
+            {/* Correção: Adicionado verificação para product.images antes de acessar [0] */}
+            {product.images && product.images.length > 0 ? (
+              <img 
+                src={product.images[0]} 
+                alt={product.name}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+            ) : (
+              // Imagem de placeholder caso não haja imagens
+              <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                Imagem não disponível
+              </div>
+            )}
             
             {product.onSale && (
               <div className="absolute top-2 left-2 bg-primary text-dark px-2 py-1 rounded-lg text-xs font-medium">
@@ -133,8 +140,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onShowToast }
               <button
                 onClick={handleToggleFavorite}
                 className={`p-2 rounded-full transition-colors ${
-                  isProductFavorite 
-                    ? 'text-error bg-error/10' 
+                  isProductFavorite  
+                    ? 'text-error bg-error/10'  
                     : 'text-gray-400 hover:text-error hover:bg-error/10'
                 }`}
                 aria-label={isProductFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}

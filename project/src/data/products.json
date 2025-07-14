@@ -47,7 +47,9 @@
       "bestSeller": true,
       "stock": 10,
       "rating": 4.9,
-      "reviewCount": 250
+      "reviewCount": 250,
+      "color": "Preto/Vermelho",
+      "shoeNumber": "40"
     },
     {
       "id": 2,
@@ -66,7 +68,9 @@
       "bestSeller": false,
       "stock": 18,
       "rating": 4.7,
-      "reviewCount": 150
+      "reviewCount": 150,
+      "color": "Branco",
+      "shoeNumber": "38-42"
     },
     {
       "id": 3,
@@ -85,7 +89,9 @@
       "bestSeller": true,
       "stock": 35,
       "rating": 4.8,
-      "reviewCount": 90
+      "reviewCount": 90,
+      "color": "Multicor",
+      "shoeNumber": "26-33"
     },
     {
       "id": 4,
@@ -104,7 +110,9 @@
       "bestSeller": true,
       "stock": 5,
       "rating": 5.0,
-      "reviewCount": 120
+      "reviewCount": 120,
+      "color": "Grafite/Azul",
+      "shoeNumber": "39"
     },
     {
       "id": 5,
@@ -123,7 +131,9 @@
       "bestSeller": false,
       "stock": 20,
       "rating": 4.6,
-      "reviewCount": 140
+      "reviewCount": 140,
+      "color": "Cinza",
+      "shoeNumber": "37-43"
     },
     {
       "id": 6,
@@ -142,7 +152,9 @@
       "bestSeller": true,
       "stock": 25,
       "rating": 4.5,
-      "reviewCount": 110
+      "reviewCount": 110,
+      "color": "Azul Marinho",
+      "shoeNumber": "36"
     },
     {
       "id": 7,
@@ -161,7 +173,9 @@
       "bestSeller": false,
       "stock": 28,
       "rating": 4.6,
-      "reviewCount": 75
+      "reviewCount": 75,
+      "color": "Preto",
+      "shoeNumber": "30-37"
     },
     {
       "id": 8,
@@ -180,7 +194,9 @@
       "bestSeller": false,
       "stock": 8,
       "rating": 4.9,
-      "reviewCount": 60
+      "reviewCount": 60,
+      "color": "Preto/Roxo",
+      "shoeNumber": "41"
     },
     {
       "id": 9,
@@ -199,7 +215,9 @@
       "bestSeller": false,
       "stock": 15,
       "rating": 4.8,
-      "reviewCount": 130
+      "reviewCount": 130,
+      "color": "Verde Oliva",
+      "shoeNumber": "42"
     },
     {
       "id": 10,
@@ -218,7 +236,9 @@
       "bestSeller": true,
       "stock": 18,
       "rating": 4.7,
-      "reviewCount": 105
+      "reviewCount": 105,
+      "color": "Branco/Verde",
+      "shoeNumber": "39"
     },
     {
       "id": 11,
@@ -237,7 +257,9 @@
       "bestSeller": false,
       "stock": 40,
       "rating": 4.7,
-      "reviewCount": 65
+      "reviewCount": 65,
+      "color": "Rosa",
+      "shoeNumber": "18-25"
     },
     {
       "id": 12,
@@ -256,7 +278,219 @@
       "bestSeller": false,
       "stock": 7,
       "rating": 4.9,
-      "reviewCount": 50
+      "reviewCount": 50,
+      "color": "Multicor",
+      "shoeNumber": "40"
+    },
+    {
+      "id": 13,
+      "name": "Tênis Performance GridRunner",
+      "description": "Maximize seu desempenho com o GridRunner. Tecnologia de amortecimento adaptável e suporte dinâmico para treinos de alta intensidade e competições.",
+      "price": 789.99,
+      "oldPrice": null,
+      "category": 1,
+      "brand": "Mizuno",
+      "images": [
+        "https://images.unsplash.com/photo-1543163521-1bf539c55dd4?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1600185348881-3a718719001d?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": true,
+      "bestSeller": false,
+      "stock": 12,
+      "rating": 4.7,
+      "reviewCount": 95,
+      "color": "Preto/Cinza",
+      "shoeNumber": "39-43"
+    },
+    {
+      "id": 14,
+      "name": "Tênis Slip-On Verão",
+      "description": "Leveza e frescor para os dias quentes. Este slip-on casual é perfeito para um look descontraído, com material respirável e solado flexível.",
+      "price": 299.90,
+      "oldPrice": 350.00,
+      "category": 2,
+      "brand": "Crocs",
+      "images": [
+        "https://images.unsplash.com/photo-1600185348881-3a718719001d?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": true,
+      "bestSeller": false,
+      "stock": 30,
+      "rating": 4.4,
+      "reviewCount": 80,
+      "color": "Bege",
+      "shoeNumber": "35-41"
+    },
+    {
+      "id": 15,
+      "name": "Tênis Infantil Power Jumper",
+      "description": "Com design divertido e cores vibrantes, o Power Jumper foi feito para acompanhar a energia das crianças. Solado antiderrapante e fecho de velcro para autonomia.",
+      "price": 219.90,
+      "oldPrice": null,
+      "category": 3,
+      "brand": "Adidas Kids",
+      "images": [
+        "https://images.unsplash.com/photo-1563228795-17e947761005?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1596755490426-580193798950?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": false,
+      "bestSeller": true,
+      "stock": 22,
+      "rating": 4.8,
+      "reviewCount": 100,
+      "color": "Vermelho/Branco",
+      "shoeNumber": "28-35"
+    },
+    {
+      "id": 16,
+      "name": "Edição Especial: Tênis Zenith Prime",
+      "description": "Exclusividade e tecnologia de ponta se encontram no Zenith Prime. Uma edição limitada com detalhes únicos e conforto inigualável para quem busca o máximo.",
+      "price": 1600.00,
+      "oldPrice": null,
+      "category": 4,
+      "brand": "New Balance",
+      "images": [
+        "https://images.unsplash.com/photo-1590409540898-7503b140d39e?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1594914101833-ad1a95e2634e?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": true,
+      "onSale": false,
+      "bestSeller": false,
+      "stock": 4,
+      "rating": 5.0,
+      "reviewCount": 45,
+      "color": "Azul/Prata",
+      "shoeNumber": "42"
+    },
+    {
+      "id": 17,
+      "name": "Tênis Casual Classic Low",
+      "description": "O clássico que nunca sai de moda. Design atemporal com materiais resistentes e conforto para o dia a dia. Perfeito para qualquer ocasião casual.",
+      "price": 329.99,
+      "oldPrice": null,
+      "category": 2,
+      "brand": "Converse",
+      "images": [
+        "https://images.unsplash.com/photo-1588147424169-1b91e97669d0?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1612036782180-d66a6b579177?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": false,
+      "bestSeller": false,
+      "stock": 25,
+      "rating": 4.6,
+      "reviewCount": 160,
+      "color": "Branco",
+      "shoeNumber": "37-44"
+    },
+    {
+      "id": 18,
+      "name": "Tênis Caminhada Air Comfort",
+      "description": "Ideal para longas caminhadas, este tênis Nike oferece amortecimento excepcional e ventilação para manter seus pés frescos e confortáveis.",
+      "price": 550.00,
+      "oldPrice": 600.00,
+      "category": 1,
+      "brand": "Nike",
+      "images": [
+        "https://images.unsplash.com/photo-1603808064971-d60232b71d9d?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1579298245785-f55a15993699?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": true,
+      "bestSeller": false,
+      "stock": 15,
+      "rating": 4.5,
+      "reviewCount": 90,
+      "color": "Preto",
+      "shoeNumber": "38-43"
+    },
+    {
+      "id": 19,
+      "name": "Tênis Lifestyle Court Legacy",
+      "description": "Um clássico da Adidas repaginado. O Court Legacy traz um visual retrô com materiais modernos, perfeito para o dia a dia e para compor um estilo casual.",
+      "price": 420.00,
+      "oldPrice": null,
+      "category": 2,
+      "brand": "Adidas",
+      "images": [
+        "https://images.unsplash.com/photo-1584735164805-472e39130761?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1605348532760-6753d2c43329?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": false,
+      "bestSeller": true,
+      "stock": 28,
+      "rating": 4.7,
+      "reviewCount": 120,
+      "color": "Branco/Preto",
+      "shoeNumber": "36-44"
+    },
+    {
+      "id": 20,
+      "name": "Tênis Crossfit Strength RX",
+      "description": "Construído para suportar os treinos mais intensos de crossfit. Oferece estabilidade superior, aderência e durabilidade para levantamento de peso e movimentos explosivos.",
+      "price": 799.99,
+      "oldPrice": null,
+      "category": 1,
+      "brand": "Mizuno",
+      "images": [
+        "https://images.unsplash.com/photo-1582845012586-efce13ce7b43?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1518015505417-761e712a2080?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": false,
+      "bestSeller": false,
+      "stock": 8,
+      "rating": 4.8,
+      "reviewCount": 70,
+      "color": "Preto/Laranja",
+      "shoeNumber": "39-45"
+    },
+    {
+      "id": 21,
+      "name": "Tênis Basketball JumpMaster Elite",
+      "description": "Domine as quadras com o JumpMaster Elite. Alto desempenho, suporte de tornozelo e amortecimento responsivo para saltos e mudanças rápidas de direção.",
+      "price": 899.99,
+      "oldPrice": 1000.00,
+      "category": 1,
+      "brand": "Nike",
+      "images": [
+        "https://images.unsplash.com/photo-1600185348881-3a718719001d?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": true,
+      "onSale": true,
+      "bestSeller": false,
+      "stock": 9,
+      "rating": 4.9,
+      "reviewCount": 110,
+      "color": "Branco/Azul",
+      "shoeNumber": "40-44"
+    },
+    {
+      "id": 22,
+      "name": "Tênis Casual Retro Boost",
+      "description": "Conforto e estilo retrô se unem neste tênis Adidas. A tecnologia Boost proporciona retorno de energia a cada passo, ideal para uso prolongado.",
+      "price": 650.00,
+      "oldPrice": 720.00,
+      "category": 2,
+      "brand": "Adidas",
+      "images": [
+        "https://images.unsplash.com/photo-1616091008631-f155f9e71b56?w=800&h=600&fit=crop&crop=center",
+        "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&h=600&fit=crop&crop=center"
+      ],
+      "featured": false,
+      "onSale": true,
+      "bestSeller": true,
+      "stock": 16,
+      "rating": 4.6,
+      "reviewCount": 130,
+      "color": "Cinza/Laranja",
+      "shoeNumber": "39-43"
     }
   ]
 }

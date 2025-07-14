@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// project/src/components/Navbar.tsx
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Heart, Search, Menu, X, LogIn, User } from 'lucide-react';
 import { DarkModeToggle } from './DarkModeToggle';
@@ -6,10 +7,11 @@ import { useCart } from '../contexts/CartContext';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { useAuth } from '../contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getCategories } from '../services/api';
-import { Category } from '../types';
+import { getCategories } from '../services/api'; // Certifique-se de que esta função existe e retorna 'Category[]'
+import { Category } from '../types'; // Importa a interface Category do arquivo de tipos
 import { useSearch } from '../hooks/useSearch';
 import { SearchResults } from './SearchResults';
+import { useProducts } from '../contexts/ProductContext';
 
 export const Navbar: React.FC = () => {
   const { getItemCount } = useCart();
@@ -17,8 +19,11 @@ export const Navbar: React.FC = () => {
   const { isAuthenticated, isAdmin, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [brands, setBrands] = useState<string[]>([]);
   const navigate = useNavigate();
-  
+
+  const { products } = useProducts(); // Acesso aos produtos completos do ProductContext
+
   const { 
     searchQuery, 
     setSearchQuery, 
@@ -31,7 +36,7 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const data = await getCategories();
+        const data = await getCategories(); // Assume que getCategories retorna Category[]
         setCategories(data);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -41,28 +46,37 @@ export const Navbar: React.FC = () => {
     fetchCategories();
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (products.length) {
+      // Usa os produtos já processados do ProductContext para extrair as marcas
+      const uniqueBrands = Array.from(new Set(products.map(p => p.brand))).sort();
+      setBrands(uniqueBrands);
+    }
+  }, [products]); // Depende de 'products' do ProductContext
+
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       setShowSearchResults(true);
     }
-  };
+  }, [searchQuery]);
 
-  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchQuery(value);
-    setShowSearchResults(value.trim().length > 0);
-  };
+    // Mostra resultados apenas se houver query e se não estiver vazio
+    setShowSearchResults(value.trim().length > 0); 
+  }, [setSearchQuery]);
 
-  const handleSearchResultClick = () => {
+  const handleSearchResultClick = useCallback(() => {
     setShowSearchResults(false);
     setSearchQuery('');
-  };
+  }, [setSearchQuery]);
 
-  // Close search results when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      // Certifique-se de que o clique não é dentro do input de busca ou dos resultados
       if (!target.closest('.search-container')) {
         setShowSearchResults(false);
       }
@@ -72,9 +86,9 @@ export const Navbar: React.FC = () => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen(prev => !prev);
+  }, []);
 
   const cartItemCount = getItemCount();
   const favoritesCount = favorites.length;
@@ -87,7 +101,7 @@ export const Navbar: React.FC = () => {
           <Link to="/" className="flex items-center">
             <img 
               src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png"
-              alt="MPZ Imports"
+              alt="D'Pazz Imports" // Atualizado para D'Pazz Imports
               className="h-12"
             />
           </Link>
@@ -106,6 +120,24 @@ export const Navbar: React.FC = () => {
                 {category.name}
               </Link>
             ))}
+
+            {/* Dropdown Marcas */}
+            <div className="relative group">
+              <button className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors focus:outline-none">
+                Marcas
+              </button>
+              <div className="absolute hidden group-hover:block bg-white dark:bg-dark-lighter shadow-lg rounded mt-2 py-2 min-w-[150px] z-50 border border-gray-200 dark:border-gray-700">
+                {brands.map(brand => (
+                  <Link
+                    key={brand}
+                    to={`/marca/${brand.toLowerCase()}`}
+                    className="block px-4 py-2 text-dark dark:text-white hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
+                  >
+                    {brand}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </nav>
 
           {/* Search, Cart, Favorites, Dark Mode */}
@@ -166,8 +198,9 @@ export const Navbar: React.FC = () => {
                         <p className="text-sm font-medium text-dark dark:text-white">
                           {isAdmin ? 'Admin' : 'Cliente'}
                         </p>
+                        {/* Adapte para mostrar o email do usuário logado se disponível */}
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {isAdmin ? 'admin@example.com' : 'customer@example.com'}
+                          {isAdmin ? 'admin@example.com' : 'customer@example.com'} 
                         </p>
                       </div>
                     </div>
@@ -176,12 +209,16 @@ export const Navbar: React.FC = () => {
                   <Link 
                     to={isAdmin ? '/admin/dashboard' : '/cliente/painel'}
                     className="flex items-center gap-2 px-4 py-2 text-sm text-dark dark:text-white hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
+                    onClick={() => setIsMenuOpen(false)} // Fecha o menu ao clicar
                   >
                     {isAdmin ? 'Dashboard Admin' : 'Minha Conta'}
                   </Link>
                   
                   <button 
-                    onClick={logout}
+                    onClick={() => {
+                      logout();
+                      setIsMenuOpen(false); // Fecha o menu ao fazer logout
+                    }}
                     className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-error hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
                   >
                     <LogIn size={18} />
@@ -298,6 +335,23 @@ export const Navbar: React.FC = () => {
                   {category.name}
                 </Link>
               ))}
+
+              {/* Marcas no menu mobile */}
+              {brands.length > 0 && (
+                <>
+                  <p className="text-dark dark:text-white font-semibold mt-4">Marcas</p>
+                  {brands.map(brand => (
+                    <Link
+                      key={brand}
+                      to={`/marca/${brand.toLowerCase()}`}
+                      className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {brand}
+                    </Link>
+                  ))}
+                </>
+              )}
 
               <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700">
                 <DarkModeToggle />
