@@ -1,12 +1,12 @@
 // project/src/contexts/ProductContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Product, Category, ProductsJsonData } from '../types'; // Importando interfaces completas do arquivo de tipos
+import { Product, Category, ProductsJsonData } from '../types';
 
 interface ProductContextData {
-  products: Product[]; // Agora Products[] contém todos os detalhes e o nome da categoria
+  products: Product[];
   categories: Category[];
   loading: boolean;
-  getProductById: (id: number) => Product | undefined; // Adicionado para buscar um produto específico
+  getProductById: (id: number) => Product | undefined;
   getProductsByBrand: (brand: string) => Product[];
   getProductsByCategory: (categoryId: number) => Product[];
   getFeaturedProducts: () => Product[];
@@ -14,6 +14,7 @@ interface ProductContextData {
   getOnSaleProducts: () => Product[];
   getAllBrands: () => string[];
   searchProducts: (query: string) => Product[];
+  getNoveltiesProducts: () => Product[]; // Nova função para novidades
 }
 
 const ProductContext = createContext<ProductContextData | undefined>(undefined);
@@ -27,24 +28,19 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     const loadProducts = async () => {
       try {
         setLoading(true);
-        
-        // Carrega os dados do arquivo JSON localmente
+
         const module = await import('../data/products.json');
         const data: ProductsJsonData = module.default;
-        
-        // Mapeia as categorias para um lookup rápido do nome da categoria
+
         const categoryMap = new Map<number, string>();
         data.categories.forEach(cat => categoryMap.set(cat.id, cat.name));
 
-        // Converte os dados brutos para o formato da interface Product completa
-        // Adicionando categoryName e garantindo que 'images' é um array
         const convertedProducts: Product[] = data.products.map(productData => ({
           ...productData,
-          categoryName: categoryMap.get(productData.category) || 'Desconhecida', // Fallback para caso não encontre
-          // Garante que images é um array; se não for, ou estiver vazio, fornece um array vazio.
+          categoryName: categoryMap.get(productData.category) || 'Desconhecida',
           images: productData.images && Array.isArray(productData.images) ? productData.images : [],
         }));
-        
+
         setProducts(convertedProducts);
         setCategories(data.categories);
       } catch (error) {
@@ -55,14 +51,12 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
 
     loadProducts();
-  }, []); // Dependência vazia para carregar os dados apenas uma vez na montagem
+  }, []);
 
-  // Função para buscar um produto por ID
   const getProductById = (id: number): Product | undefined => {
     return products.find(p => p.id === id);
   };
 
-  // Funções de filtragem e busca agora operam sobre o array `products` já convertido e tipado
   const getProductsByBrand = (brand: string): Product[] => {
     return products.filter(p => p.brand.toLowerCase() === brand.toLowerCase());
   };
@@ -84,8 +78,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
 
   const getAllBrands = (): string[] => {
-    // Usamos um Set para garantir marcas únicas e depois convertemos para array
-    return Array.from(new Set(products.map(p => p.brand))).sort(); // Adicionado sort para ordem alfabética
+    return Array.from(new Set(products.map(p => p.brand))).sort();
   };
 
   const searchProducts = (query: string): Product[] => {
@@ -95,23 +88,39 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
       p.name.toLowerCase().includes(lowerQuery) ||
       p.description.toLowerCase().includes(lowerQuery) ||
       p.brand.toLowerCase().includes(lowerQuery) ||
-      p.categoryName.toLowerCase().includes(lowerQuery) // Inclui busca por nome da categoria
+      p.categoryName.toLowerCase().includes(lowerQuery)
     );
   };
 
+  // Implementação da função para obter produtos de "novidades"
+  // Definição: Produtos que são "featured" (destaque) OU "bestSeller" (mais vendidos)
+  // E também os mais recentes, se tivessem uma data de adição, para simular novidade real.
+  // Por simplicidade, vamos usar 'featured' e 'bestSeller' como critérios primários para "melhores de todas as coleções"
+  // E podemos adicionar uma lógica de ordenação por ID (assumindo que IDs maiores são mais novos).
+  const getNoveltiesProducts = (): Product[] => {
+    // Filtra produtos que são destaque OU mais vendidos
+    const novelties = products.filter(p => p.featured || p.bestSeller);
+
+    // Opcional: Ordenar por ID para simular produtos "mais novos" (se IDs forem sequenciais)
+    // Se você tiver um campo 'dateAdded' no seu Product, seria ideal usá-lo aqui.
+    return novelties.sort((a, b) => b.id - a.id);
+  };
+
+
   return (
-    <ProductContext.Provider value={{ 
-      products, 
+    <ProductContext.Provider value={{
+      products,
       categories,
-      loading, 
-      getProductById, // Incluído no contexto
-      getProductsByBrand, 
+      loading,
+      getProductById,
+      getProductsByBrand,
       getProductsByCategory,
       getFeaturedProducts,
       getBestSellers,
       getOnSaleProducts,
       getAllBrands,
-      searchProducts
+      searchProducts,
+      getNoveltiesProducts // Adicionado ao valor do contexto
     }}>
       {children}
     </ProductContext.Provider>

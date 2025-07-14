@@ -26,7 +26,8 @@ import { CustomerDashboardPage } from './pages/CustomerDashboardPage';
 import { PurchaseHistoryPage } from './pages/PurchaseHistoryPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { BrandPage } from './pages/BrandPage';
-import { ContactPage } from './pages/ContactPage'; 
+import { ContactPage } from './pages/ContactPage';
+import { NoveltiesPage } from './pages/NoveltiesPage'; // Importe a nova página
 
 // Componente que engloba todos os providers para melhor organização
 const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -68,7 +69,8 @@ function App() {
           <Route path="/favoritos" element={<FavoritesPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/contato" element={<ContactPage />} /> 
+          <Route path="/contato" element={<ContactPage />} />
+          <Route path="/novidades" element={<NoveltiesPage />} /> {/* Nova rota */}
 
           {/* Rotas administrativas */}
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />

@@ -1,11 +1,13 @@
+// project/src/components/SectionTitle.tsx
+// Este arquivo não foi alterado, pois já estava pronto para uso.
 import React from 'react';
-import { LucideIcon } from 'lucide-react'; // Certifique-se de ter 'lucide-react' instalado
+import { LucideIcon } from 'lucide-react';
 
 interface SectionTitleProps {
   icon: LucideIcon;
   title: string;
   subtitle: string;
-  gradient: string; // Ex: "from-blue-500 to-indigo-600"
+  gradient: string;
 }
 
 export const SectionTitle: React.FC<SectionTitleProps> = ({ icon: Icon, title, subtitle, gradient }) => {

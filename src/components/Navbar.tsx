@@ -1,14 +1,14 @@
 // project/src/components/Navbar.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Heart, Search, Menu, X, LogIn, User } from 'lucide-react';
+import { ShoppingCart, Heart, Search, Menu, X, LogIn, User, Sparkles } from 'lucide-react'; // Importar Sparkles
 import { DarkModeToggle } from './DarkModeToggle';
 import { useCart } from '../contexts/CartContext';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { useAuth } from '../contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getCategories } from '../services/api'; // Certifique-se de que esta função existe e retorna 'Category[]'
-import { Category } from '../types'; // Importa a interface Category do arquivo de tipos
+import { getCategories } from '../services/api';
+import { Category } from '../types';
 import { useSearch } from '../hooks/useSearch';
 import { SearchResults } from './SearchResults';
 import { useProducts } from '../contexts/ProductContext';
@@ -22,13 +22,13 @@ export const Navbar: React.FC = () => {
   const [brands, setBrands] = useState<string[]>([]);
   const navigate = useNavigate();
 
-  const { products } = useProducts(); // Acesso aos produtos completos do ProductContext
+  const { products } = useProducts();
 
-  const { 
-    searchQuery, 
-    setSearchQuery, 
-    searchResults, 
-    isSearching 
+  const {
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    isSearching
   } = useSearch();
 
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -36,7 +36,7 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const data = await getCategories(); // Assume que getCategories retorna Category[]
+        const data = await getCategories();
         setCategories(data);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -48,11 +48,10 @@ export const Navbar: React.FC = () => {
 
   useEffect(() => {
     if (products.length) {
-      // Usa os produtos já processados do ProductContext para extrair as marcas
       const uniqueBrands = Array.from(new Set(products.map(p => p.brand))).sort();
       setBrands(uniqueBrands);
     }
-  }, [products]); // Depende de 'products' do ProductContext
+  }, [products]);
 
   const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -64,8 +63,7 @@ export const Navbar: React.FC = () => {
   const handleSearchInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchQuery(value);
-    // Mostra resultados apenas se houver query e se não estiver vazio
-    setShowSearchResults(value.trim().length > 0); 
+    setShowSearchResults(value.trim().length > 0);
   }, [setSearchQuery]);
 
   const handleSearchResultClick = useCallback(() => {
@@ -76,7 +74,6 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // Certifique-se de que o clique não é dentro do input de busca ou dos resultados
       if (!target.closest('.search-container')) {
         setShowSearchResults(false);
       }
@@ -99,9 +96,9 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img 
+            <img
               src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png"
-              alt="D'Pazz Imports" // Atualizado para D'Pazz Imports
+              alt="D'Pazz Imports"
               className="h-12"
             />
           </Link>
@@ -112,7 +109,7 @@ export const Navbar: React.FC = () => {
               Início
             </Link>
             {categories.slice(0, 4).map(category => (
-              <Link 
+              <Link
                 key={category.id}
                 to={`/categoria/${category.id}`}
                 className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors"
@@ -120,6 +117,10 @@ export const Navbar: React.FC = () => {
                 {category.name}
               </Link>
             ))}
+            {/* Novo link para Novidades */}
+            <Link to="/novidades" className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors flex items-center gap-1">
+              <Sparkles size={18} className="text-primary" /> Novidades
+            </Link>
 
             {/* Dropdown Marcas */}
             <div className="relative group">
@@ -153,17 +154,17 @@ export const Navbar: React.FC = () => {
                 />
                 <Search size={18} className="absolute left-3 top-2.5 text-gray-400" />
               </form>
-              
+
               {showSearchResults && (
-                <SearchResults 
-                  results={searchResults} 
-                  onClose={handleSearchResultClick} 
+                <SearchResults
+                  results={searchResults}
+                  onClose={handleSearchResultClick}
                 />
               )}
             </div>
 
-            <Link 
-              to="/favoritos" 
+            <Link
+              to="/favoritos"
               className="relative p-2 rounded-full hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
             >
               <Heart size={24} className="text-dark dark:text-white" />
@@ -180,7 +181,7 @@ export const Navbar: React.FC = () => {
                   <User size={24} className="text-dark dark:text-white" />
                 </button>
               ) : (
-                <Link 
+                <Link
                   to="/login"
                   className="flex items-center gap-2 p-2 rounded-full hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
                 >
@@ -188,7 +189,7 @@ export const Navbar: React.FC = () => {
                   <span className="text-sm font-medium text-dark dark:text-white">Entrar</span>
                 </Link>
               )}
-              
+
               {isAuthenticated && (
                 <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-dark-lighter shadow-lg rounded-lg overflow-hidden hidden group-hover:block border border-gray-200 dark:border-gray-700">
                   <div className="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -198,26 +199,25 @@ export const Navbar: React.FC = () => {
                         <p className="text-sm font-medium text-dark dark:text-white">
                           {isAdmin ? 'Admin' : 'Cliente'}
                         </p>
-                        {/* Adapte para mostrar o email do usuário logado se disponível */}
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {isAdmin ? 'admin@example.com' : 'customer@example.com'} 
+                          {isAdmin ? 'admin@example.com' : 'customer@example.com'}
                         </p>
                       </div>
                     </div>
                   </div>
-                  
-                  <Link 
+
+                  <Link
                     to={isAdmin ? '/admin/dashboard' : '/cliente/painel'}
                     className="flex items-center gap-2 px-4 py-2 text-sm text-dark dark:text-white hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
-                    onClick={() => setIsMenuOpen(false)} // Fecha o menu ao clicar
+                    onClick={() => setIsMenuOpen(false)}
                   >
                     {isAdmin ? 'Dashboard Admin' : 'Minha Conta'}
                   </Link>
-                  
-                  <button 
+
+                  <button
                     onClick={() => {
                       logout();
-                      setIsMenuOpen(false); // Fecha o menu ao fazer logout
+                      setIsMenuOpen(false);
                     }}
                     className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-error hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
                   >
@@ -228,8 +228,8 @@ export const Navbar: React.FC = () => {
               )}
             </div>
 
-            <Link 
-              to="/carrinho" 
+            <Link
+              to="/carrinho"
               className="relative p-2 rounded-full hover:bg-light-darker dark:hover:bg-dark-light transition-colors"
             >
               <ShoppingCart size={24} className="text-dark dark:text-white" />
@@ -259,7 +259,7 @@ export const Navbar: React.FC = () => {
                 <LogIn size={24} className="text-dark dark:text-white" />
               </Link>
             )}
-            
+
             <Link to="/carrinho" className="relative p-2">
               <ShoppingCart size={24} className="text-dark dark:text-white" />
               {cartItemCount > 0 && (
@@ -268,8 +268,8 @@ export const Navbar: React.FC = () => {
                 </span>
               )}
             </Link>
-            
-            <button 
+
+            <button
               onClick={toggleMenu}
               className="p-2 rounded-lg bg-light-darker dark:bg-dark-lighter"
               aria-label="Menu"
@@ -306,19 +306,19 @@ export const Navbar: React.FC = () => {
                   />
                   <Search size={18} className="absolute left-3 top-2.5 text-gray-400" />
                 </form>
-                
+
                 {showSearchResults && (
                   <div className="absolute top-full left-0 right-0 mt-2 z-50">
-                    <SearchResults 
-                      results={searchResults} 
-                      onClose={handleSearchResultClick} 
+                    <SearchResults
+                      results={searchResults}
+                      onClose={handleSearchResultClick}
                     />
                   </div>
                 )}
               </div>
 
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -326,7 +326,7 @@ export const Navbar: React.FC = () => {
               </Link>
 
               {categories.map(category => (
-                <Link 
+                <Link
                   key={category.id}
                   to={`/categoria/${category.id}`}
                   className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors"
@@ -335,6 +335,14 @@ export const Navbar: React.FC = () => {
                   {category.name}
                 </Link>
               ))}
+              {/* Novo link para Novidades no menu mobile */}
+              <Link
+                to="/novidades"
+                className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors flex items-center gap-1"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Sparkles size={18} className="text-primary" /> Novidades
+              </Link>
 
               {/* Marcas no menu mobile */}
               {brands.length > 0 && (
@@ -355,17 +363,17 @@ export const Navbar: React.FC = () => {
 
               <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700">
                 <DarkModeToggle />
-                
+
                 {isAuthenticated ? (
                   <div className="flex space-x-4">
-                    <Link 
+                    <Link
                       to={isAdmin ? '/admin/dashboard' : '/cliente/painel'}
                       className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {isAdmin ? 'Admin' : 'Minha Conta'}
                     </Link>
-                    <button 
+                    <button
                       onClick={() => {
                         logout();
                         setIsMenuOpen(false);
@@ -376,7 +384,7 @@ export const Navbar: React.FC = () => {
                     </button>
                   </div>
                 ) : (
-                  <Link 
+                  <Link
                     to="/login"
                     className="text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors"
                     onClick={() => setIsMenuOpen(false)}

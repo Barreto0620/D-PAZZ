@@ -1,4 +1,5 @@
 // project/src/types/index.ts
+// Este arquivo não foi alterado funcionalmente, apenas revisado para consistência.
 
 // --- Interfaces para dados de produtos e categorias ---
 
@@ -35,7 +36,6 @@ export interface Product {
 
 // Interface para os DADOS BRUTOS como vêm do seu arquivo `products.json`
 // NOTA: 'categoryName' NÃO existe aqui, será adicionado pelo ProductContext
-// NOTA: 'featured' no produto pode ter sido removido do seu JSON, ajustei aqui.
 export interface ProductDataFromJson {
   id: number;
   name: string;
@@ -45,7 +45,7 @@ export interface ProductDataFromJson {
   category: number; // No JSON, a categoria é geralmente um ID
   brand: string;
   images: string[];
-  featured: boolean; // Confirmar se 'featured' ainda existe nos dados brutos do produto ou se foi removido
+  featured: boolean;
   onSale: boolean;
   bestSeller: boolean;
   stock: number;

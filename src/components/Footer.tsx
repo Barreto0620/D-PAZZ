@@ -1,4 +1,5 @@
-  import React from 'react';
+// project/src/components/Footer.tsx
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from 'lucide-react';
 
@@ -10,14 +11,14 @@ export const Footer: React.FC = () => {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center">
-              <img 
-                src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png" 
-                alt="MPZ Imports"
+              <img
+                src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png"
+                alt="D'Pazz Imports" // Atualizado para D'Pazz Imports
                 className="h-12"
               />
             </div>
             <p className="text-gray-600 dark:text-gray-300 text-sm">
-              A MPZ Imports é especializada em produtos importados de alta qualidade, 
+              A D'Pazz Imports é especializada em produtos importados de alta qualidade,
               trazendo o melhor do mundo diretamente para sua casa.
             </p>
             <div className="flex space-x-4">
@@ -39,34 +40,25 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li>
                 <Link to="/categoria/1" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Eletrônicos
+                  Tênis Esportivos
                 </Link>
               </li>
               <li>
                 <Link to="/categoria/2" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Roupas
+                  Tênis Casuais
                 </Link>
               </li>
               <li>
                 <Link to="/categoria/3" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Acessórios
+                  Tênis Infantis
                 </Link>
               </li>
               <li>
                 <Link to="/categoria/4" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Casa & Decoração
+                  Lançamentos & Exclusivos
                 </Link>
               </li>
-              <li>
-                <Link to="/categoria/5" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Beleza
-                </Link>
-              </li>
-              <li>
-                <Link to="/categoria/6" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Esportes
-                </Link>
-              </li>
+              {/* Removi as categorias genéricas e adicionei as específicas de tênis */}
             </ul>
           </div>
 
@@ -77,6 +69,16 @@ export const Footer: React.FC = () => {
               <li>
                 <Link to="/" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
                   Página Inicial
+                </Link>
+              </li>
+              <li>
+                <Link to="/novidades" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                  Novidades
+                </Link>
+              </li>
+              <li>
+                <Link to="/contato" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                  Contato
                 </Link>
               </li>
               <li>
@@ -99,11 +101,6 @@ export const Footer: React.FC = () => {
                   FAQ
                 </a>
               </li>
-              <li>
-                <a href="#" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Contato
-                </a>
-              </li>
             </ul>
           </div>
 
@@ -123,7 +120,7 @@ export const Footer: React.FC = () => {
               </li>
               <li className="flex items-center space-x-3">
                 <Mail size={20} className="text-primary" />
-                <span className="text-gray-600 dark:text-gray-300">contato@mpzimports.com.br</span>
+                <span className="text-gray-600 dark:text-gray-300">contato@dpazzimports.com.br</span> {/* Atualizado o email */}
               </li>
             </ul>
           </div>
@@ -131,7 +128,7 @@ export const Footer: React.FC = () => {
 
         <div className="border-t border-gray-200 dark:border-gray-700 mt-8 pt-6 text-center">
           <p className="text-gray-600 dark:text-gray-400 text-sm">
-            &copy; {new Date().getFullYear()} MPZ Imports. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} D'Pazz Imports. Todos os direitos reservados. {/* Atualizado o nome da empresa */}
           </p>
         </div>
       </div>
