@@ -1,4 +1,4 @@
-// src/components/Navbar.tsx (ou onde seu header estiver)
+// src/components/Navbar.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Heart, Search, Menu, X, LogIn, User } from 'lucide-react';
@@ -123,22 +123,6 @@ export const Navbar: React.FC = () => {
 
     return (
         <>
-            <style jsx>{`
-                @keyframes dpazz-glow {
-                    0% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                    100% { background-position: 0% 50%; }
-                }
-
-                .cart-badge-animated {
-                    background: linear-gradient(270deg, #D4AF37, #C9A96E, #CD853F, #DC8B7C, #B8566C, #8B7355, #6B8E5A, #A5B968);
-                    background-size: 1600% 1600%;
-                    animation: dpazz-glow 18s ease infinite;
-                    color: white !important;
-                    font-weight: bold;
-                }
-            `}</style>
-
             <header className="sticky top-0 z-50 bg-white/80 dark:bg-dark-lighter/80 backdrop-blur-lg shadow-sm border-b border-gray-200 dark:border-gray-700/50">
                 <div className="container mx-auto px-4">
                     <div className="flex items-center justify-between h-20">
@@ -269,7 +253,8 @@ export const Navbar: React.FC = () => {
                             >
                                 <ShoppingCart size={22} className="text-dark dark:text-white" />
                                 {cartItemCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center cart-badge-animated">
+                                    // Balão do carrinho AGORA VERDE para desktop
+                                    <span className="absolute -top-1 -right-1 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center bg-green-500 text-white animate-pulse">
                                         {cartItemCount}
                                     </span>
                                 )}
@@ -297,7 +282,8 @@ export const Navbar: React.FC = () => {
                             <Link to="/carrinho" className="relative p-2">
                                 <ShoppingCart size={22} className="text-dark dark:text-white" />
                                 {cartItemCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center cart-badge-animated">
+                                    // Balão do carrinho AGORA VERDE para mobile
+                                    <span className="absolute -top-1 -right-1 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center bg-green-500 text-white animate-pulse">
                                         {cartItemCount}
                                     </span>
                                 )}

@@ -1,3 +1,4 @@
+// project/src/components/DarkModeToggle.tsx
 import React from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext'; // Ensure this path is correct
