@@ -69,11 +69,6 @@ export const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4 text-dark dark:text-white">Informações</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/sobre" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Sobre Nós
-                </Link>
-              </li>
-              <li>
                 <Link to="/termos-de-servico" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
                   Termos de Serviço
                 </Link>
@@ -84,12 +79,7 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/trocas-e-devolucoes" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  Trocas e Devoluções
-                </Link>
-              </li>
-              <li>
-                <Link to="/faq" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                <Link to="/contato" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
                   FAQ
                 </Link>
               </li>

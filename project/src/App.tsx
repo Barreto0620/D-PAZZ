@@ -27,7 +27,9 @@ import { PurchaseHistoryPage } from './pages/PurchaseHistoryPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { BrandPage } from './pages/BrandPage';
 import { ContactPage } from './pages/ContactPage';
-import { NoveltiesPage } from './pages/NoveltiesPage'; // Importe a nova página
+import { NoveltiesPage } from './pages/NoveltiesPage';
+import { TermsOfServicePage } from './pages/TermsOfServicePage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 
 // Componente que engloba todos os providers para melhor organização
 const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -44,7 +46,6 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
 function App() {
   return (
-    // Adicionado future flags ao BrowserRouter para compatibilidade futura do React Router
     <AppProviders>
       <Router future={{ v7_startTransition: true, v7_normalizeSplatPaths: true }}>
         <Helmet>
@@ -70,7 +71,9 @@ function App() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/contato" element={<ContactPage />} />
-          <Route path="/novidades" element={<NoveltiesPage />} /> {/* Nova rota */}
+          <Route path="/novidades" element={<NoveltiesPage />} />
+          <Route path="/termos-de-servico" element={<TermsOfServicePage />} />
+          <Route path="/politica-de-privacidade" element={<PrivacyPolicyPage />} />
 
           {/* Rotas administrativas */}
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
