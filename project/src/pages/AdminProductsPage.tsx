@@ -1,7 +1,7 @@
 // project/src/pages/AdminProductsPage.tsx
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Plus, Search, Trash2, AlertTriangle } from 'lucide-react';
 import { AdminLayout } from '../components/Admin/AdminLayout';
 import { DataTable } from '../components/Admin/DataTable';

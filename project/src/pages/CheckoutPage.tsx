@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { useCart } from '../contexts/CartContext';

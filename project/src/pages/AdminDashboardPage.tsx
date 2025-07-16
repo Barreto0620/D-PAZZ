@@ -1,6 +1,6 @@
 // project/src/pages/AdminDashboardPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async'; // Certifique-se de que o Helmet está instalado
 import { Package, ShoppingCart, Users, TrendingUp } from 'lucide-react'; // Removido Plus, BarChart2
 import { AdminLayout } from '../components/Admin/AdminLayout';
 import { StatsCard } from '../components/Admin/StatsCard';

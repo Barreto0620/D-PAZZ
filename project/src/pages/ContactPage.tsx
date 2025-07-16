@@ -7,7 +7,7 @@ import { Navbar } from '../components/Navbar'; // ✅ Mantido: Seu Navbar
 // ✅ REMOVIDO: A importação do Footer que causou o erro.
 import { ContactForm } from '../components/ContactForm';
 import { useTheme } from '../contexts/ThemeContext';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async'; // Importando Helmet para SEO
 
 // Componente para um item de informação de contato (sem alterações)
 const ContactInfoItem: React.FC<{

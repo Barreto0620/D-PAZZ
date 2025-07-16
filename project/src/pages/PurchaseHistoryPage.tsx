@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { CustomerLayout } from '../components/Customer/CustomerLayout';
 import { useProtectedRoute } from '../hooks/useProtectedRoute';
 import { Package, Truck, CheckCircle, Eye, Download, Calendar } from 'lucide-react';

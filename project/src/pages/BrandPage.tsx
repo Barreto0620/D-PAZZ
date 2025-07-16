@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom';
 import { useProducts } from '../contexts/ProductContext';
 import { Product } from '../types';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { SectionTitle } from '../components/SectionTitle';

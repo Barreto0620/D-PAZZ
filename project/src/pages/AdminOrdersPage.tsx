@@ -1,6 +1,6 @@
 // project/src/pages/AdminOrdersPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { AdminLayout } from '../components/Admin/AdminLayout';
 import { useProtectedRoute } from '../hooks/useProtectedRoute';
 import { Toast } from '../components/Toast';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { ProductCard } from '../components/ProductCard'; // Assuming ProductCard is well-designed

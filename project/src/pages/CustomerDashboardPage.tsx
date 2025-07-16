@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { ShoppingBag, Heart, User, Save, X, Edit3, Calendar, TrendingUp } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProtectedRoute } from '../hooks/useProtectedRoute';

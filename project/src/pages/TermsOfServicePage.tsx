@@ -1,6 +1,6 @@
 // src/pages/TermsOfServicePage.tsx
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Navbar } from '../components/Navbar';
 
 export const TermsOfServicePage: React.FC = () => {

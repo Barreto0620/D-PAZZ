@@ -1,6 +1,6 @@
 // project/src/pages/AdminCustomersPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Search, Trash2, XCircle, AlertTriangle, Eye } from 'lucide-react'; // Adicionado Eye para o estado vazio
 import { AdminLayout } from '../components/Admin/AdminLayout';
 import { useProtectedRoute } from '../hooks/useProtectedRoute';

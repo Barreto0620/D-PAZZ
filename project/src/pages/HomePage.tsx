@@ -1,6 +1,6 @@
 // pages/index.tsx
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { Banner } from '../components/Banner'; // ESTE É O SEU BANNER ORIGINAL NO TOPO
