@@ -1,159 +1,139 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '../types';
+import { supabase } from '../lib/supabase'; // ✅ 1. Importa o cliente Supabase que você já configurou
+import { Session, User } from '@supabase/supabase-js';
+import { Profile } from '../types'; // Supondo que você tenha um tipo Profile em types.ts
 
+// ✅ 2. A interface agora reflete os dados reais do Supabase e do seu perfil
 type AuthContextType = {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (data: { 
-    email: string;
-    password: string;
-    confirmPassword: string;
-    name: string;
-    cpf: string;
-    phone: string;
-  }) => Promise<boolean>;
-  logout: () => void;
+  profile: Profile | null;
+  session: Session | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  loading: boolean;
+  login: (email, password) => Promise<any>;
+  register: (formData) => Promise<any>;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// For demo purposes only - in a real app, this would be handled securely on the server
-const ADMIN_CREDENTIALS = {
-  email: 'admin@example.com',
-  password: 'admin123'
-};
-
-const DEMO_USERS = [
-  {
-    id: '1',
-    email: 'customer@example.com',
-    password: 'customer123',
-    username: 'customer',
-    isAdmin: false,
-    name: 'João Silva',
-    cpf: '123.456.789-00',
-    phone: '(11) 98765-4321',
-    address: 'Rua das Flores, 123 - São Paulo, SP'
-  }
-];
-
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [users, setUsers] = useState(DEMO_USERS);
-  
-  useEffect(() => {
-    // Check for saved user on mount
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (error) {
-        console.error('Error parsing saved user:', error);
-        localStorage.removeItem('user');
-      }
-    }
-  }, []);
+    const [user, setUser] = useState<User | null>(null);
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [session, setSession] = useState<Session | null>(null);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    // Simulating API call delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // ✅ 3. Gerenciamento de sessão automático com o Supabase
+    useEffect(() => {
+        // Pega a sessão ativa quando o app carrega
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session);
+            setUser(session?.user ?? null);
+            setLoading(false);
+        });
 
-    // First check if it's an admin login
-    if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
-      const adminUser: User = {
-        id: 'admin',
-        username: 'admin',
-        email: ADMIN_CREDENTIALS.email,
-        isAdmin: true
-      };
-      setUser(adminUser);
-      localStorage.setItem('user', JSON.stringify(adminUser));
-      return true;
-    }
+        // Ouve por qualquer mudança no estado de autenticação (LOGIN, LOGOUT, etc)
+        const { data: authListener } = supabase.auth.onAuthStateChange(
+            async (_event, session) => {
+                setSession(session);
+                setUser(session?.user ?? null);
+                setLoading(false);
+            }
+        );
 
-    // If not admin, check for customer login
-    const customer = users.find(u => u.email === email && u.password === password);
-    if (customer) {
-      const { password: _, ...customerData } = customer;
-      setUser(customerData);
-      localStorage.setItem('user', JSON.stringify(customerData));
-      return true;
-    }
+        // Limpa o listener quando o componente é desmontado
+        return () => {
+            authListener.subscription.unsubscribe();
+        };
+    }, []);
 
-    return false;
-  };
+    // ✅ 4. Busca o perfil do usuário na sua tabela 'perfis' sempre que o usuário logar
+    useEffect(() => {
+        if (user) {
+            supabase
+                .from('perfis') // Busca na sua tabela em português
+                .select('*')
+                .eq('id', user.id)
+                .single()
+                .then(({ data, error }) => {
+                    if (error) {
+                        console.error("Erro ao buscar perfil do usuário:", error);
+                    }
+                    if (data) {
+                        setProfile(data);
+                        // Define se é admin baseado na coluna 'funcao' da sua tabela
+                        setIsAdmin(data.funcao === 'admin'); 
+                    }
+                });
+        } else {
+            // Limpa o perfil se o usuário deslogar
+            setProfile(null);
+            setIsAdmin(false);
+        }
+    }, [user]);
 
-  const register = async (data: { 
-    email: string;
-    password: string;
-    confirmPassword: string;
-    name: string;
-    cpf: string;
-    phone: string;
-  }): Promise<boolean> => {
-    // Simulating API call delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Check if email already exists
-    if (users.some(u => u.email === data.email)) {
-      return false;
-    }
-
-    // Check if passwords match
-    if (data.password !== data.confirmPassword) {
-      throw new Error('As senhas não coincidem');
-    }
-
-    // Create new user
-    const newUser = {
-      id: String(users.length + 1),
-      email: data.email,
-      password: data.password,
-      username: data.email.split('@')[0],
-      name: data.name,
-      cpf: data.cpf,
-      phone: data.phone,
-      isAdmin: false
+    // ✅ 5. Função de REGISTRO real com Supabase
+    const register = async (formData) => {
+        const { email, password, nome_completo, cpf, telefone } = formData;
+        
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                // Estes dados são passados para o gatilho SQL que cria o perfil
+                data: {
+                    nome_completo: nome_completo,
+                    cpf: cpf,
+                    telefone: telefone,
+                },
+            },
+        });
+        if (error) throw error;
+        return data;
     };
 
-    // Add to users array
-    setUsers(prev => [...prev, newUser]);
+    // ✅ 6. Função de LOGIN real com Supabase
+    const login = async (email, password) => {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+        if (error) throw error;
+        return data;
+    };
 
-    // Log in the new user
-    const { password: _, ...userData } = newUser;
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    // ✅ 7. Função de LOGOUT real com Supabase
+    const logout = async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+    };
 
-    return true;
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-  };
-
-  return (
-    <AuthContext.Provider 
-      value={{ 
-        user, 
-        login, 
-        register,
-        logout, 
+    const value = {
+        user,
+        profile,
+        session,
         isAuthenticated: !!user,
-        isAdmin: user?.isAdmin || false
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+        isAdmin,
+        loading,
+        login,
+        register,
+        logout,
+    };
+
+    // Mostra um loading enquanto a sessão inicial é verificada
+    if (loading) {
+        return <div>Carregando sessão...</div>
+    }
+
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
 };
