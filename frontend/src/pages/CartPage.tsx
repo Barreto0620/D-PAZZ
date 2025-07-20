@@ -32,20 +32,7 @@ export const CartPage: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-              <ShoppingBag size={20} className="text-dark" />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Carrinho de Compras
-            </h1>
-          </div>
-          <p className="text-gray-600 dark:text-gray-300">
-            {cartItems.length > 0 
-              ? `${cartItems.reduce((total, item) => total + item.quantity, 0)} ${cartItems.reduce((total, item) => total + item.quantity, 0) === 1 ? 'item' : 'itens'} no seu carrinho`
-              : 'Seu carrinho está vazio'
-            }
-          </p>
+        
         </motion.div>
         
         {cartItems.length > 0 ? (
