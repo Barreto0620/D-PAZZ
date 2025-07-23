@@ -1,61 +1,65 @@
+// pages/CategoryPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { ProductCard } from '../components/ProductCard';
-import { getProductsByCategory, getCategoryById } from '../services/api';
+// REMOVIDO: import { getProductsByCategory, getCategoryById } from '../services/api';
+// ADICIONADO: Import do hook useProducts
+import { useProducts } from '../contexts/ProductContext';
 import { Product, Category } from '../types';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const CategoryPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const categoryId = id ? parseInt(id) : 1;
+  const categoryId = id ? parseInt(id) : undefined; // Use undefined se não houver id, para evitar buscar categoria com ID 1 sempre
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [category, setCategory] = useState<Category | null>(null);
-  const [loading, setLoading] = useState(true);
+  // ADICIONADO: Use o hook useProducts
+  const { categories, products, loading: productsContextLoading, getProductsByCategory, getProductById } = useProducts();
+
+  const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
+  const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true); // Estado de carregamento local
   const [sortOption, setSortOption] = useState<string>('default');
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [categoryData, productsData] = await Promise.all([
-          getCategoryById(categoryId),
-          getProductsByCategory(categoryId)
-        ]);
-        
-        setCategory(categoryData);
-        setProducts(productsData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
+    // Apenas carrega os dados quando o ProductContext tiver terminado de carregar
+    if (!productsContextLoading) {
+      if (categoryId) {
+        // Encontra a categoria pelo ID
+        const foundCategory = categories.find(cat => cat.id === categoryId);
+        setCurrentCategory(foundCategory || null);
+
+        // Obtém os produtos para esta categoria usando a função do contexto
+        setCategoryProducts(getProductsByCategory(categoryId));
+      } else {
+        setCurrentCategory(null); // Nenhuma categoria ID fornecida
+        setCategoryProducts([]);
       }
-    };
+      setLoading(false); // Terminou de carregar os dados específicos da página
+    }
+  }, [categoryId, productsContextLoading, categories, getProductsByCategory]); // Adicione as dependências necessárias
 
-    fetchData();
-  }, [categoryId]);
+  const sortProducts = (productsToSort: Product[]): Product[] => {
+    const sortedProducts = [...productsToSort];
 
-  const sortProducts = (products: Product[]): Product[] => {
-    const sortedProducts = [...products];
-    
     switch (sortOption) {
       case 'price-asc':
         return sortedProducts.sort((a, b) => a.price - b.price);
       case 'price-desc':
         return sortedProducts.sort((a, b) => b.price - a.price);
       case 'bestseller':
+        // A lógica de ordenação por mais vendido já está no contexto, mas aqui ordenamos localmente
         return sortedProducts.sort((a, b) => (b.bestSeller ? 1 : 0) - (a.bestSeller ? 1 : 0));
       default:
         return sortedProducts;
     }
   };
 
-  const sortedProducts = sortProducts(products);
+  const sortedProducts = sortProducts(categoryProducts); // Usa os produtos da categoria carregados
 
   const getSortOptionLabel = (option: string): string => {
     switch (option) {
@@ -73,45 +77,45 @@ export const CategoryPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-light dark:bg-dark">
       <Helmet>
-        <title>{category ? `${category.name} - ImportShop` : 'Categoria - ImportShop'}</title>
-        <meta 
-          name="description" 
-          content={category?.description || 'Navegue por nossa categoria de produtos importados de alta qualidade.'} 
+        <title>{currentCategory ? `${currentCategory.name} - D'Pazz Imports` : 'Categoria - D\'Pazz Imports'}</title>
+        <meta
+          name="description"
+          content={currentCategory?.description || 'Navegue por nossa categoria de produtos importados de alta qualidade.'}
         />
       </Helmet>
-      
+
       <Navbar />
-      
+
       <main className="container mx-auto px-4 py-6">
         {/* Category Header */}
         <section className="mb-8">
           {loading ? (
             <div className="h-40 bg-light-darker dark:bg-dark-lighter rounded-2xl animate-pulse" />
-          ) : category ? (
-            <div 
+          ) : currentCategory ? (
+            <div
               className="h-40 rounded-2xl overflow-hidden relative"
             >
-              <div 
+              <div
                 className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${category.image})` }}
+                style={{ backgroundImage: `url(${currentCategory.image})` }}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
-              
+
               <div className="absolute inset-0 flex flex-col justify-center px-8">
-                <motion.h1 
+                <motion.h1
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="text-3xl md:text-4xl font-bold text-white mb-2"
                 >
-                  {category.name}
+                  {currentCategory.name}
                 </motion.h1>
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                   className="text-white/80 max-w-xl"
                 >
-                  {category.description}
+                  {currentCategory.description}
                 </motion.p>
               </div>
             </div>
@@ -123,7 +127,7 @@ export const CategoryPage: React.FC = () => {
             </div>
           )}
         </section>
-        
+
         {/* Sort and Filter */}
         <section className="mb-6 flex justify-between items-center">
           <div className="text-dark dark:text-white">
@@ -131,7 +135,7 @@ export const CategoryPage: React.FC = () => {
               <span>{sortedProducts.length} produtos encontrados</span>
             )}
           </div>
-          
+
           <div className="relative">
             <button
               onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
@@ -140,7 +144,7 @@ export const CategoryPage: React.FC = () => {
               {getSortOptionLabel(sortOption)}
               <ChevronDown size={18} className={`transition-transform ${isSortMenuOpen ? 'rotate-180' : ''}`} />
             </button>
-            
+
             <AnimatePresence>
               {isSortMenuOpen && (
                 <motion.div
@@ -190,20 +194,20 @@ export const CategoryPage: React.FC = () => {
             </AnimatePresence>
           </div>
         </section>
-        
+
         {/* Products Grid */}
         <section className="mb-8">
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {[...Array(8)].map((_, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="bg-light-darker dark:bg-dark-lighter rounded-2xl animate-pulse h-80"
                 />
               ))}
             </div>
           ) : sortedProducts.length > 0 ? (
-            <motion.div 
+            <motion.div
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
               initial="hidden"
               animate="visible"
@@ -218,7 +222,7 @@ export const CategoryPage: React.FC = () => {
               }}
             >
               {sortedProducts.map(product => (
-                <motion.div 
+                <motion.div
                   key={product.id}
                   variants={{
                     hidden: { opacity: 0, y: 20 },
@@ -241,8 +245,9 @@ export const CategoryPage: React.FC = () => {
             </div>
           )}
         </section>
+
       </main>
-      
+
       <Footer />
     </div>
   );

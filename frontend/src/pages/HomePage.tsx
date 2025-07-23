@@ -6,9 +6,7 @@ import { Footer } from '../components/Footer';
 import { Banner } from '../components/Banner';
 import { CategoryCard } from '../components/CategoryCard';
 import { ProductCard } from '../components/ProductCard';
-// REMOVIDO: import { getFeaturedCategories, getOnSaleProducts, getBestSellerProducts } from '../services/api';
-// ADICIONADO: Import do hook useProducts
-import { useProducts } from '../contexts/ProductContext';
+import { useProducts } from '../contexts/ProductContext'; // Import do hook useProducts
 import { Category, Product } from '../types'; // Mantenha a importação de tipos
 import { motion } from 'framer-motion';
 import { Sparkles, TrendingUp, Star, ShoppingBag, Flame, Trophy } from 'lucide-react';
@@ -21,23 +19,20 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 export const HomePage: React.FC = () => {
-  // ADICIONADO: Use o hook useProducts para acessar os dados e funções
   const {
     categories, // As categorias agora vêm do contexto
-    loading: productsContextLoading, // Renomeado para evitar conflito com o 'loading' local
+    loading: productsContextLoading,
     getFeaturedProducts,
     getBestSellers,
     getOnSaleProducts,
     getNoveltiesProducts,
   } = useProducts();
 
-  // Estados locais para os carrosséis da Home, agora populados pelo contexto
   const [homeFeaturedCategories, setHomeFeaturedCategories] = useState<Category[]>([]);
   const [homeOnSaleProducts, setHomeOnSaleProducts] = useState<Product[]>([]);
   const [homeBestSellerProducts, setHomeBestSellerProducts] = useState<Product[]>([]);
   const [homeNoveltiesProducts, setHomeNoveltiesProducts] = useState<Product[]>([]);
 
-  // Atualizado para usar o loading do ProductContext
   const [loading, setLoading] = useState({
     categories: true,
     onSale: true,
@@ -56,10 +51,8 @@ export const HomePage: React.FC = () => {
   };
 
   useEffect(() => {
-    // Agora, o ProductContext já carrega os dados.
-    // Basta pegar os dados filtrados pelas funções do contexto.
     if (!productsContextLoading) {
-      // Categorias em destaque: filtro 'featured' do ProductContext.categories
+      // Categorias em destaque
       const filteredFeaturedCategories = categories.filter(cat => cat.featured);
       setHomeFeaturedCategories(filteredFeaturedCategories);
       setLoading(prev => ({ ...prev, categories: false }));
@@ -339,7 +332,6 @@ export const HomePage: React.FC = () => {
             )}
           </section>
 
-          {/* NOVO: Seção para Produtos de Novidades */}
           <section className="mb-20">
             <SectionTitle
               icon={TrendingUp}
