@@ -9,7 +9,7 @@ type AuthContextType = {
   session: Session | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
-  loading: boolean; // Loading inicial da sessão
+  loading: boolean;
   loadingProfile: boolean; // ADICIONADO: Loading específico para o perfil
   login: (email, password) => Promise<any>;
   register: (formData) => Promise<any>;

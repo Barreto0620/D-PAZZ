@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../contexts/AuthContext';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { CustomerLayout } from '../components/Customer/CustomerLayout';
+// ✅ CORREÇÃO: Ícone 'Edit3' trocado para 'Edit' que está importado
 import { User, Edit, X, Save, Loader, Heart, ShoppingBag, Calendar, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Toast } from '../components/Toast';
