@@ -1,9 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../contexts/AuthContext';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { CustomerLayout } from '../components/Customer/CustomerLayout';
-// ✅ CORREÇÃO: Ícone 'Edit3' trocado para 'Edit' que está importado
 import { User, Edit, X, Save, Loader, Heart, ShoppingBag, Calendar, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Toast } from '../components/Toast';
@@ -142,20 +142,106 @@ export const CustomerDashboardPage: React.FC = () => {
                                     </>
                                 ) : (
                                     <>
-                                        {/* Campos do Formulário de Edição */}
-                                        <div><label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Nome Completo</label><input type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full p-4 rounded-xl border-2 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:border-blue-900"/></div>
-                                        <div><label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Email</label><input type="email" name="email" value={formData.email} disabled className="w-full p-4 rounded-xl border-2 dark:border-gray-700 bg-gray-100 dark:bg-dark text-gray-500 cursor-not-allowed"/></div>
-                                        <div><label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">CPF</label><input type="text" name="cpf" value={formData.cpf} onChange={handleInputChange} className="w-full p-4 rounded-xl border-2 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:border-blue-900"/></div>
-                                        <div><label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Telefone</label><input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full p-4 rounded-xl border-2 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:border-blue-900"/></div>
-                                        <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Endereço</label><input type="text" name="address" value={formData.address} onChange={handleInputChange} className="w-full p-4 rounded-xl border-2 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:border-blue-900"/></div>
+                                        {/* Campo Nome - EDITÁVEL */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                                                Nome Completo
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                name="name" 
+                                                value={formData.name} 
+                                                onChange={handleInputChange} 
+                                                className="w-full p-4 rounded-xl border-2 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:border-blue-900 transition-colors"
+                                            />
+                                        </div>
+
+                                        {/* Campo Email - DESABILITADO */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                                                Email
+                                            </label>
+                                            <input 
+                                                type="email" 
+                                                name="email" 
+                                                value={formData.email} 
+                                                disabled 
+                                                className="w-full p-4 rounded-xl border-2 border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                                            />
+                                        </div>
+
+                                        {/* Campo CPF - DESABILITADO */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                                                CPF
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                name="cpf" 
+                                                value={formData.cpf} 
+                                                disabled 
+                                                className="w-full p-4 rounded-xl border-2 border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                                            />
+                                        </div>
+
+                                        {/* Campo Telefone - DESABILITADO */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                                                Telefone
+                                            </label>
+                                            <input 
+                                                type="tel" 
+                                                name="phone" 
+                                                value={formData.phone} 
+                                                disabled 
+                                                className="w-full p-4 rounded-xl border-2 border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                                            />
+                                        </div>
+
+                                        {/* Campo Endereço - EDITÁVEL */}
+                                        <div className="md:col-span-2">
+                                            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                                                Endereço
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                name="address" 
+                                                value={formData.address} 
+                                                onChange={handleInputChange} 
+                                                className="w-full p-4 rounded-xl border-2 dark:border-gray-700 bg-white dark:bg-dark-light text-dark dark:text-white focus:outline-none focus:border-blue-900 transition-colors"
+                                            />
+                                        </div>
                                     </>
                                 )}
                             </div>
                             
                             {isEditing && (
                                 <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                                    <button type="button" onClick={() => setIsEditing(false)} className="group flex items-center space-x-2 px-6 py-3 border-2 border-red-600 text-red-700 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20"><X size={18} /><span>Cancelar</span></button>
-                                    <button type="submit" disabled={isSaving} className="group flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-700 to-green-600 text-white rounded-xl shadow-lg">{isSaving ? <><Loader size={18} className="animate-spin" /><span>Salvando...</span></> : <><Save size={18} /><span>Salvar</span></>}</button>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setIsEditing(false)} 
+                                        className="group flex items-center space-x-2 px-6 py-3 border-2 border-red-600 text-red-700 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                    >
+                                        <X size={18} />
+                                        <span>Cancelar</span>
+                                    </button>
+                                    <button 
+                                        type="submit" 
+                                        disabled={isSaving} 
+                                        className="group flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-700 to-green-600 text-white rounded-xl shadow-lg hover:from-green-600 hover:to-green-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+                                    >
+                                        {isSaving ? (
+                                            <>
+                                                <Loader size={18} className="animate-spin" />
+                                                <span>Salvando...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Save size={18} />
+                                                <span>Salvar</span>
+                                            </>
+                                        )}
+                                    </button>
                                 </div>
                             )}
                         </form>
@@ -163,7 +249,13 @@ export const CustomerDashboardPage: React.FC = () => {
                 </div>
             </CustomerLayout>
 
-            {showToast && (<Toast message="Informações atualizadas com sucesso!" type="success" onClose={() => setShowToast(false)} />)}
+            {showToast && (
+                <Toast 
+                    message="Informações atualizadas com sucesso!" 
+                    type="success" 
+                    onClose={() => setShowToast(false)} 
+                />
+            )}
         </>
     );
 };
