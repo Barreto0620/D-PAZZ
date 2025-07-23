@@ -146,12 +146,6 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
           <p className="text-sm text-gray-200 mt-1 drop-shadow">
             {category.description}
           </p>
-          {/* Debug info para ver a URL em desenvolvimento */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="text-xs text-yellow-300 mt-1 truncate">
-              URL: {imageUrl || 'No URL found'}
-            </div>
-          )}
         </div>
       </Link>
     </motion.div>
