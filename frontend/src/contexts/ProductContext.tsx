@@ -1,6 +1,7 @@
 // project/src/contexts/ProductContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Product, Category, ProductsJsonData } from '../types';
+import { Product, Category } from '../types';
+import { supabase } from '../lib/supabase'; // Caminho de importação CONFIRMADO com sua estrutura
 
 interface ProductContextData {
   products: Product[];
@@ -14,7 +15,7 @@ interface ProductContextData {
   getOnSaleProducts: () => Product[];
   getAllBrands: () => string[];
   searchProducts: (query: string) => Product[];
-  getNoveltiesProducts: () => Product[]; // Nova função para novidades
+  getNoveltiesProducts: () => Product[];
 }
 
 const ProductContext = createContext<ProductContextData | undefined>(undefined);
@@ -29,22 +30,61 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
       try {
         setLoading(true);
 
-        const module = await import('../data/products.json');
-        const data: ProductsJsonData = module.default;
+        // 1. Buscar categorias do Supabase
+        const { data: categoriesData, error: categoriesError } = await supabase
+          .from('categorias') // Nome da sua tabela de categorias no Supabase
+          .select('*');
+
+        if (categoriesError) {
+          throw categoriesError;
+        }
+
+        const fetchedCategories: Category[] = categoriesData.map((cat: any) => ({
+          id: cat.id,
+          name: cat.nome,
+          image: cat.imagem_url || '',
+          featured: cat.em_destaque || false,
+          slug: cat.slug || ''
+        }));
+        setCategories(fetchedCategories);
 
         const categoryMap = new Map<number, string>();
-        data.categories.forEach(cat => categoryMap.set(cat.id, cat.name));
+        fetchedCategories.forEach(cat => categoryMap.set(cat.id, cat.name));
 
-        const convertedProducts: Product[] = data.products.map(productData => ({
-          ...productData,
-          categoryName: categoryMap.get(productData.category) || 'Desconhecida',
-          images: productData.images && Array.isArray(productData.images) ? productData.images : [],
+        // 2. Buscar produtos do Supabase
+        const { data: productsData, error: productsError } = await supabase
+          .from('produtos') // Nome da sua tabela de produtos no Supabase
+          .select('*');
+
+        if (productsError) {
+          throw productsError;
+        }
+
+        // Mapear os dados do Supabase para a interface Product
+        const convertedProducts: Product[] = productsData.map((productData: any) => ({
+          id: productData.id,
+          name: productData.nome,
+          description: productData.descricao || '',
+          price: parseFloat(productData.preco),
+          oldPrice: productData.preco_antigo ? parseFloat(productData.preco_antigo) : undefined,
+          category: productData.categoria_id,
+          categoryName: categoryMap.get(productData.categoria_id) || 'Desconhecida',
+          brand: productData.marca_id || 'Sem Marca', // Se marca_id for UUID, você pode precisar de um join ou outra lógica
+          images: productData.imagens && Array.isArray(productData.imagens) ? productData.imagens : [],
+          featured: productData.em_destaque || false,
+          onSale: productData.em_promocao || false,
+          bestSeller: productData.mais_vendido || false,
+          stock: productData.estoque || 0,
+          rating: parseFloat(productData.avaliacao) || 0,
+          reviewCount: productData.numero_avaliacoes || 0,
+          color: productData.cor || undefined,
+          shoeNumber: productData.tamanho || undefined,
         }));
 
         setProducts(convertedProducts);
-        setCategories(data.categories);
+
       } catch (error) {
-        console.error('Erro ao carregar produtos:', error);
+        console.error('Erro ao carregar produtos ou categorias do Supabase:', error);
       } finally {
         setLoading(false);
       }
@@ -92,20 +132,19 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     );
   };
 
-  // Implementação da função para obter produtos de "novidades"
-  // Definição: Produtos que são "featured" (destaque) OU "bestSeller" (mais vendidos)
-  // E também os mais recentes, se tivessem uma data de adição, para simular novidade real.
-  // Por simplicidade, vamos usar 'featured' e 'bestSeller' como critérios primários para "melhores de todas as coleções"
-  // E podemos adicionar uma lógica de ordenação por ID (assumindo que IDs maiores são mais novos).
   const getNoveltiesProducts = (): Product[] => {
-    // Filtra produtos que são destaque OU mais vendidos
-    const novelties = products.filter(p => p.featured || p.bestSeller);
+    return [...products]
+      .sort((a, b) => {
+        const aIsSpecial = a.featured || a.bestSeller;
+        const bIsSpecial = b.featured || b.bestSeller;
 
-    // Opcional: Ordenar por ID para simular produtos "mais novos" (se IDs forem sequenciais)
-    // Se você tiver um campo 'dateAdded' no seu Product, seria ideal usá-lo aqui.
-    return novelties.sort((a, b) => b.id - a.id);
+        if (aIsSpecial && !bIsSpecial) return -1;
+        if (!aIsSpecial && bIsSpecial) return 1;
+
+        return b.id - a.id;
+      })
+      .slice(0, 10);
   };
-
 
   return (
     <ProductContext.Provider value={{
@@ -120,7 +159,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
       getOnSaleProducts,
       getAllBrands,
       searchProducts,
-      getNoveltiesProducts // Adicionado ao valor do contexto
+      getNoveltiesProducts
     }}>
       {children}
     </ProductContext.Provider>

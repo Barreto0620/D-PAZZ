@@ -3,30 +3,46 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
-import { Banner } from '../components/Banner'; // ESTE É O SEU BANNER ORIGINAL NO TOPO
+import { Banner } from '../components/Banner';
 import { CategoryCard } from '../components/CategoryCard';
 import { ProductCard } from '../components/ProductCard';
-import { getFeaturedCategories, getOnSaleProducts, getBestSellerProducts } from '../services/api';
-import { Category, Product } from '../types';
+// REMOVIDO: import { getFeaturedCategories, getOnSaleProducts, getBestSellerProducts } from '../services/api';
+// ADICIONADO: Import do hook useProducts
+import { useProducts } from '../contexts/ProductContext';
+import { Category, Product } from '../types'; // Mantenha a importação de tipos
 import { motion } from 'framer-motion';
 import { Sparkles, TrendingUp, Star, ShoppingBag, Flame, Trophy } from 'lucide-react';
 import Slider from 'react-slick';
 import { Toast } from '../components/Toast';
-import { VideoBanner } from '../components/VideoBanner'; // Importe o VideoBanner
-import { WhatsAppButton } from '../components/WhatsAppButton'; // Importe o WhatsAppButton
+import { VideoBanner } from '../components/VideoBanner';
+import { WhatsAppButton } from '../components/WhatsAppButton';
 
-// Importar os estilos do react-slick
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 export const HomePage: React.FC = () => {
-  const [featuredCategories, setFeaturedCategories] = useState<Category[]>([]);
-  const [onSaleProducts, setOnSaleProducts] = useState<Product[]>([]);
-  const [bestSellerProducts, setBestSellerProducts] = useState<Product[]>([]);
+  // ADICIONADO: Use o hook useProducts para acessar os dados e funções
+  const {
+    categories, // As categorias agora vêm do contexto
+    loading: productsContextLoading, // Renomeado para evitar conflito com o 'loading' local
+    getFeaturedProducts,
+    getBestSellers,
+    getOnSaleProducts,
+    getNoveltiesProducts,
+  } = useProducts();
+
+  // Estados locais para os carrosséis da Home, agora populados pelo contexto
+  const [homeFeaturedCategories, setHomeFeaturedCategories] = useState<Category[]>([]);
+  const [homeOnSaleProducts, setHomeOnSaleProducts] = useState<Product[]>([]);
+  const [homeBestSellerProducts, setHomeBestSellerProducts] = useState<Product[]>([]);
+  const [homeNoveltiesProducts, setHomeNoveltiesProducts] = useState<Product[]>([]);
+
+  // Atualizado para usar o loading do ProductContext
   const [loading, setLoading] = useState({
     categories: true,
     onSale: true,
-    bestSeller: true
+    bestSeller: true,
+    novelties: true,
   });
 
   const [showToast, setShowToast] = useState(false);
@@ -40,40 +56,27 @@ export const HomePage: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const categories = await getFeaturedCategories();
-        setFeaturedCategories(categories);
-        setLoading(prev => ({ ...prev, categories: false }));
-      } catch (error) {
-        console.error('Erro ao buscar categorias:', error);
-        setLoading(prev => ({ ...prev, categories: false }));
-        handleShowToast('Erro ao carregar categorias.', 'error');
-      }
+    // Agora, o ProductContext já carrega os dados.
+    // Basta pegar os dados filtrados pelas funções do contexto.
+    if (!productsContextLoading) {
+      // Categorias em destaque: filtro 'featured' do ProductContext.categories
+      const filteredFeaturedCategories = categories.filter(cat => cat.featured);
+      setHomeFeaturedCategories(filteredFeaturedCategories);
+      setLoading(prev => ({ ...prev, categories: false }));
 
-      try {
-        const onSale = await getOnSaleProducts();
-        setOnSaleProducts(onSale);
-        setLoading(prev => ({ ...prev, onSale: false }));
-      } catch (error) {
-        console.error('Erro ao buscar produtos em promoção:', error);
-        setLoading(prev => ({ ...prev, onSale: false }));
-        handleShowToast('Erro ao carregar ofertas.', 'error');
-      }
+      // Produtos em promoção
+      setHomeOnSaleProducts(getOnSaleProducts());
+      setLoading(prev => ({ ...prev, onSale: false }));
 
-      try {
-        const bestSeller = await getBestSellerProducts();
-        setBestSellerProducts(bestSeller);
-        setLoading(prev => ({ ...prev, bestSeller: false }));
-      } catch (error) {
-        console.error('Erro ao buscar produtos mais vendidos:', error);
-        setLoading(prev => ({ ...prev, bestSeller: false }));
-        handleShowToast('Erro ao carregar mais vendidos.', 'error');
-      }
-    };
+      // Produtos mais vendidos
+      setHomeBestSellerProducts(getBestSellers());
+      setLoading(prev => ({ ...prev, bestSeller: false }));
 
-    fetchData();
-  }, []);
+      // Produtos de novidades
+      setHomeNoveltiesProducts(getNoveltiesProducts());
+      setLoading(prev => ({ ...prev, novelties: false }));
+    }
+  }, [productsContextLoading, categories, getOnSaleProducts, getBestSellers, getNoveltiesProducts]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -275,8 +278,6 @@ export const HomePage: React.FC = () => {
       ></div>
 
       {/* Overlay semitransparente */}
-      {/* Ajustado para bg-white e bg-opacity-80 no modo claro (padrão) */}
-      {/* E mantido dark:bg-gray-900 com dark:bg-opacity-70 para o modo escuro */}
       <div className="absolute inset-0 z-10 bg-white bg-opacity-80 dark:bg-gray-900 dark:bg-opacity-70"></div>
 
       {/* Conteúdo principal (Navbar, Banner, Sections, Footer) */}
@@ -284,9 +285,8 @@ export const HomePage: React.FC = () => {
         <Navbar />
 
         <main className="container mx-auto px-4 py-8 md:py-12 flex-grow">
-          {/* SEÇÃO DO SEU BANNER PRINCIPAL ORIGINAL - NÃO MODIFICADA */}
           <section className="mb-16">
-            <Banner /> {/* MANTIDO: O seu componente Banner original */}
+            <Banner />
           </section>
 
           <motion.section
@@ -323,7 +323,7 @@ export const HomePage: React.FC = () => {
             ) : (
               <div className="relative px-4 md:px-8 lg:px-12 overflow-hidden">
                 <Slider {...categorySliderSettings}>
-                  {featuredCategories.map(category => (
+                  {homeFeaturedCategories.map(category => (
                     <div key={category.id} className="p-2">
                       <motion.div
                         variants={itemVariants}
@@ -338,6 +338,57 @@ export const HomePage: React.FC = () => {
               </div>
             )}
           </section>
+
+          {/* NOVO: Seção para Produtos de Novidades */}
+          <section className="mb-20">
+            <SectionTitle
+              icon={TrendingUp}
+              title="Novidades Quentíssimas Chegando!"
+              subtitle="Fique por dentro dos lançamentos mais recentes e dos produtos que acabaram de chegar em nosso estoque. Seja o primeiro a garantir as últimas tendências!"
+              gradient="from-blue-500 to-purple-500"
+            />
+
+            {loading.novelties ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                {[...Array(4)].map((_, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-200 dark:bg-gray-700 rounded-3xl animate-pulse h-96"
+                  />
+                ))}
+              </div>
+            ) : (
+              <motion.div
+                className="relative px-4 md:px-8 lg:px-12 overflow-hidden"
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <Slider {...productSliderSettings}>
+                  {homeNoveltiesProducts.map((product, index) => (
+                    <div key={product.id} className="p-2">
+                      <motion.div
+                        variants={itemVariants}
+                        whileHover={{
+                          y: -8,
+                          boxShadow: "0 15px 30px rgba(0,0,0,0.15)",
+                          transition: { duration: 0.3 }
+                        }}
+                        className="relative group rounded-3xl overflow-hidden"
+                      >
+                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl blur-md opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
+                        <div className="relative">
+                          <ProductCard product={product} onShowToast={handleShowToast} />
+                        </div>
+                      </motion.div>
+                    </div>
+                  ))}
+                </Slider>
+              </motion.div>
+            )}
+          </section>
+
 
           <section className="mb-20">
             <SectionTitle
@@ -365,7 +416,7 @@ export const HomePage: React.FC = () => {
                 viewport={{ once: true }}
               >
                 <Slider {...productSliderSettings}>
-                  {onSaleProducts.map((product, index) => (
+                  {homeOnSaleProducts.map((product, index) => (
                     <div key={product.id} className="p-2">
                       <motion.div
                         variants={itemVariants}
@@ -414,7 +465,7 @@ export const HomePage: React.FC = () => {
                 viewport={{ once: true }}
               >
                 <Slider {...productSliderSettings}>
-                  {bestSellerProducts.map((product, index) => (
+                  {homeBestSellerProducts.map((product, index) => (
                     <div key={product.id} className="p-2">
                       <motion.div
                         variants={itemVariants}
@@ -429,11 +480,6 @@ export const HomePage: React.FC = () => {
                         <div className="relative">
                           <ProductCard product={product} onShowToast={handleShowToast} />
                         </div>
-                        {index < 3 && (
-                          <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                            #{index + 1} TOP
-                          </div>
-                        )}
                       </motion.div>
                     </div>
                   ))}
@@ -442,7 +488,6 @@ export const HomePage: React.FC = () => {
             )}
           </section>
 
-          {/* SEÇÃO DA NEWSLETTER COM O VÍDEO DE FUNDO - MODIFICADA */}
           <motion.section
             className="mb-16"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -450,17 +495,14 @@ export const HomePage: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            {/* O SEU CÓDIGO ORIGINAL DA NEWSLETTER FOI SUBSTITUÍDO PELO VideoBanner */}
             <VideoBanner
-              videoSrc="/img/video_banner.mp4" // Confirme que este caminho está correto para o seu vídeo
+              videoSrc="/img/video_banner.mp4"
               title="Não Perca Nenhuma Novidade!"
               subtitle="Seja o primeiro a descobrir lançamentos exclusivos e ofertas especiais diretamente na sua caixa de entrada."
               callToAction="Cadastre-se Agora"
               onCallToActionClick={() => {
                 handleShowToast('Você clicou em "Cadastre-se Agora" na newsletter!', 'info');
-                // Adicione sua lógica de cadastro ou formulário aqui
               }}
-              // Classes para ajustar a altura e padding desta seção específica
               containerClasses="h-auto py-12 md:py-16"
             />
           </motion.section>
@@ -477,7 +519,6 @@ export const HomePage: React.FC = () => {
         />
       )}
 
-      {/* Adicione o WhatsAppButton aqui */}
       <WhatsAppButton />
     </div>
   );
