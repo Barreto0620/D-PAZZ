@@ -1,4 +1,4 @@
-// src/pages/ProductPage.tsx (VERSÃO COMPLETA E CORRIGIDA)
+// src/pages/ProductPage.tsx (VERSÃO COM PRODUTOS RELACIONADOS COMPLETOS)
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -10,7 +10,6 @@ import { ProductCard } from '../components/ProductCard';
 import { Product } from '../types';
 import { supabase } from '../lib/supabase';
 
-// Garantindo que a tipagem do produto no Supabase inclua os campos necessários
 type ProdutoComRelacoes = Product & {
   categorias: { nome: string } | null;
   marcas: { nome: string } | null;
@@ -30,6 +29,7 @@ export const ProductPage: React.FC = () => {
       setLoading({ product: true, related: true });
       
       try {
+        // Busca do produto principal (sem alterações aqui)
         const { data: productData, error: productError } = await supabase
           .from('produtos')
           .select(`*, categorias(nome), marcas(nome)`)
@@ -58,16 +58,39 @@ export const ProductPage: React.FC = () => {
         setProduct(formattedProduct);
         setLoading(prev => ({ ...prev, product: false }));
 
+        // ===== MODIFICAÇÃO ABAIXO =====
+
+        // 1. A busca pelos produtos relacionados agora também pede os nomes de categoria e marca
         const { data: relatedData, error: relatedError } = await supabase
           .from('produtos')
-          .select('*')
+          .select(`*, categorias(nome), marcas(nome)`) // MODIFICADO
           .eq('categoria_id', formattedProduct.category)
           .neq('id', formattedProduct.id)
           .limit(4);
 
         if (relatedError) throw relatedError;
         
-        setRelatedProducts(relatedData as Product[]);
+        // 2. Formatamos os dados dos produtos relacionados para garantir que todos os campos estejam corretos
+        if (relatedData) {
+          const formattedRelatedProducts: Product[] = relatedData.map(p => ({
+            id: p.id,
+            name: p.nome,
+            description: p.descricao || '',
+            price: parseFloat(p.preco),
+            oldPrice: p.preco_antigo ? parseFloat(p.preco_antigo) : undefined,
+            category: p.categoria_id,
+            categoryName: (p as any).categorias?.nome || 'Categoria',
+            brand: (p as any).marcas?.nome || 'Marca',
+            images: Array.isArray(p.imagens) ? p.imagens : [],
+            stock: p.estoque || 0,
+            rating: p.avaliacoes || 0,
+            reviewCount: p.numero_avaliacoes || 0,
+            color: p.cor || undefined,
+            tamanhos: p.tamanhos || undefined,
+          }));
+          setRelatedProducts(formattedRelatedProducts);
+        }
+        // ===== FIM DA MODIFICAÇÃO =====
 
       } catch (error) {
         console.error('Erro ao buscar dados do produto:', error);
@@ -81,6 +104,7 @@ export const ProductPage: React.FC = () => {
     fetchProductData();
   }, [id]);
 
+  // Nenhuma mudança no JSX abaixo
   return (
     <div className="min-h-screen bg-light dark:bg-dark">
       <Helmet>
