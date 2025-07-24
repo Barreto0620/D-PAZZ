@@ -81,6 +81,7 @@ const DeleteConfirmationModal: React.FC<{
 export const AdminProductsPage: React.FC = () => {
   const { authLoading } = useProtectedRoute(true);
 
+  // Estados principais
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -112,19 +113,95 @@ export const AdminProductsPage: React.FC = () => {
     try {
       // Mock de dados se a API não estiver disponível. Remova em produção.
       const mockProducts: Product[] = [
-        { id: 1, name: 'Tênis Esportivo Pro', description: 'Tênis de alta performance para corrida', price: 299.90, imageUrl: '/images/mock-product-1.jpg', category: 'Esportivo', stock: 50, color: 'Preto', shoeNumber: 42, material: 'Mesh' },
-        { id: 2, name: 'Sandália Casual Confort', description: 'Sandália confortável para o dia a dia', price: 89.90, imageUrl: '/images/mock-product-2.jpg', category: 'Casual', stock: 120, color: 'Marrom', shoeNumber: 38, material: 'Couro Sintético' },
-        { id: 3, name: 'Bota de Couro Elegance', description: 'Bota feminina de couro legítimo', price: 450.00, imageUrl: '/images/mock-product-3.jpg', category: 'Social', stock: 30, color: 'Caramelo', shoeNumber: 36, material: 'Couro' },
-        { id: 4, name: 'Chuteira Speed Max', description: 'Chuteira para alta velocidade em campo', price: 199.90, imageUrl: '/images/mock-product-4.jpg', category: 'Esportivo', stock: 75, color: 'Verde Limão', shoeNumber: 40, material: 'Sintético' },
-        { id: 5, name: 'Sapato Social Clássico', description: 'Sapato masculino ideal para eventos formais', price: 350.00, imageUrl: '/images/mock-product-5.jpg', category: 'Social', stock: 40, color: 'Preto', shoeNumber: 43, material: 'Couro' },
+        { 
+          id: 1, 
+          name: 'Tênis Esportivo Pro', 
+          description: 'Tênis de alta performance para corrida', 
+          price: 299.90, 
+          imageUrl: '/images/mock-product-1.jpg', 
+          category: 'Esportivo', 
+          stock: 50, 
+          color: 'Preto', 
+          shoeNumber: 42, 
+          material: 'Mesh',
+          featured: true,
+          onSale: false,
+          bestSeller: true
+        },
+        { 
+          id: 2, 
+          name: 'Sandália Casual Confort', 
+          description: 'Sandália confortável para o dia a dia', 
+          price: 89.90, 
+          imageUrl: '/images/mock-product-2.jpg', 
+          category: 'Casual', 
+          stock: 120, 
+          color: 'Marrom', 
+          shoeNumber: 38, 
+          material: 'Couro Sintético',
+          featured: false,
+          onSale: true,
+          bestSeller: false
+        },
+        { 
+          id: 3, 
+          name: 'Bota de Couro Elegance', 
+          description: 'Bota feminina de couro legítimo', 
+          price: 450.00, 
+          oldPrice: 500.00,
+          imageUrl: '/images/mock-product-3.jpg', 
+          category: 'Social', 
+          stock: 30, 
+          color: 'Caramelo', 
+          shoeNumber: 36, 
+          material: 'Couro',
+          featured: true,
+          onSale: true,
+          bestSeller: false
+        },
+        { 
+          id: 4, 
+          name: 'Chuteira Speed Max', 
+          description: 'Chuteira para alta velocidade em campo', 
+          price: 199.90, 
+          imageUrl: '/images/mock-product-4.jpg', 
+          category: 'Esportivo', 
+          stock: 75, 
+          color: 'Verde Limão', 
+          shoeNumber: 40, 
+          material: 'Sintético',
+          featured: false,
+          onSale: false,
+          bestSeller: true
+        },
+        { 
+          id: 5, 
+          name: 'Sapato Social Clássico', 
+          description: 'Sapato masculino ideal para eventos formais', 
+          price: 350.00, 
+          imageUrl: '/images/mock-product-5.jpg', 
+          category: 'Social', 
+          stock: 0, // Produto em falta
+          color: 'Preto', 
+          shoeNumber: 43, 
+          material: 'Couro',
+          featured: false,
+          onSale: false,
+          bestSeller: false
+        },
       ];
+      
       // const data: Product[] = await getProducts(); // Descomente e use esta linha quando a API estiver pronta
       const data: Product[] = mockProducts; // Use os dados mockados por enquanto
+      
+      console.log('Produtos carregados:', data.length, data);
+      
       setProducts(data);
       setFilteredProducts(data);
     } catch (error) {
       console.error('Error fetching products:', error);
       showToast('Erro ao carregar produtos', 'error');
+      // Definir arrays vazios em caso de erro para evitar undefined
       setProducts([]);
       setFilteredProducts([]);
     } finally {
@@ -157,8 +234,9 @@ export const AdminProductsPage: React.FC = () => {
       const categoryMatch = (product.category || '').toLowerCase().includes(lowercasedSearchTerm);
       const colorMatch = (product.color || '').toLowerCase().includes(lowercasedSearchTerm);
       const shoeNumberMatch = (product.shoeNumber || '').toString().includes(lowercasedSearchTerm);
+      const materialMatch = (product.material || '').toLowerCase().includes(lowercasedSearchTerm);
       
-      return nameMatch || descriptionMatch || categoryMatch || colorMatch || shoeNumberMatch;
+      return nameMatch || descriptionMatch || categoryMatch || colorMatch || shoeNumberMatch || materialMatch;
     });
     
     console.log('Filtered results:', results.length, 'Results:', results);
@@ -168,8 +246,19 @@ export const AdminProductsPage: React.FC = () => {
   const handleCreateProduct = async (product: Omit<Product, 'id'>) => {
     try {
       // const newProduct = await createProduct(product); // Descomente quando integrar com a API
-      const newProduct: Product = { ...product, id: products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1 }; // Mock de ID
-      setProducts(prev => [...prev, newProduct]);
+      const newProduct: Product = { 
+        ...product, 
+        id: products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1 
+      }; // Mock de ID
+      
+      const updatedProducts = [...products, newProduct];
+      setProducts(updatedProducts);
+      
+      // Atualizar filteredProducts também se necessário
+      if (!searchTerm || searchTerm.trim() === '') {
+        setFilteredProducts(updatedProducts);
+      }
+      
       showToast('Produto criado com sucesso! 🎉', 'success');
     } catch (error) {
       console.error('Error creating product:', error);
@@ -184,13 +273,33 @@ export const AdminProductsPage: React.FC = () => {
     try {
       // const updatedProduct = await updateProduct(product.id, product); // Descomente quando integrar com a API
       const updatedProduct = product; // Mock de retorno
+      
       if (!updatedProduct) {
         throw new Error('Produto não encontrado ou atualização falhou.');
       }
 
-      setProducts(prev =>
-        prev.map(p => (p.id === product.id ? { ...p, ...updatedProduct } : p))
-      );
+      const updatedProducts = products.map(p => (p.id === product.id ? { ...p, ...updatedProduct } : p));
+      setProducts(updatedProducts);
+      
+      // Atualizar filteredProducts também se necessário
+      if (!searchTerm || searchTerm.trim() === '') {
+        setFilteredProducts(updatedProducts);
+      } else {
+        // Re-aplicar filtro se houver busca ativa
+        const lowercasedSearchTerm = searchTerm.toLowerCase().trim();
+        const filtered = updatedProducts.filter(p => {
+          if (!p) return false;
+          const nameMatch = (p.name || '').toLowerCase().includes(lowercasedSearchTerm);
+          const descriptionMatch = (p.description || '').toLowerCase().includes(lowercasedSearchTerm);
+          const categoryMatch = (p.category || '').toLowerCase().includes(lowercasedSearchTerm);
+          const colorMatch = (p.color || '').toLowerCase().includes(lowercasedSearchTerm);
+          const shoeNumberMatch = (p.shoeNumber || '').toString().includes(lowercasedSearchTerm);
+          const materialMatch = (p.material || '').toLowerCase().includes(lowercasedSearchTerm);
+          return nameMatch || descriptionMatch || categoryMatch || colorMatch || shoeNumberMatch || materialMatch;
+        });
+        setFilteredProducts(filtered);
+      }
+      
       showToast('Produto atualizado com sucesso! ✅', 'success');
     } catch (error) {
       console.error('Error updating product:', error);
@@ -220,7 +329,13 @@ export const AdminProductsPage: React.FC = () => {
 
     try {
       // await deleteProduct(deleteModal.productId); // Descomente quando integrar com a API
-      setProducts(prev => prev.filter(p => p.id !== deleteModal.productId));
+      const updatedProducts = products.filter(p => p.id !== deleteModal.productId);
+      setProducts(updatedProducts);
+      
+      // Atualizar filteredProducts também
+      const updatedFilteredProducts = filteredProducts.filter(p => p.id !== deleteModal.productId);
+      setFilteredProducts(updatedFilteredProducts);
+      
       setDeleteModal({
         isOpen: false,
         productId: null,
