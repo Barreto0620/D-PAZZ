@@ -13,16 +13,13 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
-    // Debug: Log completo da categoria com todas as possíveis variações do campo
+    // Debug: Log completo da categoria
     console.log('=== CategoryCard Debug ===');
-    console.log('Category full object:', category);
-    console.log('All category keys:', Object.keys(category));
     console.log('Category ID:', category.id);
     console.log('Category Name:', category.name);
-    console.log('Category image:', category.image);
+    console.log('Category Image (image):', category.image);
     console.log('Category url_imagem:', (category as any).url_imagem);
-    console.log('Category urlImagem:', (category as any).urlImagem);
-    console.log('Category imageUrl:', (category as any).imageUrl);
+    console.log('Full category object:', category);
     console.log('========================');
     
     // Reset states quando a categoria muda
@@ -44,26 +41,20 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
     setImageLoaded(false);
   };
 
-  // Função para obter a URL da imagem testando todas as possibilidades
+  // Função para obter a URL da imagem correta
   const getImageUrl = (): string | null => {
-    const possibleFields = [
-      (category as any).url_imagem,
-      (category as any).urlImagem,
-      (category as any).imageUrl,
-      (category as any).image_url,
-      category.image
-    ];
-
-    for (const field of possibleFields) {
-      if (field && typeof field === 'string' && field.trim().length > 0) {
-        console.log('Found image URL in field:', field);
-        return field.trim();
-      }
+    // Primeiro tenta usar url_imagem do banco
+    const urlImagem = (category as any).url_imagem;
+    if (urlImagem && typeof urlImagem === 'string' && urlImagem.trim().length > 0) {
+      return urlImagem.trim();
     }
     
-    // Se não encontrou em nenhum campo, tenta uma URL de fallback para teste
-    console.log('No image URL found, using fallback');
-    return 'https://cdn.pixabay.com/photo/2024/02/29/19/58/winter-8605108_1280.jpg';
+    // Fallback para o campo image
+    if (category.image && typeof category.image === 'string' && category.image.trim().length > 0) {
+      return category.image.trim();
+    }
+    
+    return null;
   };
 
   // Verifica se a URL da imagem é válida
@@ -86,7 +77,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   const imageUrl = getImageUrl();
   const validImageUrl = isValidImageUrl(imageUrl);
   
-  console.log('Final image validation for', category.name, ':', {
+  console.log('Image validation for', category.name, ':', {
     imageUrl: imageUrl,
     isValid: validImageUrl,
     willShowImage: validImageUrl && !imageError
@@ -111,6 +102,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
                 onLoad={handleImageLoad}
                 onError={handleImageError}
                 loading="lazy"
+                crossOrigin="anonymous"
               />
               {!imageLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-800">
@@ -146,6 +138,12 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
           <p className="text-sm text-gray-200 mt-1 drop-shadow">
             {category.description}
           </p>
+          {/* Debug info para ver a URL em desenvolvimento */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="text-xs text-yellow-300 mt-1 truncate">
+              URL: {imageUrl || 'No URL found'}
+            </div>
+          )}
         </div>
       </Link>
     </motion.div>
