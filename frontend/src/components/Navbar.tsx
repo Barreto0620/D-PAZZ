@@ -1,6 +1,6 @@
-// src/components/Navbar.tsx (VERSÃO FINAL CORRIGIDA E LIMPA)
+// src/components/Navbar.tsx (VERSÃO 100% COMPLETA COM RENDERIZAÇÃO SEPARADA)
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Heart, Search, Menu, X, LogIn, User } from 'lucide-react';
 import { DarkModeToggle } from './DarkModeToggle';
@@ -20,9 +20,8 @@ export const Navbar: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [headerCategories, setHeaderCategories] = useState<Category[]>([]);
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-    const navigate = useNavigate();
     const userDropdownRef = useRef<HTMLDivElement>(null);
-    const { searchQuery, setSearchQuery, searchResults, isSearching } = useSearch();
+    const { searchQuery, setSearchQuery, searchResults } = useSearch();
     const [showSearchResults, setShowSearchResults] = useState(false);
 
     useEffect(() => {
@@ -35,44 +34,22 @@ export const Navbar: React.FC = () => {
                     .order('nome', { ascending: true });
 
                 if (error) throw error;
-
-                // ===== CORREÇÃO FINAL AQUI =====
-                // "Traduzimos" os dados do Supabase para o formato que o componente espera.
                 if (data) {
                     const formattedCategories: Category[] = data.map(cat => ({
-                        id: cat.id,
-                        name: cat.nome, // Mapeando de `nome` (banco) para `name` (código)
-                        description: cat.descricao, // Adicionando outros campos se necessário
-                        image: cat.url_imagem,    // Adicionando outros campos se necessário
+                        id: cat.id, name: cat.nome, description: cat.descricao, image: cat.url_imagem,
                     }));
                     setHeaderCategories(formattedCategories);
                 }
-                // =============================
-
             } catch (error) {
                 console.error('Erro ao buscar categorias do header:', error);
             }
         };
-
         fetchHeaderCategories();
     }, []);
-
-    const navLinks = useMemo(() => {
-        const dynamicLinks = headerCategories.map(category => ({
-            name: category.name,
-            path: `/categoria/${category.id}`
-        }));
-        const staticLinks = [
-            { name: 'Novidades', path: '/novidades' },
-            { name: 'Contato', path: '/contato' },
-        ];
-        return [...dynamicLinks, ...staticLinks];
-    }, [headerCategories]);
-
+    
     const handleSearch = (e: React.FormEvent) => { e.preventDefault(); if (searchQuery.trim()) { setShowSearchResults(true); } };
     const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => { const value = e.target.value; setSearchQuery(value); setShowSearchResults(value.trim().length > 0); };
     const handleSearchResultClick = () => { setShowSearchResults(false); setSearchQuery(''); };
-
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
@@ -82,7 +59,6 @@ export const Navbar: React.FC = () => {
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, []);
-
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
     const cartItemCount = getItemCount();
     const favoritesCount = favorites.length;
@@ -90,6 +66,21 @@ export const Navbar: React.FC = () => {
     const handleMouseEnterUserDropdown = () => { clearTimeout(dropdownCloseTimer); setIsUserDropdownOpen(true); };
     const handleMouseLeaveUserDropdown = () => { dropdownCloseTimer = setTimeout(() => { setIsUserDropdownOpen(false); }, 200); };
 
+    // Componente interno para evitar repetição de código do Link
+    const NavLinkItem: React.FC<{ to: string, name: string }> = ({ to, name }) => (
+        <Link to={to} className="relative text-dark dark:text-white font-semibold hover:text-primary dark:hover:text-primary transition-all duration-300 text-lg group">
+            {name}
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent transition-all duration-300 group-hover:w-full"></span>
+        </Link>
+    );
+
+    // Componente interno para o menu mobile
+    const MobileNavLinkItem: React.FC<{ to: string, name: string }> = ({ to, name }) => (
+         <Link to={to} className="block text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors text-lg font-medium py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-light" onClick={() => setIsMenuOpen(false)}>
+            {name}
+        </Link>
+    );
+    
     return (
         <>
             <header className="sticky top-0 z-50 bg-white/80 dark:bg-dark-lighter/80 backdrop-blur-lg shadow-sm border-b border-gray-200 dark:border-gray-700/50">
@@ -98,20 +89,17 @@ export const Navbar: React.FC = () => {
                         <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
                             <motion.img src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png" alt="D'Pazz Imports" className="h-14" whileHover={{ scale: 1.05 }} />
                         </Link>
+                        
                         <nav className="hidden lg:flex items-center justify-center flex-grow">
                             <div className="flex items-center space-x-8">
-                                {navLinks.map((link) => (
-                                    <Link
-                                        key={link.path}
-                                        to={link.path}
-                                        className="relative text-dark dark:text-white font-semibold hover:text-primary dark:hover:text-primary transition-all duration-300 text-lg group"
-                                    >
-                                        {link.name}
-                                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent transition-all duration-300 group-hover:w-full"></span>
-                                    </Link>
+                                {headerCategories.map((category) => (
+                                    <NavLinkItem key={category.id} to={`/categoria/${category.id}`} name={category.name} />
                                 ))}
+                                <NavLinkItem to="/novidades" name="Novidades" />
+                                <NavLinkItem to="/contato" name="Contato" />
                             </div>
                         </nav>
+
                         <div className="hidden lg:flex items-center space-x-3">
                             <div className="relative search-container">
                                 <form onSubmit={handleSearch} className="relative">
@@ -136,6 +124,7 @@ export const Navbar: React.FC = () => {
                             <Link to="/carrinho" className="relative p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-dark-light transition-all duration-300"><ShoppingCart size={22} className="text-dark dark:text-white" />{cartItemCount > 0 && (<span className="absolute -top-1 -right-1 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center bg-green-500 text-white animate-pulse">{cartItemCount}</span>)}</Link>
                             <div className="border-l border-gray-200 dark:border-gray-700 pl-3 ml-2"><DarkModeToggle /></div>
                         </div>
+
                         <div className="flex items-center space-x-2 lg:hidden">
                             <Link to="/favoritos" className="relative p-2"><Heart size={22} className="text-dark dark:text-white" />{favoritesCount > 0 && (<span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">{favoritesCount}</span>)}</Link>
                             {!isAuthenticated && (<Link to="/login" className="relative p-2"><LogIn size={22} className="text-dark dark:text-white" /></Link>)}
@@ -144,6 +133,7 @@ export const Navbar: React.FC = () => {
                         </div>
                     </div>
                 </div>
+
                 <AnimatePresence>
                     {isMenuOpen && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="lg:hidden overflow-hidden border-t border-gray-200 dark:border-gray-700">
@@ -156,7 +146,11 @@ export const Navbar: React.FC = () => {
                                     {showSearchResults && (<div className="absolute top-full left-0 right-0 mt-2 z-50"><SearchResults results={searchResults} onClose={handleSearchResultClick} /></div>)}
                                 </div>
                                 <div className="space-y-3">
-                                    {navLinks.map((link) => (<Link key={link.path} to={link.path} className="block text-dark dark:text-white hover:text-primary dark:hover:text-primary transition-colors text-lg font-medium py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-light" onClick={() => setIsMenuOpen(false)}>{link.name}</Link>))}
+                                    {headerCategories.map((category) => (
+                                        <MobileNavLinkItem key={category.id} to={`/categoria/${category.id}`} name={category.name} />
+                                    ))}
+                                    <MobileNavLinkItem to="/novidades" name="Novidades" />
+                                    <MobileNavLinkItem to="/contato" name="Contato" />
                                 </div>
                                 <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
                                     <DarkModeToggle />

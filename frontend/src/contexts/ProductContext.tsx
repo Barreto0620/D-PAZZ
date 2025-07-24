@@ -1,15 +1,16 @@
-// project/src/contexts/ProductContext.tsx
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+// src/contexts/ProductContext.tsx (VERSÃO FINAL OTIMIZADA)
+
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
 import { Product, Category } from '../types';
-import { supabase } from '../lib/supabase'; // Caminho de importação CONFIRMADO com sua estrutura
+import { supabase } from '../lib/supabase';
 
 interface ProductContextData {
   products: Product[];
   categories: Category[];
   loading: boolean;
-  getProductById: (id: number) => Product | undefined;
+  getProductById: (id: string) => Product | undefined; // CORRIGIDO: de number para string
   getProductsByBrand: (brand: string) => Product[];
-  getProductsByCategory: (categoryId: number) => Product[];
+  getProductsByCategory: (categoryId: string) => Product[]; // CORRIGIDO: de number para string
   getFeaturedProducts: () => Product[];
   getBestSellers: () => Product[];
   getOnSaleProducts: () => Product[];
@@ -26,102 +27,77 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadProducts = async () => {
+    const loadInitialData = async () => {
       try {
         setLoading(true);
+        
+        // Buscas em paralelo para mais performance
+        const [categoriesResponse, productsResponse] = await Promise.all([
+          supabase.from('categorias').select('*'),
+          supabase.from('produtos').select('*, marcas(nome)') // Puxando o nome da marca junto
+        ]);
 
-        // 1. Buscar categorias do Supabase
-        const { data: categoriesData, error: categoriesError } = await supabase
-          .from('categorias') // Nome da sua tabela de categorias no Supabase
-          .select('*');
+        if (categoriesResponse.error) throw categoriesResponse.error;
+        if (productsResponse.error) throw productsResponse.error;
 
-        if (categoriesError) {
-          throw categoriesError;
-        }
-
-        const fetchedCategories: Category[] = categoriesData.map((cat: any) => ({
+        // Processa e formata as categorias
+        const formattedCategories: Category[] = categoriesResponse.data.map((cat: any) => ({
           id: cat.id,
           name: cat.nome,
-          image: cat.imagem_url || '',
+          description: cat.descricao || '',
+          image: cat.url_imagem || '',
           featured: cat.em_destaque || false,
           slug: cat.slug || ''
         }));
-        setCategories(fetchedCategories);
+        setCategories(formattedCategories);
 
-        const categoryMap = new Map<number, string>();
-        fetchedCategories.forEach(cat => categoryMap.set(cat.id, cat.name));
-
-        // 2. Buscar produtos do Supabase
-        const { data: productsData, error: productsError } = await supabase
-          .from('produtos') // Nome da sua tabela de produtos no Supabase
-          .select('*');
-
-        if (productsError) {
-          throw productsError;
-        }
-
-        // Mapear os dados do Supabase para a interface Product
-        const convertedProducts: Product[] = productsData.map((productData: any) => ({
-          id: productData.id,
-          name: productData.nome,
-          description: productData.descricao || '',
-          price: parseFloat(productData.preco),
-          oldPrice: productData.preco_antigo ? parseFloat(productData.preco_antigo) : undefined,
-          category: productData.categoria_id,
-          categoryName: categoryMap.get(productData.categoria_id) || 'Desconhecida',
-          brand: productData.marca_id || 'Sem Marca', // Se marca_id for UUID, você pode precisar de um join ou outra lógica
-          images: productData.imagens && Array.isArray(productData.imagens) ? productData.imagens : [],
-          featured: productData.em_destaque || false,
-          onSale: productData.em_promocao || false,
-          bestSeller: productData.mais_vendido || false,
-          stock: productData.estoque || 0,
-          rating: parseFloat(productData.avaliacao) || 0,
-          reviewCount: productData.numero_avaliacoes || 0,
-          color: productData.cor || undefined,
-          shoeNumber: productData.tamanho || undefined,
+        const categoryMap = new Map<string, string>();
+        formattedCategories.forEach(cat => categoryMap.set(cat.id, cat.name));
+        
+        // Processa e formata os produtos
+        const formattedProducts: Product[] = productsResponse.data.map((p: any) => ({
+          id: p.id,
+          name: p.nome,
+          description: p.descricao || '',
+          price: parseFloat(p.preco),
+          oldPrice: p.preco_antigo ? parseFloat(p.preco_antigo) : undefined,
+          category: p.categoria_id,
+          categoryName: categoryMap.get(p.categoria_id) || 'Desconhecida',
+          brand: (p.marcas as any)?.nome || 'Sem Marca',
+          images: Array.isArray(p.imagens) ? p.imagens : [],
+          featured: p.em_destaque || false,
+          onSale: p.em_promocao || false,
+          bestSeller: p.mais_vendido || false,
+          stock: p.estoque || 0,
+          rating: parseFloat(p.avaliacao) || 0,
+          reviewCount: p.numero_avaliacoes || 0,
+          color: p.cor || undefined,
+          tamanhos: p.tamanhos || undefined,
+          criado_em: p.criado_em,
         }));
-
-        setProducts(convertedProducts);
+        setProducts(formattedProducts);
 
       } catch (error) {
-        console.error('Erro ao carregar produtos ou categorias do Supabase:', error);
+        console.error('Erro ao carregar dados iniciais:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadProducts();
-  }, []);
+    loadInitialData();
+  }, []); // Este useEffect roda apenas uma vez, o que está correto.
 
-  const getProductById = (id: number): Product | undefined => {
-    return products.find(p => p.id === id);
-  };
+  // OTIMIZAÇÃO: Todas as funções são "memorizadas" com useCallback.
+  // Elas só serão recriadas se a lista de 'products' mudar.
+  const getProductById = useCallback((id: string) => products.find(p => p.id === id), [products]);
+  const getProductsByCategory = useCallback((categoryId: string) => products.filter(p => p.category === categoryId), [products]);
+  const getProductsByBrand = useCallback((brand: string) => products.filter(p => p.brand === brand), [products]);
+  const getFeaturedProducts = useCallback(() => products.filter(p => p.featured), [products]);
+  const getBestSellers = useCallback(() => products.filter(p => p.bestSeller), [products]);
+  const getOnSaleProducts = useCallback(() => products.filter(p => p.onSale), [products]);
+  const getAllBrands = useCallback(() => Array.from(new Set(products.map(p => p.brand))).sort(), [products]);
 
-  const getProductsByBrand = (brand: string): Product[] => {
-    return products.filter(p => p.brand.toLowerCase() === brand.toLowerCase());
-  };
-
-  const getProductsByCategory = (categoryId: number): Product[] => {
-    return products.filter(p => p.category === categoryId);
-  };
-
-  const getFeaturedProducts = (): Product[] => {
-    return products.filter(p => p.featured);
-  };
-
-  const getBestSellers = (): Product[] => {
-    return products.filter(p => p.bestSeller);
-  };
-
-  const getOnSaleProducts = (): Product[] => {
-    return products.filter(p => p.onSale);
-  };
-
-  const getAllBrands = (): string[] => {
-    return Array.from(new Set(products.map(p => p.brand))).sort();
-  };
-
-  const searchProducts = (query: string): Product[] => {
+  const searchProducts = useCallback((query: string) => {
     if (!query) return [];
     const lowerQuery = query.toLowerCase();
     return products.filter(p =>
@@ -130,37 +106,38 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
       p.brand.toLowerCase().includes(lowerQuery) ||
       p.categoryName.toLowerCase().includes(lowerQuery)
     );
-  };
+  }, [products]);
 
-  const getNoveltiesProducts = (): Product[] => {
+  const getNoveltiesProducts = useCallback(() => {
     return [...products]
-      .sort((a, b) => {
-        const aIsSpecial = a.featured || a.bestSeller;
-        const bIsSpecial = b.featured || b.bestSeller;
-
-        if (aIsSpecial && !bIsSpecial) return -1;
-        if (!aIsSpecial && bIsSpecial) return 1;
-
-        return b.id - a.id;
-      })
+      .sort((a, b) => new Date((b as any).criado_em || 0).getTime() - new Date((a as any).criado_em || 0).getTime())
       .slice(0, 10);
-  };
+  }, [products]);
+
+  // OTIMIZAÇÃO: O objeto 'value' é "memorizado" com useMemo.
+  // Ele só será recriado se um de seus valores (como a lista 'products') mudar.
+  // Isso impede que todos os componentes que usam o contexto sejam re-renderizados desnecessariamente.
+  const contextValue = useMemo(() => ({
+    products,
+    categories,
+    loading,
+    getProductById,
+    getProductsByBrand,
+    getProductsByCategory,
+    getFeaturedProducts,
+    getBestSellers,
+    getOnSaleProducts,
+    getAllBrands,
+    searchProducts,
+    getNoveltiesProducts
+  }), [
+    products, categories, loading, getProductById, getProductsByBrand,
+    getProductsByCategory, getFeaturedProducts, getBestSellers,
+    getOnSaleProducts, getAllBrands, searchProducts, getNoveltiesProducts
+  ]);
 
   return (
-    <ProductContext.Provider value={{
-      products,
-      categories,
-      loading,
-      getProductById,
-      getProductsByBrand,
-      getProductsByCategory,
-      getFeaturedProducts,
-      getBestSellers,
-      getOnSaleProducts,
-      getAllBrands,
-      searchProducts,
-      getNoveltiesProducts
-    }}>
+    <ProductContext.Provider value={contextValue}>
       {children}
     </ProductContext.Provider>
   );

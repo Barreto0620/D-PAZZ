@@ -1,6 +1,6 @@
-// pages/CategoryPage.tsx (VERSÃO 100% COMPLETA E CORRIGIDA)
+// pages/CategoryPage.tsx (VERSÃO OTIMIZADA E SEM "PISCA-PISCA")
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Navbar } from '../components/Navbar';
@@ -12,38 +12,26 @@ import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const CategoryPage: React.FC = () => {
-  // ===== CORREÇÃO PRINCIPAL AQUI =====
-  // Removemos o `parseInt`. O `categoryId` agora é a string (uuid) vinda da URL.
   const { id: categoryId } = useParams<{ id: string }>();
-  // ===================================
 
+  // MODIFICAÇÃO: Renomeado `loading` do contexto para `contextLoading` para maior clareza
   const { categories, getProductsByCategory, loading: contextLoading } = useProducts();
 
-  const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
-  const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  // MODIFICAÇÃO: A lógica de encontrar a categoria e os produtos agora é feita diretamente, sem useEffect
+  // Isso torna a renderização instantânea, pois os dados já estão no contexto.
+  const currentCategory = useMemo(() => 
+    categories.find(cat => cat.id === categoryId) || null,
+    [categoryId, categories]
+  );
+  
+  const categoryProducts = useMemo(() => 
+    categoryId ? getProductsByCategory(categoryId) : [],
+    [categoryId, getProductsByCategory]
+  );
+
+  // MODIFICAÇÃO: O estado de 'loading' local foi removido. Usaremos o 'loading' do contexto.
   const [sortOption, setSortOption] = useState<string>('default');
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
-
-  useEffect(() => {
-    // A lógica agora funciona corretamente quando o contexto termina de carregar
-    if (!contextLoading) {
-      if (categoryId) {
-        // Encontra a categoria pelo ID (comparando string com string)
-        const foundCategory = categories.find(cat => cat.id === categoryId);
-        setCurrentCategory(foundCategory || null);
-
-        // Obtém os produtos para esta categoria usando a função do contexto
-        const productsInCategory = getProductsByCategory(categoryId);
-        setCategoryProducts(productsInCategory);
-
-      } else {
-        setCurrentCategory(null);
-        setCategoryProducts([]);
-      }
-      setLoading(false);
-    }
-  }, [categoryId, contextLoading, categories, getProductsByCategory]);
 
   const sortProducts = (productsToSort: Product[]): Product[] => {
     const sortedProducts = [...productsToSort];
@@ -66,6 +54,19 @@ export const CategoryPage: React.FC = () => {
     }
   };
 
+  // MODIFICAÇÃO: A tela de loading principal agora depende apenas do carregamento inicial do contexto.
+  if (contextLoading) {
+    return (
+      <div className="min-h-screen bg-light dark:bg-dark">
+        <Navbar />
+        <div className="container mx-auto px-4 py-6 text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto"></div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-light dark:bg-dark">
       <Helmet>
@@ -77,9 +78,7 @@ export const CategoryPage: React.FC = () => {
 
       <main className="container mx-auto px-4 py-6">
         <section className="mb-8">
-          {loading ? (
-            <div className="h-40 bg-light-darker dark:bg-dark-lighter rounded-2xl animate-pulse" />
-          ) : currentCategory ? (
+          {currentCategory ? (
             <div className="h-40 rounded-2xl overflow-hidden relative">
               <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${currentCategory.image})` }} />
               <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
@@ -101,7 +100,7 @@ export const CategoryPage: React.FC = () => {
 
         <section className="mb-6 flex justify-between items-center">
           <div className="text-dark dark:text-white">
-            {!loading && (<span>{sortedProducts.length} produtos encontrados</span>)}
+            <span>{sortedProducts.length} produtos encontrados</span>
           </div>
           <div className="relative">
             <button onClick={() => setIsSortMenuOpen(!isSortMenuOpen)} className="flex items-center gap-2 bg-white dark:bg-dark-lighter px-4 py-2 rounded-lg text-dark dark:text-white">
@@ -122,11 +121,7 @@ export const CategoryPage: React.FC = () => {
         </section>
 
         <section className="mb-8">
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {[...Array(8)].map((_, index) => (<div key={index} className="bg-light-darker dark:bg-dark-lighter rounded-2xl animate-pulse h-80" />))}
-            </div>
-          ) : sortedProducts.length > 0 ? (
+          {sortedProducts.length > 0 ? (
             <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" initial="hidden" animate="visible" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } }}>
               {sortedProducts.map(product => (
                 <motion.div key={product.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}>
