@@ -1,4 +1,4 @@
-// src/pages/ProductPage.tsx (VERSÃO COM PRODUTOS RELACIONADOS COMPLETOS)
+// src/pages/ProductPage.tsx (VERSÃO 100% COMPLETA E CORRIGIDA)
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -29,7 +29,6 @@ export const ProductPage: React.FC = () => {
       setLoading({ product: true, related: true });
       
       try {
-        // Busca do produto principal (sem alterações aqui)
         const { data: productData, error: productError } = await supabase
           .from('produtos')
           .select(`*, categorias(nome), marcas(nome)`)
@@ -50,7 +49,7 @@ export const ProductPage: React.FC = () => {
             brand: (productData as ProdutoComRelacoes).marcas?.nome || 'Marca',
             images: Array.isArray(productData.imagens) ? productData.imagens : [],
             stock: productData.estoque || 0,
-            rating: productData.avaliacoes || 0,
+            rating: productData.avaliacao || 0,
             reviewCount: productData.numero_avaliacoes || 0,
             color: productData.cor || undefined,
             tamanhos: productData.tamanhos || undefined,
@@ -58,39 +57,25 @@ export const ProductPage: React.FC = () => {
         setProduct(formattedProduct);
         setLoading(prev => ({ ...prev, product: false }));
 
-        // ===== MODIFICAÇÃO ABAIXO =====
-
-        // 1. A busca pelos produtos relacionados agora também pede os nomes de categoria e marca
         const { data: relatedData, error: relatedError } = await supabase
           .from('produtos')
-          .select(`*, categorias(nome), marcas(nome)`) // MODIFICADO
+          .select(`*, categorias(nome), marcas(nome)`)
           .eq('categoria_id', formattedProduct.category)
           .neq('id', formattedProduct.id)
           .limit(4);
 
         if (relatedError) throw relatedError;
         
-        // 2. Formatamos os dados dos produtos relacionados para garantir que todos os campos estejam corretos
         if (relatedData) {
           const formattedRelatedProducts: Product[] = relatedData.map(p => ({
-            id: p.id,
-            name: p.nome,
-            description: p.descricao || '',
-            price: parseFloat(p.preco),
-            oldPrice: p.preco_antigo ? parseFloat(p.preco_antigo) : undefined,
-            category: p.categoria_id,
-            categoryName: (p as any).categorias?.nome || 'Categoria',
-            brand: (p as any).marcas?.nome || 'Marca',
-            images: Array.isArray(p.imagens) ? p.imagens : [],
-            stock: p.estoque || 0,
-            rating: p.avaliacoes || 0,
-            reviewCount: p.numero_avaliacoes || 0,
-            color: p.cor || undefined,
-            tamanhos: p.tamanhos || undefined,
+            id: p.id, name: p.nome, description: p.descricao || '', price: parseFloat(p.preco),
+            oldPrice: p.preco_antigo ? parseFloat(p.preco_antigo) : undefined, category: p.categoria_id,
+            categoryName: (p as any).categorias?.nome || 'Categoria', brand: (p as any).marcas?.nome || 'Marca',
+            images: Array.isArray(p.imagens) ? p.imagens : [], stock: p.estoque || 0,
+            rating: p.avaliacao || 0, reviewCount: p.numero_avaliacoes || 0, color: p.cor || undefined, tamanhos: p.tamanhos || undefined,
           }));
           setRelatedProducts(formattedRelatedProducts);
         }
-        // ===== FIM DA MODIFICAÇÃO =====
 
       } catch (error) {
         console.error('Erro ao buscar dados do produto:', error);
@@ -104,7 +89,6 @@ export const ProductPage: React.FC = () => {
     fetchProductData();
   }, [id]);
 
-  // Nenhuma mudança no JSX abaixo
   return (
     <div className="min-h-screen bg-light dark:bg-dark">
       <Helmet>
@@ -130,11 +114,19 @@ export const ProductPage: React.FC = () => {
         {product && relatedProducts.length > 0 && (
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-dark dark:text-white mb-6">Produtos Relacionados</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {relatedProducts.map(relatedProduct => (
-                <ProductCard key={relatedProduct.id} product={relatedProduct} />
-              ))}
-            </div>
+             {loading.related ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {[...Array(4)].map((_, index) => (
+                  <div key={index} className="bg-light-darker dark:bg-dark-lighter rounded-2xl animate-pulse h-80" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {relatedProducts.map(relatedProduct => (
+                  <ProductCard key={relatedProduct.id} product={relatedProduct} />
+                ))}
+              </div>
+            )}
           </section>
         )}
       </main>

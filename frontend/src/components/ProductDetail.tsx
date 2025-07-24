@@ -1,55 +1,16 @@
-// src/components/ProductDetail.tsx (VERSÃO FINAL COMPLETA PARA A SUA INTERFACE)
+// src/components/ProductDetail.tsx (VERSÃO 100% COMPLETA E FINAL)
 
 import React, { useState, useMemo } from 'react';
 import { Product } from '../types';
-import { ChevronLeft, ChevronRight, Star, Minus, Plus, ShoppingCart, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart, Check, Star } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { motion } from 'framer-motion';
+import { StarRating } from './StarRating';
 
-// MAPA DE CORES: Associa o nome da cor do seu banco a um código de cor (hex)
-const colorMap: { [key: string]: string } = {
-  'preto': '#000000',
-  'branco': '#FFFFFF',
-  'marrom': '#8B4513',
-  'azul marinho': '#000080',
-  'bege': '#F5F5DC',
-  'vermelho': '#FF0000',
-  'cinza': '#808080',
-  // Adicione outras cores que você usa aqui
-};
-
-// Função para processar o texto de cores e retornar objetos com nome e código hex
-const parseColors = (colorString?: string): { name: string, hex: string }[] => {
-  if (!colorString) return [];
-  return colorString.split('/').map(name => {
-    const trimmedName = name.trim();
-    const hex = colorMap[trimmedName.toLowerCase()] || '#CCCCCC'; // Retorna cinza se não encontrar
-    return { name: trimmedName, hex };
-  });
-};
-
-// Função para processar o texto de tamanhos
-const parseSizes = (sizeString?: string): string[] => {
-    if (!sizeString) return [];
-    const sizes = new Set<string>(); // Usando Set para evitar duplicatas
-    const parts = sizeString.replace(/\s/g, '').split(',');
-    parts.forEach(part => {
-        if (part.includes('-')) {
-            const [start, end] = part.split('-').map(Number);
-            if (!isNaN(start) && !isNaN(end)) {
-                for (let i = start; i <= end; i++) {
-                    sizes.add(i.toString());
-                }
-            }
-        } else {
-            if (!isNaN(Number(part)) && part) {
-                sizes.add(part);
-            }
-        }
-    });
-    return Array.from(sizes).sort((a, b) => Number(a) - Number(b));
-};
+const colorMap: { [key: string]: string } = { 'preto': '#000000', 'branco': '#FFFFFF', 'marrom': '#8B4513', 'azul marinho': '#000080', 'bege': '#F5F5DC', 'vermelho': '#FF0000', 'cinza': '#808080', };
+const parseColors = (colorString?: string): { name: string, hex: string }[] => { if (!colorString) return []; return colorString.split('/').map(name => { const trimmedName = name.trim(); const hex = colorMap[trimmedName.toLowerCase()] || '#CCCCCC'; return { name: trimmedName, hex }; }); };
+const parseSizes = (sizeString?: string): string[] => { if (!sizeString) return []; const sizes = new Set<string>(); const parts = sizeString.replace(/\s/g, '').split(','); parts.forEach(part => { if (part.includes('-')) { const [start, end] = part.split('-').map(Number); if (!isNaN(start) && !isNaN(end)) for (let i = start; i <= end; i++) sizes.add(i.toString()); } else { if (!isNaN(Number(part)) && part) sizes.add(part); } }); return Array.from(sizes).sort((a, b) => Number(a) - Number(b)); };
 
 interface ProductDetailProps {
   product: Product;
@@ -60,29 +21,12 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
-
   const availableColors = useMemo(() => parseColors(product.color), [product.color]);
   const availableSizes = useMemo(() => parseSizes(product.tamanhos), [product.tamanhos]);
-
-  const canAddToCart = (): boolean => {
-    if (availableSizes.length > 0 && !selectedSize) return false;
-    if (availableColors.length > 0 && !selectedColor) return false;
-    return product.stock > 0;
-  };
-
-  const handleAddToCart = () => {
-    if (!canAddToCart()) {
-      alert('Por favor, selecione as opções desejadas.');
-      return;
-    }
-    const cartProduct = { ...product, selectedColor, selectedSize };
-    addToCart(cartProduct, quantity);
-    alert(`${product.name} foi adicionado ao carrinho!`);
-  };
-
+  const canAddToCart = (): boolean => { if (availableSizes.length > 0 && !selectedSize) return false; if (availableColors.length > 0 && !selectedColor) return false; return product.stock > 0; };
+  const handleAddToCart = () => { if (!canAddToCart()) { alert('Por favor, selecione as opções desejadas.'); return; } const cartProduct = { ...product, selectedColor, selectedSize }; addToCart(cartProduct, quantity); alert(`${product.name} adicionado ao carrinho!`); };
   const handlePrevImage = () => product.images && setSelectedImage((p) => (p === 0 ? product.images.length - 1 : p - 1));
   const handleNextImage = () => product.images && setSelectedImage((p) => (p === product.images.length - 1 ? 0 : p + 1));
   const decreaseQuantity = () => quantity > 1 && setQuantity(quantity - 1);
@@ -96,10 +40,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
           <div className="relative aspect-square overflow-hidden rounded-md">
             {product.images && product.images.length > 0 ? (
               <motion.img 
-                key={selectedImage}
-                src={product.images[selectedImage]} 
-                alt={product.name} 
-                className="w-full h-full object-cover"
+                key={selectedImage} src={product.images[selectedImage]} alt={product.name} className="w-full h-full object-cover"
                 initial={{ opacity: 0.5 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}
               />
             ) : <div className="w-full h-full bg-gray-800 flex items-center justify-center">Sem Imagem</div>}
@@ -127,16 +68,17 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
         {/* Coluna da Direita: Informações do Produto */}
         <div className="flex flex-col space-y-4">
           <h1 className="text-3xl font-bold">{product.name}</h1>
+          
           <div className="flex items-center gap-2">
-            <div className="flex">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={16} className={i < product.rating ? 'text-yellow-400 fill-current' : 'text-gray-600'} />)}</div>
+            <StarRating rating={product.rating} size={20} />
             <span className="text-sm text-gray-400">({product.reviewCount} avaliações)</span>
           </div>
+          
           <p className="text-4xl font-bold text-primary">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.price)}</p>
           <div className="text-sm">Categoria: <span className="font-semibold">{product.categoryName}</span></div>
           <div className="text-sm font-semibold text-green-400">{product.stock > 0 ? 'Em estoque' : 'Fora de estoque'}</div>
           <div><h3 className="font-semibold mb-1">Descrição</h3><p className="text-gray-300 text-sm">{product.description}</p></div>
           
-          {/* Seletor de Tamanho */}
           {availableSizes.length > 0 && (
             <div>
               <h3 className="font-semibold mb-2">Tamanho</h3>
@@ -150,7 +92,6 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
             </div>
           )}
 
-          {/* Seletor de Cor */}
           {availableColors.length > 0 && (
             <div>
               <h3 className="font-semibold mb-2">Cor</h3>
@@ -165,7 +106,6 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
             </div>
           )}
 
-          {/* Seletor de Quantidade */}
           <div className="flex items-center gap-4">
             <h3 className="font-semibold">Quantidade:</h3>
             <div className="flex items-center border-2 border-gray-600 rounded-md">
@@ -176,9 +116,8 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
             <span className="text-sm text-gray-400">Máximo: {product.stock}</span>
           </div>
 
-          {/* Botão Adicionar ao Carrinho */}
           <button onClick={handleAddToCart} disabled={!canAddToCart()} className="w-full py-3 rounded-md bg-primary text-black font-bold hover:bg-yellow-400 transition-all disabled:bg-gray-600 disabled:cursor-not-allowed">
-            {canAddToCart() ? 'Adicionar ao Carrinho' : 'Selecione um tamanho/cor'}
+            {canAddToCart() ? 'Adicionar ao Carrinho' : 'Selecione as opções'}
           </button>
         </div>
       </div>
