@@ -181,44 +181,64 @@ export const deleteOrder = async (orderId: string): Promise<boolean> => {
 };
 
 // ####################################################################
-// ##  FUNÇÕES DE USUÁRIOS (CLIENTES) - MODIFICADAS PARA O BANCO     ##
+// ##  FUNÇÕES DE USUÁRIOS (CLIENTES) - USANDO A VIEW 'user_details' ##
 // ####################################################################
 
 export const getUsers = async (): Promise<User[]> => {
-  // Consulta simplificada para evitar o erro 400.
-  const { data: perfis, error } = await supabase
-    .from('perfis')
-    .select(`id, nome_completo, cpf, telefone, endereco, criado_em`);
+  // Agora consultamos a VIEW 'user_details', que já contém o email.
+  const { data, error } = await supabase
+    .from('user_details')
+    .select('*');
 
   if (error) {
-    console.error('Erro ao buscar perfis:', error.message);
+    console.error('Erro ao buscar detalhes dos usuários:', error.message);
     throw new Error(error.message);
   }
 
-  // O email virá como 'N/A' por enquanto para focarmos em exibir a lista.
-  return perfis.map((p: any) => ({
-    id: p.id,
-    name: p.nome_completo,
-    email: 'N/A', 
-    phone: p.telefone,
-    cpf: p.cpf,
-    address: p.endereco,
-    createdAt: p.criado_em,
-    role: 'customer',
+  // O mapeamento agora é direto e completo.
+  return data.map((user: any) => ({
+    id: user.id,
+    name: user.nome_completo,
+    email: user.email, // O email agora vem diretamente da VIEW!
+    phone: user.telefone,
+    cpf: user.cpf,
+    address: user.endereco,
+    createdAt: user.criado_em,
+    role: 'customer', 
   }));
 };
 
 export const getUserById = async (userId: string): Promise<User | null> => {
-  const { data, error } = await supabase.from('perfis').select(`*`).eq('id', userId).single();
+  // Também usa a VIEW para buscar um usuário específico com todos os detalhes.
+  const { data, error } = await supabase
+    .from('user_details')
+    .select('*')
+    .eq('id', userId)
+    .single();
+    
   if (error || !data) {
-    console.error(`Erro ao buscar perfil ID ${userId}:`, error);
+    console.error(`Erro ao buscar detalhes do usuário ID ${userId}:`, error);
     return null;
   }
-  return { id: data.id, name: data.nome_completo, email: 'N/A', phone: data.telefone, cpf: data.cpf, address: data.endereco, createdAt: data.criado_em, role: 'customer' };
+  return {
+    id: data.id,
+    name: data.nome_completo,
+    email: data.email,
+    phone: data.telefone,
+    cpf: data.cpf,
+    address: data.endereco,
+    createdAt: data.criado_em,
+    role: 'customer' 
+  };
 };
 
 export const deleteUser = async (userId: string): Promise<boolean> => {
-  const { error } = await supabase.from('perfis').delete().eq('id', userId);
+  // A exclusão ainda é feita na tabela 'perfis' original.
+  const { error } = await supabase
+    .from('perfis')
+    .delete()
+    .eq('id', userId);
+    
   if (error) {
     console.error('Erro ao deletar perfil:', error.message);
     return false;
