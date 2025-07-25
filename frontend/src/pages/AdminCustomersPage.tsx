@@ -1,15 +1,15 @@
 // project/src/pages/AdminCustomersPage.tsx
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Search, Trash2, XCircle, AlertTriangle, Eye } from 'lucide-react'; // Adicionado Eye para o estado vazio
+import { Search, Trash2, XCircle, AlertTriangle, Eye } from 'lucide-react';
 import { AdminLayout } from '../components/Admin/AdminLayout';
 import { useProtectedRoute } from '../hooks/useProtectedRoute';
 import { Toast } from '../components/Toast';
 import { User } from '../types';
-import { getUsers, deleteUser } from '../services/api';
+import { getUsers, deleteUser } from '../services/api'; // Funções reais da API
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Modal de confirmação para exclusão
 const DeleteConfirmationModal: React.FC<{
   isOpen: boolean;
   customerId: string;
@@ -92,7 +92,6 @@ export const AdminCustomersPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState<User[]>([]);
 
-  // Estados para o modal de exclusão
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     customerId: string | null;
@@ -111,23 +110,17 @@ export const AdminCustomersPage: React.FC = () => {
     setTimeout(() => setToast(null), 3000);
   }, []);
 
+  // --- MODIFICAÇÃO PRINCIPAL AQUI ---
   const fetchCustomers = useCallback(async () => {
     setLoading(true);
     try {
-      // Usando mockUsers temporariamente. Descomente a linha abaixo quando integrar com a API real.
-      // const data: User[] = await getUsers();
-      const mockUsers: User[] = [
-        { id: 'usr001', name: 'Alice Smith', email: 'alice.s@example.com', role: 'customer', createdAt: '2024-01-10T10:00:00Z', phone: '(11) 91234-5678', address: 'Rua A, 123', cpf: '123.456.789-00' },
-        { id: 'usr002', name: 'Bob Johnson', email: 'bob.j@example.com', role: 'customer', createdAt: '2024-02-15T11:30:00Z', phone: '(21) 98765-4321', address: 'Av. B, 456', cpf: '987.654.321-00' },
-        { id: 'usr003', name: 'Charlie Brown', email: 'charlie.b@example.com', role: 'customer', createdAt: '2024-03-20T14:45:00Z', phone: '(31) 99123-4567', address: 'Praça C, 789', cpf: '456.789.123-00' },
-        { id: 'usr004', name: 'Diana Prince', email: 'diana.p@example.com', role: 'customer', createdAt: '2024-04-01T09:15:00Z', phone: '(41) 97654-3210', address: 'Travessa D, 101', cpf: '789.123.456-00' },
-      ];
-      const data: User[] = mockUsers;
+      // Usa a função getUsers que agora busca os dados do Supabase
+      const data: User[] = await getUsers();
       setCustomers(data);
-      setFilteredCustomers(data); // Inicializa clientes filtrados com todos os clientes
+      setFilteredCustomers(data); 
     } catch (error) {
       console.error('Error fetching customers:', error);
-      showToast('Erro ao carregar clientes', 'error');
+      showToast(String(error), 'error'); // Mostra o erro vindo da API
       setCustomers([]);
       setFilteredCustomers([]);
     } finally {
@@ -155,7 +148,7 @@ export const AdminCustomersPage: React.FC = () => {
       const emailMatch = customer.email.toLowerCase().includes(lowercasedSearchTerm);
       const phoneMatch = (customer.phone || '').toLowerCase().includes(lowercasedSearchTerm);
       const idMatch = customer.id.toLowerCase().includes(lowercasedSearchTerm);
-      const cpfMatch = (customer.cpf || '').toLowerCase().includes(lowercasedSearchTerm); // Adicionado CPF
+      const cpfMatch = (customer.cpf || '').toLowerCase().includes(lowercasedSearchTerm);
 
       return nameMatch || emailMatch || phoneMatch || idMatch || cpfMatch;
     });
@@ -181,8 +174,12 @@ export const AdminCustomersPage: React.FC = () => {
     setDeleteModal(prev => ({ ...prev, isDeleting: true }));
 
     try {
-      // await deleteUser(deleteModal.customerId); // Descomente quando integrar com a API
+      // --- MODIFICAÇÃO PRINCIPAL AQUI ---
+      await deleteUser(deleteModal.customerId); // Chama a função real da API
+
+      // Atualiza o estado local para remover o usuário da lista visível
       setCustomers(prev => prev.filter(user => user.id !== deleteModal.customerId));
+      
       setDeleteModal({
         isOpen: false,
         customerId: null,
@@ -250,7 +247,7 @@ export const AdminCustomersPage: React.FC = () => {
               Carregando clientes...
             </div>
           </div>
-        ) : filteredCustomers.length === 0 && searchTerm ? ( // Condição para exibir "Nenhum cliente encontrado" com base na pesquisa
+        ) : filteredCustomers.length === 0 && searchTerm ? ( 
           <div className="bg-white dark:bg-dark-lighter rounded-2xl shadow-md p-8 text-center">
             <div className="text-gray-400 dark:text-gray-500 mb-4">
               <Search size={48} className="mx-auto mb-2" />
@@ -267,8 +264,8 @@ export const AdminCustomersPage: React.FC = () => {
         ) : (
           <div className="bg-white dark:bg-dark-lighter rounded-2xl shadow-md overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full"> {/* Removido min-w-full para consistência com DataTable */}
-                <thead className="bg-gray-50 dark:bg-gray-800"> {/* Consistente com DataTable */}
+              <table className="w-full">
+                <thead className="bg-gray-50 dark:bg-gray-800">
                   <tr>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       ID do Cliente
@@ -288,7 +285,6 @@ export const AdminCustomersPage: React.FC = () => {
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Data de Criação
                     </th>
-                    {/* Coluna Ações com destaque especial */}
                     <th className="px-6 py-3 text-center text-xs font-bold text-white uppercase tracking-wider bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 shadow-lg">
                       <div className="flex items-center justify-center gap-1">
                         <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
@@ -348,10 +344,8 @@ export const AdminCustomersPage: React.FC = () => {
                               minute: '2-digit'
                             }).replace(', ', ' às ')}
                           </td>
-                          {/* Coluna Ações com fundo destacado */}
                           <td className="px-6 py-4 whitespace-nowrap text-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 border-l-2 border-blue-200 dark:border-blue-700">
                             <div className="flex items-center justify-center space-x-2">
-                              {/* Você pode adicionar um botão de "Ver Detalhes" aqui se houver uma rota para isso */}
                               <button
                                 onClick={() => handleDeleteCustomer(customer.id)}
                                 className="group relative p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200 transform hover:scale-105"
@@ -372,7 +366,6 @@ export const AdminCustomersPage: React.FC = () => {
               </table>
             </div>
 
-            {/* Rodapé da tabela */}
             <div className="bg-gray-50 dark:bg-gray-800 px-6 py-3">
               <div className="flex items-center justify-between">
                 <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -395,7 +388,6 @@ export const AdminCustomersPage: React.FC = () => {
         />
       )}
 
-      {/* Modal de Confirmação de Exclusão */}
       <AnimatePresence>
         {deleteModal.isOpen && (
           <DeleteConfirmationModal

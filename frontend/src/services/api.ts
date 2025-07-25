@@ -1,5 +1,8 @@
+// frontend/src/services/api.ts
+
+import { supabase } from '../lib/supabase';
 import productsData from '../data/products.json';
-import usersData from '../data/users.json'; // Assumindo que você terá um arquivo de usuários ou gerenciará em memória
+import usersData from '../data/users.json';
 import { Product, Category, CustomerInfo, Order, User } from '../types';
 
 // Simulate API delay
@@ -8,7 +11,6 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 // In-memory store for mock data
 let products: Product[] = [...productsData.products];
 const categories: Category[] = [...productsData.categories];
-let users: User[] = [...usersData.users]; // Carrega usuários de um arquivo mock ou inicializa vazio
 let orders: Order[] = []; // In-memory store for orders
 
 // Initialize some mock orders if needed for demonstration
@@ -41,7 +43,10 @@ if (orders.length === 0) {
 }
 
 
-// Products API
+// ####################################################################
+// ##  FUNÇÕES ORIGINAIS DE PRODUTOS E CATEGORIAS - MANTIDAS 100%    ##
+// ####################################################################
+
 export const getProducts = async (): Promise<Product[]> => {
   await delay(300);
   return products.map(product => {
@@ -93,7 +98,6 @@ export const getBestSellerProducts = async (): Promise<Product[]> => {
   return (await getProducts()).filter(p => p.bestSeller);
 };
 
-// Categories API
 export const getCategories = async (): Promise<Category[]> => {
   await delay(300);
   return categories;
@@ -110,7 +114,6 @@ export const getFeaturedCategories = async (): Promise<Category[]> => {
   return categories.filter(c => c.featured);
 };
 
-// Admin Products API (simulated with in-memory persistence)
 export const createProduct = async (product: Omit<Product, 'id'>): Promise<Product> => {
   await delay(500);
   const newId = Math.max(...products.map(p => p.id), 0) + 1;
@@ -124,7 +127,6 @@ export const createProduct = async (product: Omit<Product, 'id'>): Promise<Produ
     reviewCount: product.reviewCount || 0 // Garantir valor padrão
   };
   
-  // Update in-memory products array
   products.push(newProduct);
   
   return newProduct;
@@ -138,7 +140,6 @@ export const updateProduct = async (id: number, updates: Partial<Product>): Prom
   
   const category = categories.find(c => c.id === (updates.category ?? products[index].category));
   
-  // Update the product in the in-memory array
   const updatedProduct: Product = {
     ...products[index],
     ...updates,
@@ -158,10 +159,8 @@ export const deleteProduct = async (id: number): Promise<boolean> => {
   return products.length < initialLength; // Returns true if a product was actually removed
 };
 
-// Admin Orders API (simulated with in-memory persistence)
 export const getOrders = async (): Promise<Order[]> => {
   await delay(400);
-  // Simular ordenação por data de criação do mais novo para o mais antigo
   return [...orders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 };
 
@@ -181,29 +180,58 @@ export const deleteOrder = async (orderId: string): Promise<boolean> => {
   return orders.length < initialLength;
 };
 
-// Admin Users (Clients) API (simulated with in-memory persistence)
+// ####################################################################
+// ##  FUNÇÕES DE USUÁRIOS (CLIENTES) - MODIFICADAS PARA O BANCO     ##
+// ####################################################################
+
 export const getUsers = async (): Promise<User[]> => {
-  await delay(400);
-  return users;
+  // Consulta simplificada para evitar o erro 400.
+  const { data: perfis, error } = await supabase
+    .from('perfis')
+    .select(`id, nome_completo, cpf, telefone, endereco, criado_em`);
+
+  if (error) {
+    console.error('Erro ao buscar perfis:', error.message);
+    throw new Error(error.message);
+  }
+
+  // O email virá como 'N/A' por enquanto para focarmos em exibir a lista.
+  return perfis.map((p: any) => ({
+    id: p.id,
+    name: p.nome_completo,
+    email: 'N/A', 
+    phone: p.telefone,
+    cpf: p.cpf,
+    address: p.endereco,
+    createdAt: p.criado_em,
+    role: 'customer',
+  }));
 };
 
 export const getUserById = async (userId: string): Promise<User | null> => {
-  await delay(300);
-  return users.find(u => u.id === userId) || null;
+  const { data, error } = await supabase.from('perfis').select(`*`).eq('id', userId).single();
+  if (error || !data) {
+    console.error(`Erro ao buscar perfil ID ${userId}:`, error);
+    return null;
+  }
+  return { id: data.id, name: data.nome_completo, email: 'N/A', phone: data.telefone, cpf: data.cpf, address: data.endereco, createdAt: data.criado_em, role: 'customer' };
 };
 
 export const deleteUser = async (userId: string): Promise<boolean> => {
-  await delay(500);
-  const initialLength = users.length;
-  users = users.filter(u => u.id !== userId);
-  return users.length < initialLength;
+  const { error } = await supabase.from('perfis').delete().eq('id', userId);
+  if (error) {
+    console.error('Erro ao deletar perfil:', error.message);
+    return false;
+  }
+  return true;
 };
 
+// ####################################################################
+// ##        FUNÇÃO DE CHECKOUT - MANTIDA 100% ORIGINAL              ##
+// ####################################################################
 
-// Checkout API (simulated)
 export const submitOrder = async (customerInfo: CustomerInfo, cartItems: any[]): Promise<{ success: boolean; orderId: string }> => {
   await delay(1000);
-  // Simular a criação de um novo pedido e adicioná-lo ao array em memória
   const newOrderId = `ORD-${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`;
   const total = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
@@ -216,7 +244,7 @@ export const submitOrder = async (customerInfo: CustomerInfo, cartItems: any[]):
     createdAt: new Date().toISOString(),
     shippingAddress: customerInfo.address, // Usar o endereço do customerInfo
   };
-  orders.push(newOrder); // Adiciona o novo pedido à lista
+  orders.push(newOrder); 
 
   return {
     success: true,
