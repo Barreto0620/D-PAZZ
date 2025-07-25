@@ -1,5 +1,4 @@
-// project/src/pages/AdminProductsPage.tsx
-
+// frontend/src/pages/AdminProductsPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Plus, Search, Trash2, AlertTriangle } from 'lucide-react';
@@ -11,7 +10,6 @@ import { Product } from '../types';
 import { useProtectedRoute } from '../hooks/useProtectedRoute';
 import { Toast } from '../components/Toast';
 
-// Modal de confirmação para exclusão
 const DeleteConfirmationModal: React.FC<{
   isOpen: boolean;
   productName: string;
@@ -81,7 +79,6 @@ const DeleteConfirmationModal: React.FC<{
 export const AdminProductsPage: React.FC = () => {
   const { authLoading } = useProtectedRoute(true);
 
-  // Estados principais
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -90,10 +87,9 @@ export const AdminProductsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   
-  // Estados para o modal de exclusão
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
-    productId: number | null;
+    productId: string | null; // CORREÇÃO: number para string
     productName: string;
     isDeleting: boolean;
   }>({
@@ -111,97 +107,12 @@ export const AdminProductsPage: React.FC = () => {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      // Mock de dados se a API não estiver disponível. Remova em produção.
-      const mockProducts: Product[] = [
-        { 
-          id: 1, 
-          name: 'Tênis Esportivo Pro', 
-          description: 'Tênis de alta performance para corrida', 
-          price: 299.90, 
-          imageUrl: '/images/mock-product-1.jpg', 
-          category: 'Esportivo', 
-          stock: 50, 
-          color: 'Preto', 
-          shoeNumber: 42, 
-          material: 'Mesh',
-          featured: true,
-          onSale: false,
-          bestSeller: true
-        },
-        { 
-          id: 2, 
-          name: 'Sandália Casual Confort', 
-          description: 'Sandália confortável para o dia a dia', 
-          price: 89.90, 
-          imageUrl: '/images/mock-product-2.jpg', 
-          category: 'Casual', 
-          stock: 120, 
-          color: 'Marrom', 
-          shoeNumber: 38, 
-          material: 'Couro Sintético',
-          featured: false,
-          onSale: true,
-          bestSeller: false
-        },
-        { 
-          id: 3, 
-          name: 'Bota de Couro Elegance', 
-          description: 'Bota feminina de couro legítimo', 
-          price: 450.00, 
-          oldPrice: 500.00,
-          imageUrl: '/images/mock-product-3.jpg', 
-          category: 'Social', 
-          stock: 30, 
-          color: 'Caramelo', 
-          shoeNumber: 36, 
-          material: 'Couro',
-          featured: true,
-          onSale: true,
-          bestSeller: false
-        },
-        { 
-          id: 4, 
-          name: 'Chuteira Speed Max', 
-          description: 'Chuteira para alta velocidade em campo', 
-          price: 199.90, 
-          imageUrl: '/images/mock-product-4.jpg', 
-          category: 'Esportivo', 
-          stock: 75, 
-          color: 'Verde Limão', 
-          shoeNumber: 40, 
-          material: 'Sintético',
-          featured: false,
-          onSale: false,
-          bestSeller: true
-        },
-        { 
-          id: 5, 
-          name: 'Sapato Social Clássico', 
-          description: 'Sapato masculino ideal para eventos formais', 
-          price: 350.00, 
-          imageUrl: '/images/mock-product-5.jpg', 
-          category: 'Social', 
-          stock: 0, // Produto em falta
-          color: 'Preto', 
-          shoeNumber: 43, 
-          material: 'Couro',
-          featured: false,
-          onSale: false,
-          bestSeller: false
-        },
-      ];
-      
-      // const data: Product[] = await getProducts(); // Descomente e use esta linha quando a API estiver pronta
-      const data: Product[] = mockProducts; // Use os dados mockados por enquanto
-      
-      console.log('Produtos carregados:', data.length, data);
-      
+      const data: Product[] = await getProducts(); // <--- USA A API REAL
       setProducts(data);
       setFilteredProducts(data);
     } catch (error) {
       console.error('Error fetching products:', error);
       showToast('Erro ao carregar produtos', 'error');
-      // Definir arrays vazios em caso de erro para evitar undefined
       setProducts([]);
       setFilteredProducts([]);
     } finally {
@@ -215,102 +126,53 @@ export const AdminProductsPage: React.FC = () => {
     }
   }, [authLoading, fetchProducts]);
 
-  // Efeito para filtrar produtos
   useEffect(() => {
-    console.log('Filtering products. Search term:', searchTerm, 'Total products:', products.length);
-    
     if (!searchTerm || searchTerm.trim() === '') {
       setFilteredProducts(products);
       return;
     }
-
     const lowercasedSearchTerm = searchTerm.toLowerCase().trim();
-    
     const results = products.filter(product => {
       if (!product) return false;
-      
       const nameMatch = (product.name || '').toLowerCase().includes(lowercasedSearchTerm);
       const descriptionMatch = (product.description || '').toLowerCase().includes(lowercasedSearchTerm);
-      const categoryMatch = (product.category || '').toLowerCase().includes(lowercasedSearchTerm);
+      const categoryMatch = (product.categoryName || '').toLowerCase().includes(lowercasedSearchTerm);
       const colorMatch = (product.color || '').toLowerCase().includes(lowercasedSearchTerm);
-      const shoeNumberMatch = (product.shoeNumber || '').toString().includes(lowercasedSearchTerm);
-      const materialMatch = (product.material || '').toLowerCase().includes(lowercasedSearchTerm);
-      
-      return nameMatch || descriptionMatch || categoryMatch || colorMatch || shoeNumberMatch || materialMatch;
+      const shoeNumberMatch = (product.tamanhos || []).join(' ').toLowerCase().includes(lowercasedSearchTerm);
+      const brandMatch = (product.brand || '').toLowerCase().includes(lowercasedSearchTerm);
+      return nameMatch || descriptionMatch || categoryMatch || colorMatch || shoeNumberMatch || brandMatch;
     });
-    
-    console.log('Filtered results:', results.length, 'Results:', results);
     setFilteredProducts(results);
   }, [searchTerm, products]);
 
-  const handleCreateProduct = async (product: Omit<Product, 'id'>) => {
+  const handleSaveProduct = async (productData: Omit<Product, 'id'> | Product) => {
     try {
-      // const newProduct = await createProduct(product); // Descomente quando integrar com a API
-      const newProduct: Product = { 
-        ...product, 
-        id: products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1 
-      }; // Mock de ID
-      
-      const updatedProducts = [...products, newProduct];
-      setProducts(updatedProducts);
-      
-      // Atualizar filteredProducts também se necessário
-      if (!searchTerm || searchTerm.trim() === '') {
-        setFilteredProducts(updatedProducts);
-      }
-      
-      showToast('Produto criado com sucesso! 🎉', 'success');
-    } catch (error) {
-      console.error('Error creating product:', error);
-      showToast('Erro ao criar produto', 'error');
-    } finally {
-      setIsFormOpen(false);
-      setCurrentProduct(undefined);
-    }
-  };
-
-  const handleUpdateProduct = async (product: Product) => {
-    try {
-      // const updatedProduct = await updateProduct(product.id, product); // Descomente quando integrar com a API
-      const updatedProduct = product; // Mock de retorno
-      
-      if (!updatedProduct) {
-        throw new Error('Produto não encontrado ou atualização falhou.');
-      }
-
-      const updatedProducts = products.map(p => (p.id === product.id ? { ...p, ...updatedProduct } : p));
-      setProducts(updatedProducts);
-      
-      // Atualizar filteredProducts também se necessário
-      if (!searchTerm || searchTerm.trim() === '') {
-        setFilteredProducts(updatedProducts);
+      if ('id' in productData) {
+        // Atualizar produto
+        const updated = await updateProduct(productData.id, productData);
+        if (updated) {
+          // Atualiza a lista local com o produto retornado pela API, que tem todos os dados.
+          setProducts(prev => prev.map(p => (p.id === updated.id ? updated : p)));
+        }
+        showToast('Produto atualizado com sucesso! ✅', 'success');
       } else {
-        // Re-aplicar filtro se houver busca ativa
-        const lowercasedSearchTerm = searchTerm.toLowerCase().trim();
-        const filtered = updatedProducts.filter(p => {
-          if (!p) return false;
-          const nameMatch = (p.name || '').toLowerCase().includes(lowercasedSearchTerm);
-          const descriptionMatch = (p.description || '').toLowerCase().includes(lowercasedSearchTerm);
-          const categoryMatch = (p.category || '').toLowerCase().includes(lowercasedSearchTerm);
-          const colorMatch = (p.color || '').toLowerCase().includes(lowercasedSearchTerm);
-          const shoeNumberMatch = (p.shoeNumber || '').toString().includes(lowercasedSearchTerm);
-          const materialMatch = (p.material || '').toLowerCase().includes(lowercasedSearchTerm);
-          return nameMatch || descriptionMatch || categoryMatch || colorMatch || shoeNumberMatch || materialMatch;
-        });
-        setFilteredProducts(filtered);
+        // Criar produto
+        const newProduct = await createProduct(productData);
+        // Adiciona o novo produto retornado pela API na lista local.
+        setProducts(prev => [...prev, newProduct]);
+        showToast('Produto criado com sucesso! 🎉', 'success');
       }
-      
-      showToast('Produto atualizado com sucesso! ✅', 'success');
     } catch (error) {
-      console.error('Error updating product:', error);
-      showToast(error instanceof Error ? error.message : 'Erro ao atualizar produto', 'error');
+      const action = 'id' in productData ? 'atualizar' : 'criar';
+      console.error(`Error ${action} product:`, error);
+      showToast(`Erro ao ${action} produto`, 'error');
     } finally {
       setIsFormOpen(false);
       setCurrentProduct(undefined);
     }
   };
 
-  const handleDeleteProduct = async (productId: number) => {
+  const handleDeleteProduct = async (productId: string) => { // CORREÇÃO: number para string
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
@@ -324,24 +186,12 @@ export const AdminProductsPage: React.FC = () => {
 
   const confirmDelete = async () => {
     if (!deleteModal.productId) return;
-
     setDeleteModal(prev => ({ ...prev, isDeleting: true }));
 
     try {
-      // await deleteProduct(deleteModal.productId); // Descomente quando integrar com a API
-      const updatedProducts = products.filter(p => p.id !== deleteModal.productId);
-      setProducts(updatedProducts);
-      
-      // Atualizar filteredProducts também
-      const updatedFilteredProducts = filteredProducts.filter(p => p.id !== deleteModal.productId);
-      setFilteredProducts(updatedFilteredProducts);
-      
-      setDeleteModal({
-        isOpen: false,
-        productId: null,
-        productName: '',
-        isDeleting: false
-      });
+      await deleteProduct(deleteModal.productId);
+      setProducts(prev => prev.filter(p => p.id !== deleteModal.productId));
+      setDeleteModal({ isOpen: false, productId: null, productName: '', isDeleting: false });
       showToast('Produto excluído com sucesso! 🗑️', 'success');
     } catch (error) {
       console.error('Error deleting product:', error);
@@ -350,37 +200,10 @@ export const AdminProductsPage: React.FC = () => {
     }
   };
 
-  const cancelDelete = () => {
-    setDeleteModal({
-      isOpen: false,
-      productId: null,
-      productName: '',
-      isDeleting: false
-    });
-  };
-
-  const handleEdit = (product: Product) => {
-    setCurrentProduct(product);
-    setIsFormOpen(true);
-  };
-
-  const handleAddNew = () => {
-    setCurrentProduct(undefined);
-    setIsFormOpen(true);
-  };
-
-  const handleCloseForm = () => {
-    setIsFormOpen(false);
-    setCurrentProduct(undefined);
-  };
-
-  const handleSaveProduct = (product: Omit<Product, 'id'> | Product) => {
-    if ('id' in product) {
-      handleUpdateProduct(product as Product);
-    } else {
-      handleCreateProduct(product);
-    }
-  };
+  const cancelDelete = () => { setDeleteModal({ isOpen: false, productId: null, productName: '', isDeleting: false }); };
+  const handleEdit = (product: Product) => { setCurrentProduct(product); setIsFormOpen(true); };
+  const handleAddNew = () => { setCurrentProduct(undefined); setIsFormOpen(true); };
+  const handleCloseForm = () => { setIsFormOpen(false); setCurrentProduct(undefined); };
 
   if (authLoading) {
     return (
@@ -399,13 +222,11 @@ export const AdminProductsPage: React.FC = () => {
         <title>Produtos - Dashboard Admin - D'Pazz Imports</title>
         <meta name="description" content="Gerencie produtos na sua loja D'Pazz Imports. Adicione, edite e exclua produtos." />
       </Helmet>
-
       <AdminLayout title="Gerenciar Produtos">
         <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <h2 className="text-xl font-bold text-dark dark:text-white">
             Lista de Produtos ({filteredProducts.length})
           </h2>
-
           <div className="relative w-full sm:w-auto flex-grow sm:flex-grow-0">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={20} />
             <input
@@ -416,7 +237,6 @@ export const AdminProductsPage: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-
           <button
             onClick={handleAddNew}
             className="flex items-center gap-2 bg-primary hover:bg-secondary text-dark px-4 py-2 rounded-lg transition-colors w-full sm:w-auto justify-center"
@@ -425,59 +245,13 @@ export const AdminProductsPage: React.FC = () => {
             <span>Novo Produto</span>
           </button>
         </div>
-
-        {loading ? (
-          <div className="bg-white dark:bg-dark-lighter rounded-2xl shadow-md h-64 flex items-center justify-center">
-            <div className="animate-pulse text-gray-400 dark:text-gray-500">
-              Carregando produtos...
-            </div>
-          </div>
-        ) : filteredProducts.length === 0 && searchTerm ? (
-          <div className="bg-white dark:bg-dark-lighter rounded-2xl shadow-md p-8 text-center">
-            <div className="text-gray-400 dark:text-gray-500 mb-4">
-              <Search size={48} className="mx-auto mb-2" />
-              <h3 className="text-lg font-semibold mb-2">Nenhum produto encontrado</h3>
-              <p>Não encontramos produtos que correspondam à sua pesquisa "{searchTerm}".</p>
-              <button
-                onClick={() => setSearchTerm('')}
-                className="mt-4 text-primary hover:text-secondary underline"
-              >
-                Limpar pesquisa
-              </button>
-            </div>
-          </div>
-        ) : (
-          <DataTable
-            products={filteredProducts}
-            onEdit={handleEdit}
-            onDelete={handleDeleteProduct}
-          />
-        )}
-
-        {isFormOpen && (
-          <CRUDForm
-            product={currentProduct}
-            onClose={handleCloseForm}
-            onSave={handleSaveProduct}
-          />
-        )}
-
-        <DeleteConfirmationModal
-          isOpen={deleteModal.isOpen}
-          productName={deleteModal.productName}
-          onConfirm={confirmDelete}
-          onCancel={cancelDelete}
-          isDeleting={deleteModal.isDeleting}
-        />
+        {loading ? ( <div className="bg-white dark:bg-dark-lighter rounded-2xl shadow-md h-64 flex items-center justify-center"> <div className="animate-pulse text-gray-400 dark:text-gray-500"> Carregando produtos... </div> </div>
+        ) : filteredProducts.length === 0 && searchTerm ? ( <div className="bg-white dark:bg-dark-lighter rounded-2xl shadow-md p-8 text-center"> <div className="text-gray-400 dark:text-gray-500 mb-4"> <Search size={48} className="mx-auto mb-2" /> <h3 className="text-lg font-semibold mb-2">Nenhum produto encontrado</h3> <p>Não encontramos produtos que correspondam à sua pesquisa "{searchTerm}".</p> <button onClick={() => setSearchTerm('')} className="mt-4 text-primary hover:text-secondary underline" > Limpar pesquisa </button> </div> </div>
+        ) : ( <DataTable products={filteredProducts} onEdit={handleEdit} onDelete={handleDeleteProduct} /> )}
+        {isFormOpen && ( <CRUDForm product={currentProduct} onClose={handleCloseForm} onSave={handleSaveProduct} /> )}
+        <DeleteConfirmationModal isOpen={deleteModal.isOpen} productName={deleteModal.productName} onConfirm={confirmDelete} onCancel={cancelDelete} isDeleting={deleteModal.isDeleting} />
       </AdminLayout>
-
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
+      {toast && ( <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} /> )}
     </>
   );
 };

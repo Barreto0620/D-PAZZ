@@ -6,15 +6,14 @@ import { Product } from '../../types';
 interface DataTableProps {
   products: Product[];
   onEdit: (product: Product) => void;
-  onDelete: (productId: number) => void;
+  onDelete: (productId: string) => void; // CORREÇÃO: de 'number' para 'string'
 }
 
 export const DataTable: React.FC<DataTableProps> = ({ 
-  products = [], // Default para array vazio para evitar undefined
+  products = [],
   onEdit, 
   onDelete 
 }) => {
-  // Função para formatar preço
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -22,13 +21,11 @@ export const DataTable: React.FC<DataTableProps> = ({
     }).format(price);
   };
 
-  // Função para truncar texto
   const truncateText = (text: string, maxLength: number = 50): string => {
     if (!text) return '';
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
   };
 
-  // Verificação de segurança para produtos undefined ou array vazio
   if (!products || products.length === 0) {
     return (
       <div className="bg-white dark:bg-dark-lighter rounded-2xl shadow-md p-8 text-center">
@@ -81,14 +78,14 @@ export const DataTable: React.FC<DataTableProps> = ({
                   index % 2 === 0 ? 'bg-white dark:bg-dark-lighter' : 'bg-gray-25 dark:bg-gray-900/20'
                 }`}
               >
-                {/* Coluna do Produto */}
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-12 w-12">
-                      {product.imageUrl ? (
+                      {/* Lógica para usar o novo campo 'images' (array) */}
+                      {product.images && product.images.length > 0 ? (
                         <img 
                           className="h-12 w-12 rounded-lg object-cover" 
-                          src={product.imageUrl} 
+                          src={product.images[0]} 
                           alt={product.name}
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
@@ -111,15 +108,11 @@ export const DataTable: React.FC<DataTableProps> = ({
                     </div>
                   </div>
                 </td>
-
-                {/* Coluna da Categoria */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
-                    {product.category || 'Sem categoria'}
+                    {product.categoryName || 'Sem categoria'}
                   </span>
                 </td>
-
-                {/* Coluna do Preço */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                   <div className="font-semibold">
                     {formatPrice(product.price)}
@@ -130,8 +123,6 @@ export const DataTable: React.FC<DataTableProps> = ({
                     </div>
                   )}
                 </td>
-
-                {/* Coluna do Estoque */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                   <div className="flex items-center">
                     <div className={`w-2 h-2 rounded-full mr-2 ${
@@ -141,48 +132,20 @@ export const DataTable: React.FC<DataTableProps> = ({
                     {product.stock || 0} unidades
                   </div>
                 </td>
-
-                {/* Coluna do Status */}
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex flex-col gap-1">
-                    {product.featured && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">
-                        Destaque
-                      </span>
-                    )}
-                    {product.onSale && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400">
-                        Promoção
-                      </span>
-                    )}
-                    {product.bestSeller && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
-                        Mais Vendido
-                      </span>
-                    )}
-                    {!product.featured && !product.onSale && !product.bestSeller && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                        Normal
-                      </span>
-                    )}
+                    {product.featured && ( <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">Destaque</span> )}
+                    {product.onSale && ( <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400">Promoção</span> )}
+                    {product.bestSeller && ( <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Mais Vendido</span> )}
+                    {!product.featured && !product.onSale && !product.bestSeller && ( <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">Normal</span> )}
                   </div>
                 </td>
-
-                {/* Coluna das Ações */}
                 <td className="px-6 py-4 whitespace-nowrap text-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 border-l-2 border-blue-200 dark:border-blue-700">
                   <div className="flex items-center justify-center space-x-2">
-                    <button
-                      onClick={() => onEdit(product)}
-                      className="inline-flex items-center justify-center w-8 h-8 text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/20 hover:bg-indigo-200 dark:hover:bg-indigo-800/30 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
-                      title="Editar produto"
-                    >
+                    <button onClick={() => onEdit(product)} className="inline-flex items-center justify-center w-8 h-8 text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/20 hover:bg-indigo-200 dark:hover:bg-indigo-800/30 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1" title="Editar produto">
                       <Edit size={14} />
                     </button>
-                    <button
-                      onClick={() => onDelete(product.id)}
-                      className="inline-flex items-center justify-center w-8 h-8 text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20 hover:bg-red-200 dark:hover:bg-red-800/30 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
-                      title="Excluir produto"
-                    >
+                    <button onClick={() => onDelete(product.id)} className="inline-flex items-center justify-center w-8 h-8 text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20 hover:bg-red-200 dark:hover:bg-red-800/30 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1" title="Excluir produto">
                       <Trash2 size={14} />
                     </button>
                   </div>
@@ -192,8 +155,6 @@ export const DataTable: React.FC<DataTableProps> = ({
           </tbody>
         </table>
       </div>
-
-      {/* Rodapé da tabela */}
       <div className="bg-gray-50 dark:bg-gray-800 px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-500 dark:text-gray-400">
