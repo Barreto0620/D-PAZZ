@@ -1,6 +1,7 @@
-// project/src/components/Admin/AdminLayout.tsx
+// frontend/src/components/Admin/AdminLayout.tsx
+
 import React, { ReactNode, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom'; // Importe useLocation
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, Menu } from 'lucide-react';
 import { useProtectedRoute } from '../../hooks/useProtectedRoute';
 import { useAuth } from '../../contexts/AuthContext';
@@ -15,7 +16,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
   const { isAdmin } = useProtectedRoute(true);
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // Hook para obter a localização atual
+  const location = useLocation(); 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -25,19 +26,16 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
 
   if (!isAdmin) return null;
 
-  // Define os itens do menu com seus paths correspondentes
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     { name: 'Produtos', icon: Package, path: '/admin/products' },
     { name: 'Pedidos', icon: ShoppingCart, path: '/admin/orders' },
-    { name: 'Clientes', icon: Users, path: '/admin/customers' }, // Rota corrigida para clientes
+    { name: 'Clientes', icon: Users, path: '/admin/customers' },
   ];
 
   return (
     <div className="min-h-screen bg-light-darker dark:bg-dark flex">
       {/* Sidebar */}
-      {/* A sidebar é fixa em telas menores e se torna relativa em telas maiores. */}
-      {/* z-50 garante que ela fique acima de outros elementos quando aberta. */}
       <aside className={`w-64 bg-white dark:bg-dark-lighter shadow-md 
                         fixed inset-y-0 left-0 
                         transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} 
@@ -61,11 +59,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
                   to={item.path} 
                   className={`flex items-center space-x-3 p-3 rounded-lg transition-colors
                     ${location.pathname === item.path 
-                      ? 'bg-primary text-dark font-semibold shadow-md' // Estilo para página ativa
-                      : 'hover:bg-light-darker dark:hover:bg-dark-light text-dark dark:text-white' // Estilo padrão
+                      ? 'bg-primary text-dark font-semibold shadow-md'
+                      : 'hover:bg-light-darker dark:hover:bg-dark-light text-dark dark:text-white'
                     }`
                   }
-                  onClick={() => setIsMobileMenuOpen(false)} // Fecha menu ao clicar
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <item.icon size={20} />
                   <span>{item.name}</span>
@@ -89,11 +87,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
         </nav>
       </aside>
       
-      {/* Main content */}
-      {/* Removi o md:ml-64 daqui, pois a sidebar quando md:relative já ocupa o espaço. */}
-      {/* Se o problema persistir, o md:ml-64 deveria estar aqui, mas a interação com fixed/relative pode ser a causa. */}
-      {/* A classe flex-1 fará com que este div ocupe todo o espaço restante. */}
-      <div className="flex-1 flex flex-col">
+      {/* --- CORREÇÃO APLICADA AQUI --- */}
+      {/* Adicionado 'min-w-0' para forçar o cálculo correto da largura do flexbox */}
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile header and overlay */}
         <header className="bg-white dark:bg-dark-lighter p-4 shadow-md md:hidden flex items-center justify-between z-30">
           <button

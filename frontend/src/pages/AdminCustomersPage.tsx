@@ -1,4 +1,4 @@
-// project/src/pages/AdminCustomersPage.tsx
+// frontend/src/pages/AdminCustomersPage.tsx
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -7,7 +7,7 @@ import { AdminLayout } from '../components/Admin/AdminLayout';
 import { useProtectedRoute } from '../hooks/useProtectedRoute';
 import { Toast } from '../components/Toast';
 import { User } from '../types';
-import { getUsers, deleteUser } from '../services/api'; // Funções reais da API
+import { getUsers, deleteUser } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DeleteConfirmationModal: React.FC<{
@@ -110,17 +110,15 @@ export const AdminCustomersPage: React.FC = () => {
     setTimeout(() => setToast(null), 3000);
   }, []);
 
-  // --- MODIFICAÇÃO PRINCIPAL AQUI ---
   const fetchCustomers = useCallback(async () => {
     setLoading(true);
     try {
-      // Usa a função getUsers que agora busca os dados do Supabase
       const data: User[] = await getUsers();
       setCustomers(data);
       setFilteredCustomers(data); 
     } catch (error) {
       console.error('Error fetching customers:', error);
-      showToast(String(error), 'error'); // Mostra o erro vindo da API
+      showToast(String(error), 'error');
       setCustomers([]);
       setFilteredCustomers([]);
     } finally {
@@ -135,7 +133,6 @@ export const AdminCustomersPage: React.FC = () => {
   }, [authLoading, fetchCustomers]);
 
   useEffect(() => {
-    console.log('Filtering customers. Search term:', searchTerm, 'Total customers:', customers.length);
     const lowercasedSearchTerm = searchTerm.toLowerCase().trim();
 
     if (lowercasedSearchTerm === '') {
@@ -152,7 +149,6 @@ export const AdminCustomersPage: React.FC = () => {
 
       return nameMatch || emailMatch || phoneMatch || idMatch || cpfMatch;
     });
-    console.log('Filtered customer results:', results.length, 'Results:', results);
     setFilteredCustomers(results);
   }, [searchTerm, customers]);
 
@@ -174,10 +170,7 @@ export const AdminCustomersPage: React.FC = () => {
     setDeleteModal(prev => ({ ...prev, isDeleting: true }));
 
     try {
-      // --- MODIFICAÇÃO PRINCIPAL AQUI ---
-      await deleteUser(deleteModal.customerId); // Chama a função real da API
-
-      // Atualiza o estado local para remover o usuário da lista visível
+      await deleteUser(deleteModal.customerId); 
       setCustomers(prev => prev.filter(user => user.id !== deleteModal.customerId));
       
       setDeleteModal({
@@ -262,7 +255,8 @@ export const AdminCustomersPage: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-white dark:bg-dark-lighter rounded-2xl shadow-md overflow-hidden">
+          // --- CORREÇÃO DE ESTILO APLICADA AQUI ---
+          <div className="bg-white dark:bg-dark-lighter rounded-2xl shadow-md overflow-hidden w-full">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 dark:bg-gray-800">
