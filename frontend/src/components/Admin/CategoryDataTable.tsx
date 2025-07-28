@@ -1,6 +1,6 @@
 // frontend/src/components/Admin/CategoryDataTable.tsx
 import React from 'react';
-import { Edit, Trash2, CheckCircle, XCircle, Package } from 'lucide-react'; // Importa Package
+import { Edit, Trash2, CheckCircle, XCircle, Package } from 'lucide-react';
 import { Category } from '../../types';
 
 interface CategoryDataTableProps {
@@ -26,7 +26,6 @@ export const CategoryDataTable: React.FC<CategoryDataTableProps> = ({ categories
             {categories.map((category) => (
               <tr key={category.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {/* --- CORREÇÃO APLICADA AQUI --- */}
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-12 w-12">
                       {category.image ? (
@@ -36,7 +35,7 @@ export const CategoryDataTable: React.FC<CategoryDataTableProps> = ({ categories
                           alt={category.name}
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
-                            target.src = '/images/placeholder-product.jpg'; // Imagem fallback
+                            target.src = '/images/placeholder-product.jpg';
                           }}
                         />
                       ) : (
@@ -59,8 +58,8 @@ export const CategoryDataTable: React.FC<CategoryDataTableProps> = ({ categories
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-center">
                   <div className="flex items-center justify-center space-x-2">
-                    <button onClick={() => onEdit(category)} className="p-2 text-indigo-600 hover:text-indigo-900 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"><Edit size={16} /></button>
-                    <button onClick={() => onDelete(category.id)} className="p-2 text-red-600 hover:text-red-900 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"><Trash2 size={16} /></button>
+                    <button onClick={() => onEdit(category)} className="p-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"><Edit size={16} /></button>
+                    <button onClick={() => onDelete(category.id)} className="p-2 text-red-600 dark:text-red-400 hover:text-red-900 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"><Trash2 size={16} /></button>
                   </div>
                 </td>
               </tr>

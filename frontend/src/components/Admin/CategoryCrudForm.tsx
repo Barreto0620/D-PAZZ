@@ -11,7 +11,7 @@ interface CategoryCRUDFormProps {
   isSaving: boolean;
 }
 
-// REMOVIDA a função createSlug
+const createSlug = (text: string) => text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
 
 export const CategoryCRUDForm: React.FC<CategoryCRUDFormProps> = ({ category, onClose, onSave, isSaving }) => {
   const [formData, setFormData] = useState({
@@ -41,9 +41,13 @@ export const CategoryCRUDForm: React.FC<CategoryCRUDFormProps> = ({ category, on
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // A propriedade 'slug' foi removida do objeto enviado
-    onSave(formData);
+    onSave({
+      ...formData,
+      slug: createSlug(formData.name),
+    });
   };
+
+  const inputClasses = "w-full mt-1 p-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500";
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -55,15 +59,15 @@ export const CategoryCRUDForm: React.FC<CategoryCRUDFormProps> = ({ category, on
         <div className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome *</label>
-            <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full mt-1 p-2 border rounded-md dark:bg-gray-700 border-gray-300 dark:border-gray-600" />
+            <input type="text" name="name" value={formData.name} onChange={handleChange} required className={inputClasses} />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Descrição</label>
-            <textarea name="description" value={formData.description} onChange={handleChange} rows={3} className="w-full mt-1 p-2 border rounded-md dark:bg-gray-700 border-gray-300 dark:border-gray-600"></textarea>
+            <textarea name="description" value={formData.description} onChange={handleChange} rows={3} className={inputClasses}></textarea>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">URL da Imagem</label>
-            <input type="url" name="image" value={formData.image} onChange={handleChange} className="w-full mt-1 p-2 border rounded-md dark:bg-gray-700 border-gray-300 dark:border-gray-600" />
+            <input type="url" name="image" value={formData.image} onChange={handleChange} className={inputClasses} />
           </div>
           <div className="space-y-3 pt-2">
             <ToggleSwitch label="Marcar como Destaque" enabled={formData.featured} onChange={(val) => setFormData(p => ({...p, featured: val}))} />
