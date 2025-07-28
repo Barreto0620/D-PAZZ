@@ -5,18 +5,13 @@ import usersData from '../data/users.json';
 import { Product, Category, CustomerInfo, Order, User } from '../types';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-// Dados mock que não são de produtos/categorias/usuários são mantidos
 let orders: Order[] = [];
 if (orders.length === 0 && productsData.products.length > 0) {
-  orders = [
-    { id: 'ORD001', userId: 'user123', items: [{ product: productsData.products[0], quantity: 1 }, { product: productsData.products[1], quantity: 2 }], total: productsData.products[0].price * 1 + productsData.products[1].price * 2, status: 'processing', createdAt: new Date().toISOString(), shippingAddress: 'Rua Exemplo, 123, Cidade, Estado' },
-    { id: 'ORD002', userId: 'admin456', items: [{ product: productsData.products[2], quantity: 1 }], total: productsData.products[2].price * 1, status: 'pending', createdAt: new Date(Date.now() - 86400000).toISOString(), shippingAddress: 'Av. Teste, 456, Outra Cidade, Outro Estado' },
-  ];
+  orders = [ { id: 'ORD001', userId: 'user123', items: [{ product: productsData.products[0], quantity: 1 }, { product: productsData.products[1], quantity: 2 }], total: productsData.products[0].price * 1 + productsData.products[1].price * 2, status: 'processing', createdAt: new Date().toISOString(), shippingAddress: 'Rua Exemplo, 123, Cidade, Estado' }, { id: 'ORD002', userId: 'admin456', items: [{ product: productsData.products[2], quantity: 1 }], total: productsData.products[2].price * 1, status: 'pending', createdAt: new Date(Date.now() - 86400000).toISOString(), shippingAddress: 'Av. Teste, 456, Outra Cidade, Outro Estado' }, ];
 }
 
 // ####################################################################
-// ## FUNÇÕES DE PRODUTOS - CONECTADAS E CORRIGIDAS ##
+// ## FUNÇÕES DE PRODUTOS - CORRIGIDAS COM O CAMPO 'tamanhos' ##
 // ####################################################################
 export const getProducts = async (): Promise<Product[]> => {
   const { data, error } = await supabase.from('produtos').select('*, categorias(nome), marcas(nome)');
@@ -24,12 +19,12 @@ export const getProducts = async (): Promise<Product[]> => {
   return data.map((p: any) => ({
     id: p.id, name: p.nome, description: p.descricao, price: p.preco,
     oldPrice: p.preco_antigo, images: p.imagens || [], stock: p.estoque,
-    rating: p.avaliacao, // CORRIGIDO: avaliacao (singular)
+    rating: p.avaliacao,
     reviewCount: p.numero_avaliacoes, featured: p.em_destaque, onSale: p.em_promocao,
     bestSeller: p.mais_vendido, category: p.categoria_id,
     categoryName: p.categorias?.nome || 'Sem Categoria',
     brand: p.marcas?.nome || 'Sem Marca', color: p.cor,
-    tamanhos: [], // Campo 'tamanhos' não existe no BD, retorna array vazio
+    tamanhos: p.tamanhos || [], // CORRIGIDO: Agora busca os tamanhos do banco
     criado_em: p.criado_em,
   }));
 };
@@ -41,12 +36,12 @@ export const getProductById = async (id: string): Promise<Product | null> => {
   return {
     id: p.id, name: p.nome, description: p.descricao, price: p.preco,
     oldPrice: p.preco_antigo, images: p.imagens || [], stock: p.estoque,
-    rating: p.avaliacao, // CORRIGIDO
+    rating: p.avaliacao,
     reviewCount: p.numero_avaliacoes, featured: p.em_destaque, onSale: p.em_promocao,
     bestSeller: p.mais_vendido, category: p.categoria_id,
     categoryName: (p.categorias as any)?.nome || 'Sem Categoria',
     brand: (p.marcas as any)?.nome || 'Sem Marca', color: p.cor,
-    tamanhos: [], // Campo 'tamanhos' não existe no BD
+    tamanhos: p.tamanhos || [], // CORRIGIDO: Agora busca os tamanhos do banco
     criado_em: p.criado_em
   };
 };
@@ -56,10 +51,11 @@ export const createProduct = async (productData: Omit<Product, 'id' | 'categoryN
     nome: productData.name, descricao: productData.description,
     preco: productData.price, preco_antigo: productData.oldPrice,
     imagens: productData.images, estoque: productData.stock,
-    avaliacao: productData.rating, // CORRIGIDO
+    avaliacao: productData.rating,
     numero_avaliacoes: productData.reviewCount, em_destaque: productData.featured,
     em_promocao: productData.onSale, mais_vendido: productData.bestSeller,
     categoria_id: productData.category, cor: productData.color,
+    tamanhos: productData.tamanhos, // CORRIGIDO: Campo 'tamanhos' adicionado
   }).select().single();
   if (error) { console.error('Erro ao criar produto:', error); throw error; }
   const newProduct = await getProductById(data.id);
@@ -72,10 +68,11 @@ export const updateProduct = async (productId: string, productData: Partial<Prod
     nome: productData.name, descricao: productData.description,
     preco: productData.price, preco_antigo: productData.oldPrice,
     imagens: productData.images, estoque: productData.stock,
-    avaliacao: productData.rating, // CORRIGIDO
+    avaliacao: productData.rating,
     numero_avaliacoes: productData.reviewCount, em_destaque: productData.featured,
     em_promocao: productData.onSale, mais_vendido: productData.bestSeller,
     categoria_id: productData.category, cor: productData.color,
+    tamanhos: productData.tamanhos, // CORRIGIDO: Campo 'tamanhos' adicionado
     atualizado_em: new Date().toISOString(),
   }).eq('id', productId).select().single();
   if (error) { console.error('Erro ao atualizar produto:', error); throw error; }
@@ -83,11 +80,7 @@ export const updateProduct = async (productId: string, productData: Partial<Prod
   return updatedProduct;
 };
 
-export const deleteProduct = async (productId: string): Promise<boolean> => {
-  const { error } = await supabase.from('produtos').delete().eq('id', productId);
-  if (error) { console.error('Erro ao deletar produto:', error); return false; }
-  return true;
-};
+export const deleteProduct = async (productId: string): Promise<boolean> => { const { error } = await supabase.from('produtos').delete().eq('id', productId); if (error) { console.error('Erro ao deletar produto:', error); return false; } return true; };
 
 // ####################################################################
 // ## FUNÇÕES DE CATEGORIAS, CLIENTES E MOCKS - RESTAURADAS E COMPLETAS ##
@@ -99,8 +92,6 @@ export const deleteCategory = async (categoryId: string): Promise<boolean> => { 
 export const getUsers = async (): Promise<User[]> => { const { data, error } = await supabase.from('user_details').select('*'); if (error) { console.error('Erro ao buscar detalhes dos usuários:', error.message); throw new Error(error.message); } return data.map((user: any) => ({ id: user.id, name: user.nome_completo, email: user.email, phone: user.telefone, cpf: user.cpf, address: user.endereco, createdAt: user.criado_em, role: 'customer' })); };
 export const getUserById = async (userId: string): Promise<User | null> => { const { data, error } = await supabase.from('user_details').select('*').eq('id', userId).single(); if (error || !data) { console.error(`Erro ao buscar detalhes do usuário ID ${userId}:`, error); return null; } return { id: data.id, name: data.nome_completo, email: data.email, phone: data.telefone, cpf: data.cpf, address: user.endereco, createdAt: user.criado_em, role: 'customer' }; };
 export const deleteUser = async (userId: string): Promise<boolean> => { const { error } = await supabase.from('perfis').delete().eq('id', userId); if (error) { console.error('Erro ao deletar perfil:', error.message); return false; } return true; };
-
-// Funções Auxiliares e Mock (Restauradas do seu original)
 const mockProducts: Product[] = [...productsData.products];
 const mockCategories: Category[] = [...productsData.categories];
 export const getProductsByCategory = async (categoryId: string): Promise<Product[]> => { await delay(300); return mockProducts.filter(p => p.category === categoryId); };

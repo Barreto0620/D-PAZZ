@@ -14,11 +14,16 @@ export const DataTable: React.FC<DataTableProps> = ({
   onEdit, 
   onDelete 
 }) => {
-  const formatPrice = (price: number): string => {
+  // --- CORREÇÃO APLICADA AQUI ---
+  const formatPrice = (price?: number | null): string => {
+    // Se o preço for nulo, indefinido ou não for um número, retorna um valor padrão
+    if (price == null || isNaN(price)) {
+      return 'R$ --,--';
+    }
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
   };
 
-  const truncateText = (text: string, maxLength: number = 50): string => {
+  const truncateText = (text: string | undefined | null, maxLength: number = 50): string => {
     if (!text) return '';
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
   };
@@ -64,8 +69,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                           alt={product.name}
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
-                            const placeholderUrl = 'https://via.placeholder.com/50x50.png?text=S/I'; // S/I = Sem Imagem
-                            // A trava de segurança verifica se a imagem atual já não é o placeholder
+                            const placeholderUrl = 'https://via.placeholder.com/50x50.png?text=S/I';
                             if (target.src !== placeholderUrl) {
                               target.src = placeholderUrl;
                             }
@@ -88,7 +92,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                   <div className="font-semibold">{formatPrice(product.price)}</div>
-                  {product.oldPrice && (<div className="text-xs text-gray-500 line-through">{formatPrice(product.oldPrice)}</div>)}
+                  {product.oldPrice != null && product.onSale && (<div className="text-xs text-gray-500 line-through">{formatPrice(product.oldPrice)}</div>)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                   <div className="flex items-center">
