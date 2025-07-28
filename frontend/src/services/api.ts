@@ -21,14 +21,14 @@ export const getUserById = async (userId: string): Promise<User | null> => { con
 export const deleteUser = async (userId: string): Promise<boolean> => { const { error } = await supabase.from('perfis').delete().eq('id', userId); if (error) { console.error('Erro ao deletar perfil:', error.message); return false; } return true; };
 
 // ####################################################################
-// ## FUNÇÕES DE CATEGORIAS - CORRIGIDAS SEM SLUG ##
+// ## FUNÇÕES DE CATEGORIAS - CORRIGIDAS PARA USAR PARÂMETROS SEPARADOS ##
 // ####################################################################
 export const getCategories = async (): Promise<Category[]> => {
   const { data, error } = await supabase.from('categorias').select('*').order('nome', { ascending: true });
   if (error) { console.error('Erro ao buscar categorias:', error); throw error; }
   return data.map((cat: any) => ({ id: cat.id, name: cat.nome, description: cat.descricao, image: cat.url_imagem, featured: cat.em_destaque, slug: cat.slug, showInHeader: cat.exibir_no_header }));
 };
-export const createCategory = async (categoryData: Partial<Omit<Category, 'id' | 'slug'>>): Promise<Category> => {
+export const createCategory = async (categoryData: Partial<Omit<Category, 'id'>>): Promise<Category> => {
   const { data, error } = await supabase.rpc('create_new_category', {
     p_name: categoryData.name,
     p_description: categoryData.description,
@@ -39,7 +39,7 @@ export const createCategory = async (categoryData: Partial<Omit<Category, 'id' |
   if (error) { console.error('Erro ao criar categoria (RPC):', error); throw error; }
   return data as Category;
 };
-export const updateCategory = async (categoryId: string, categoryData: Partial<Omit<Category, 'id' | 'slug'>>): Promise<Category> => {
+export const updateCategory = async (categoryId: string, categoryData: Partial<Omit<Category, 'id'>>): Promise<Category> => {
   const { data, error } = await supabase.rpc('update_existing_category', {
     p_id: categoryId,
     p_name: categoryData.name,

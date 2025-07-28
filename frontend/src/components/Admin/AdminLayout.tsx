@@ -1,9 +1,7 @@
 // frontend/src/components/Admin/AdminLayout.tsx
-
 import React, { ReactNode, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, Menu } from 'lucide-react';
-import { useProtectedRoute } from '../../hooks/useProtectedRoute';
+import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, Menu, BarChart2 } from 'lucide-react'; // Adicionado BarChart2 para Categorias
 import { useAuth } from '../../contexts/AuthContext';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -13,10 +11,10 @@ interface AdminLayoutProps {
 }
 
 export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
-  const { isAdmin } = useProtectedRoute(true);
+  // REMOVIDO: A chamada ao useProtectedRoute foi removida daqui
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); 
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -24,12 +22,12 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
     navigate('/');
   };
 
-  if (!isAdmin) return null;
-
+  // REMOVIDO: A verificação 'if (!isAdmin) return null' foi removida
+  
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     { name: 'Produtos', icon: Package, path: '/admin/products' },
-    { name: 'Categorias', icon: Users, path: '/admin/categories' },
+    { name: 'Categorias', icon: BarChart2, path: '/admin/categories' },
     { name: 'Pedidos', icon: ShoppingCart, path: '/admin/orders' },
     { name: 'Clientes', icon: Users, path: '/admin/customers' },
   ];
@@ -37,11 +35,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
   return (
     <div className="min-h-screen bg-light-darker dark:bg-dark flex">
       {/* Sidebar */}
-      <aside className={`w-64 bg-white dark:bg-dark-lighter shadow-md 
-                        fixed inset-y-0 left-0 
-                        transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} 
-                        md:relative md:translate-x-0 
-                        transition-transform duration-200 ease-in-out z-50 flex-shrink-0`}>
+      <aside className={`w-64 bg-white dark:bg-dark-lighter shadow-md fixed inset-y-0 left-0 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition-transform duration-200 ease-in-out z-50 flex-shrink-0`}>
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <Link to="/" className="flex items-center justify-center">
             <img 
@@ -58,12 +52,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
               <li key={item.path}>
                 <Link 
                   to={item.path} 
-                  className={`flex items-center space-x-3 p-3 rounded-lg transition-colors
-                    ${location.pathname === item.path 
-                      ? 'bg-primary text-dark font-semibold shadow-md'
-                      : 'hover:bg-light-darker dark:hover:bg-dark-light text-dark dark:text-white'
-                    }`
-                  }
+                  className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${location.pathname.startsWith(item.path) ? 'bg-primary text-dark font-semibold shadow-md' : 'hover:bg-light-darker dark:hover:bg-dark-light text-dark dark:text-white'}`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <item.icon size={20} />
@@ -88,30 +77,17 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
         </nav>
       </aside>
       
-      {/* --- CORREÇÃO APLICADA AQUI --- */}
-      {/* Adicionado 'min-w-0' para forçar o cálculo correto da largura do flexbox */}
+      {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile header and overlay */}
+        {/* Mobile header */}
         <header className="bg-white dark:bg-dark-lighter p-4 shadow-md md:hidden flex items-center justify-between z-30">
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 rounded-lg hover:bg-light-darker dark:hover:bg-dark-light text-dark dark:text-white transition-colors"
-          >
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 rounded-lg hover:bg-light-darker dark:hover:bg-dark-light text-dark dark:text-white transition-colors">
             <Menu size={24} />
           </button>
-          <img 
-            src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png" 
-            alt="D'Pazz Imports"
-            className="h-8"
-          />
+          <img src="https://raw.githubusercontent.com/Lusxka/logompz/refs/heads/main/logompz-Photoroom.png" alt="D'Pazz Imports" className="h-8" />
           <ThemeToggle />
         </header>
-        {isMobileMenuOpen && (
-          <div 
-            className="fixed inset-0 bg-black/50 z-40 md:hidden" 
-            onClick={() => setIsMobileMenuOpen(false)}
-          ></div>
-        )}
+        {isMobileMenuOpen && ( <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)}></div> )}
         
         {/* Page content */}
         <main className="flex-1 p-6 overflow-y-auto">
