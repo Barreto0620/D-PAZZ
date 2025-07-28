@@ -1,4 +1,4 @@
-// src/components/ProductDetail.tsx (VERSÃO 100% COMPLETA E FINAL)
+// src/components/ProductDetail.tsx
 
 import React, { useState, useMemo } from 'react';
 import { Product } from '../types';
@@ -10,7 +10,36 @@ import { StarRating } from './StarRating';
 
 const colorMap: { [key: string]: string } = { 'preto': '#000000', 'branco': '#FFFFFF', 'marrom': '#8B4513', 'azul marinho': '#000080', 'bege': '#F5F5DC', 'vermelho': '#FF0000', 'cinza': '#808080', };
 const parseColors = (colorString?: string): { name: string, hex: string }[] => { if (!colorString) return []; return colorString.split('/').map(name => { const trimmedName = name.trim(); const hex = colorMap[trimmedName.toLowerCase()] || '#CCCCCC'; return { name: trimmedName, hex }; }); };
-const parseSizes = (sizeString?: string): string[] => { if (!sizeString) return []; const sizes = new Set<string>(); const parts = sizeString.replace(/\s/g, '').split(','); parts.forEach(part => { if (part.includes('-')) { const [start, end] = part.split('-').map(Number); if (!isNaN(start) && !isNaN(end)) for (let i = start; i <= end; i++) sizes.add(i.toString()); } else { if (!isNaN(Number(part)) && part) sizes.add(part); } }); return Array.from(sizes).sort((a, b) => Number(a) - Number(b)); };
+
+// --- FUNÇÃO CORRIGIDA AQUI ---
+// Agora ela aceita um array de textos (string[]) como entrada
+const parseSizes = (sizeArray?: string[]): string[] => {
+  if (!sizeArray || sizeArray.length === 0) return [];
+  
+  const sizes = new Set<string>();
+  
+  // Itera sobre cada item do array (ex: '39', '40-42')
+  sizeArray.forEach(part => {
+    const cleanPart = part.replace(/\s/g, ''); // Limpa espaços
+    if (cleanPart.includes('-')) {
+      // Se for um intervalo (ex: "40-42"), gera os números
+      const [start, end] = cleanPart.split('-').map(Number);
+      if (!isNaN(start) && !isNaN(end)) {
+        for (let i = start; i <= end; i++) {
+          sizes.add(i.toString());
+        }
+      }
+    } else {
+      // Se for um número único
+      if (!isNaN(Number(cleanPart)) && cleanPart) {
+        sizes.add(cleanPart);
+      }
+    }
+  });
+  
+  return Array.from(sizes).sort((a, b) => Number(a) - Number(b));
+};
+
 
 interface ProductDetailProps {
   product: Product;
@@ -24,7 +53,10 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const availableColors = useMemo(() => parseColors(product.color), [product.color]);
+  
+  // Esta linha agora funciona corretamente com a nova função parseSizes
   const availableSizes = useMemo(() => parseSizes(product.tamanhos), [product.tamanhos]);
+
   const canAddToCart = (): boolean => { if (availableSizes.length > 0 && !selectedSize) return false; if (availableColors.length > 0 && !selectedColor) return false; return product.stock > 0; };
   const handleAddToCart = () => { if (!canAddToCart()) { alert('Por favor, selecione as opções desejadas.'); return; } const cartProduct = { ...product, selectedColor, selectedSize }; addToCart(cartProduct, quantity); alert(`${product.name} adicionado ao carrinho!`); };
   const handlePrevImage = () => product.images && setSelectedImage((p) => (p === 0 ? product.images.length - 1 : p - 1));
