@@ -1,7 +1,6 @@
 // project/src/App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-// MODIFICAÇÃO: HelmetProvider é importado para envolver a aplicação.
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 // Contexts
@@ -23,6 +22,7 @@ import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { AdminProductsPage } from './pages/AdminProductsPage';
 import { AdminOrdersPage } from './pages/AdminOrdersPage';
 import { AdminCustomersPage } from './pages/AdminCustomersPage';
+import { AdminCategoriesPage } from './pages/AdminCategoriesPage'; // <<< CORREÇÃO AQUI
 import { CustomerDashboardPage } from './pages/CustomerDashboardPage';
 import { PurchaseHistoryPage } from './pages/PurchaseHistoryPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -48,9 +48,7 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 function App() {
   return (
     <AppProviders>
-      {/* MODIFICAÇÃO: O HelmetProvider agora envolve o Router para corrigir o erro. */}
       <HelmetProvider>
-        {/* MODIFICAÇÃO: Adicionada a flag v7_relativeSplatPath para resolver o aviso do console. */}
         <Router future={{ v7_startTransition: true, v7_normalizeSplatPaths: true, v7_relativeSplatPath: true }}>
           <Helmet>
             <title>D'Pazz Imports - Tênis Premium | Qualidade Internacional</title>
@@ -85,6 +83,7 @@ function App() {
             <Route path="/admin/products" element={<AdminProductsPage />} />
             <Route path="/admin/orders" element={<AdminOrdersPage />} />
             <Route path="/admin/customers" element={<AdminCustomersPage />} />
+            <Route path="/admin/categories" element={<AdminCategoriesPage />} />
 
             {/* Rotas de cliente */}
             <Route path="/cliente/painel" element={<CustomerDashboardPage />} />

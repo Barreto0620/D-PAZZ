@@ -29,6 +29,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => 
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     { name: 'Produtos', icon: Package, path: '/admin/products' },
+    { name: 'Categorias', icon: Users, path: '/admin/categories' },
     { name: 'Pedidos', icon: ShoppingCart, path: '/admin/orders' },
     { name: 'Clientes', icon: Users, path: '/admin/customers' },
   ];
