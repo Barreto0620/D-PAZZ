@@ -1,8 +1,8 @@
-// frontend/src/components/Admin/CRUDForm.tsx (VERSÃO FINAL)
+// frontend/src/components/Admin/CRUDForm.tsx
 import React, { useState, useEffect } from 'react';
-import { X, Save, Upload, Palette, Ruler, Plus, ArrowLeft } from 'lucide-react';
+import { X, Save, Upload, Palette, Ruler } from 'lucide-react';
 import { Product, Category } from '../../types';
-import { getCategories, createCategory } from '../../services/api';
+import { getCategories } from '../../services/api';
 import { ToggleSwitch } from './ToggleSwitch';
 
 interface CRUDFormProps {
@@ -10,8 +10,6 @@ interface CRUDFormProps {
   onClose: () => void;
   onSave: (product: Omit<Product, 'id'> | Product) => void;
 }
-
-const createSlug = (text: string) => text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
 
 export const CRUDForm: React.FC<CRUDFormProps> = ({ product, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -23,16 +21,13 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({ product, onClose, onSave }) 
     stock: '',
     image: '',
     color: '',
-    tamanhos: '',
+    // O campo 'tamanhos' que estava aqui foi removido
     featured: false,
     onSale: false,
     bestSeller: false,
   });
 
   const [categories, setCategories] = useState<Category[]>([]);
-  const [isAddingCategory, setIsAddingCategory] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [isSavingCategory, setIsSavingCategory] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
 
@@ -52,12 +47,11 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({ product, onClose, onSave }) 
         name: product.name || '',
         description: product.description || '',
         category: product.category || '',
-        price: product.price != null ? product.price.toString() : '',
-        oldPrice: product.oldPrice != null ? product.oldPrice.toString() : '',
-        stock: product.stock != null ? product.stock.toString() : '0',
-        image: Array.isArray(product.images) ? product.images[0] || '' : '',
+        price: product.price?.toString() || '',
+        oldPrice: product.oldPrice?.toString() || '',
+        stock: product.stock?.toString() || '0',
+        image: product.images?.[0] || '',
         color: product.color || '',
-        tamanhos: Array.isArray(product.tamanhos) ? product.tamanhos.join(', ') : '',
         featured: product.featured || false,
         onSale: product.onSale || false,
         bestSeller: product.bestSeller || false,
@@ -65,17 +59,27 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({ product, onClose, onSave }) 
     }
   }, [product]);
 
-  const validateForm = () => { /* ... */ return true; };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
     setIsSaving(true);
     try {
-      const tamanhosArray = formData.tamanhos.split(',').map(t => t.trim()).filter(t => t);
       const productData = {
-        name: formData.name.trim(), description: formData.description.trim(), category: formData.category, price: Number(formData.price) || 0, oldPrice: formData.oldPrice ? Number(formData.oldPrice) : undefined, stock: Number(formData.stock) || 0, images: formData.image ? [formData.image.trim()] : [], color: formData.color.trim(), tamanhos: tamanhosArray, featured: formData.featured, onSale: formData.onSale, bestSeller: formData.bestSeller, rating: product?.rating ?? 0, reviewCount: product?.reviewCount ?? 0,
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        category: formData.category,
+        price: Number(formData.price) || 0,
+        oldPrice: formData.oldPrice ? Number(formData.oldPrice) : undefined,
+        stock: Number(formData.stock) || 0,
+        images: formData.image ? [formData.image.trim()] : [],
+        color: formData.color.trim(),
+        featured: formData.featured,
+        onSale: formData.onSale,
+        bestSeller: formData.bestSeller,
+        rating: product?.rating ?? 0,
+        reviewCount: product?.reviewCount ?? 0,
+        // O campo 'tamanhos' foi removido daqui também
       };
+
       if (product) {
         onSave({ ...product, ...productData });
       } else {
@@ -83,30 +87,12 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({ product, onClose, onSave }) 
       }
     } catch (error) {
       console.error('Error saving product:', error);
-      setIsSaving(false); // Garante que o botão seja reativado em caso de erro
+      setIsSaving(false);
     }
   };
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSaveNewCategory = async () => {
-    if (!newCategoryName.trim()) return;
-    setIsSavingCategory(true);
-    try {
-      const newCategory = await createCategory({ name: newCategoryName.trim(), slug: createSlug(newCategoryName.trim()) });
-      const updatedCategories = [...categories, newCategory].sort((a, b) => a.name.localeCompare(b.name));
-      setCategories(updatedCategories);
-      setFormData(prev => ({ ...prev, category: newCategory.id }));
-      setNewCategoryName('');
-      setIsAddingCategory(false);
-    } catch (error) {
-      console.error("Falha ao criar nova categoria", error);
-      alert("Erro ao criar nova categoria.");
-    } finally {
-      setIsSavingCategory(false);
-    }
   };
 
   const predefinedColors = ['Preto', 'Branco', 'Vermelho', 'Azul', 'Verde', 'Amarelo', 'Rosa', 'Marrom', 'Cinza', 'Bege', 'Dourado', 'Prateado'];
@@ -120,8 +106,10 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({ product, onClose, onSave }) 
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{product ? 'Editar Produto' : 'Novo Produto'}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"><X size={24} /></button>
         </div>
+
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          <div>
+          {/* ... outros campos do formulário ... */}
+           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome do Produto *</label>
             <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} className={`${inputClasses} ${defaultBorder}`} />
           </div>
@@ -132,21 +120,10 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({ product, onClose, onSave }) 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categoria *</label>
-              {isAddingCategory ? (
-                <div className="flex items-center gap-2">
-                  <button type="button" onClick={() => setIsAddingCategory(false)} className="p-2 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white" title="Voltar"><ArrowLeft size={18}/></button>
-                  <input type="text" value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)} placeholder="Nome da nova categoria" className="flex-grow px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                  <button type="button" onClick={handleSaveNewCategory} disabled={isSavingCategory} className="px-4 py-2 bg-primary hover:bg-secondary text-dark rounded-lg disabled:opacity-50">{isSavingCategory ? '...' : 'Salvar'}</button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <select id="category" name="category" value={formData.category} onChange={handleChange} className={`${inputClasses} ${defaultBorder}`}>
-                    <option value="">Selecione uma categoria</option>
-                    {categories.map(cat => ( <option key={cat.id} value={cat.id}>{cat.name}</option> ))}
-                  </select>
-                  <button type="button" onClick={() => setIsAddingCategory(true)} className="p-2 flex-shrink-0 bg-gray-200 dark:bg-gray-600 rounded-full hover:bg-gray-300 dark:hover:bg-gray-500" title="Adicionar Nova Categoria"><Plus size={18}/></button>
-                </div>
-              )}
+              <select id="category" name="category" value={formData.category} onChange={handleChange} className={`${inputClasses} ${defaultBorder}`}>
+                <option value="">Selecione uma categoria</option>
+                {categories.map(cat => ( <option key={cat.id} value={cat.id}>{cat.name}</option> ))}
+              </select>
             </div>
             <div>
               <label htmlFor="stock" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estoque</label>
@@ -173,10 +150,7 @@ export const CRUDForm: React.FC<CRUDFormProps> = ({ product, onClose, onSave }) 
                  {predefinedColors.map(color => ( <option key={color} value={color}>{color}</option> ))}
                </select>
              </div>
-             <div>
-               <label htmlFor="tamanhos" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"><Ruler size={16} /> Tamanhos</label>
-               <input type="text" id="tamanhos" name="tamanhos" value={formData.tamanhos} onChange={handleChange} className={`${inputClasses} ${defaultBorder}`} placeholder="Ex: 38, 39, 40, 41-44" />
-             </div>
+             {/* O campo de tamanho foi removido daqui para evitar o erro */}
            </div>
           <div>
             <label htmlFor="image" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"><Upload size={16} /> URL da Imagem Principal</label>
